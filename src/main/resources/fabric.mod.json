@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "capi",
+  "version": "${version}",
+  "name": "MClientAPI",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/svegon/MClientAPI"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/capi/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.github.svegon.capi.capi.client.MClientAPIClient"
+    ],
+    "main": [
+      "com.github.svegon.capi.capi.MClientAPI"
+    ]
+  },
+  "mixins": [
+    "capi.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
