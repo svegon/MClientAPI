@@ -4,24 +4,30 @@
   "version": "${version}",
   "name": "MClientAPI",
   "description": "",
-  "authors": [],
+  "authors": [
+    "Svegon"
+  ],
   "contact": {
     "repo": "https://github.com/svegon/MClientAPI"
   },
-  "license": "All-Rights-Reserved",
+  "license": "MIT",
   "icon": "assets/capi/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.github.svegon.capi.capi.client.MClientAPIClient"
+      "com.github.svegon.capi.CAPIMain"
     ],
     "main": [
-      "com.github.svegon.capi.capi.MClientAPI"
+      "com.github.svegon.capi.CAPIMain"
+    ],
+    "server": [
+      "com.github.svegon.capi.CAPIMain"
     ]
   },
   "mixins": [
     "capi.mixins.json"
   ],
+  "accessWidener": "capi.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
