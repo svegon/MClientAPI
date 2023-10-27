@@ -15,13 +15,13 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.github.svegon.capi.CAPIMain"
+      "io.github.svegon.capi.CAPIMain"
     ],
     "main": [
-      "com.github.svegon.capi.CAPIMain"
+      "io.github.svegon.capi.CAPIMain"
     ],
     "server": [
-      "com.github.svegon.capi.CAPIMain"
+      "io.github.svegon.capi.CAPIMain"
     ]
   },
   "mixins": [
