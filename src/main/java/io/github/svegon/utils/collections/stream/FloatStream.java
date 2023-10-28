@@ -2,7 +2,6 @@ package io.github.svegon.utils.collections.stream;
 
 import io.github.svegon.utils.fast.util.floats.FloatCollector;
 import io.github.svegon.utils.fast.util.floats.FloatSummaryStatistics;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.FloatSupplier;
 import io.github.svegon.utils.optional.OptionalFloat;
 import io.github.svegon.utils.collections.ArrayUtil;

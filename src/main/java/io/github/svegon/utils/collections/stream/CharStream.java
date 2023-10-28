@@ -2,7 +2,6 @@ package io.github.svegon.utils.collections.stream;
 
 import io.github.svegon.utils.fast.util.chars.CharCollector;
 import io.github.svegon.utils.fast.util.chars.CharSummaryStatistics;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.CharSupplier;
 import io.github.svegon.utils.optional.OptionalChar;
 import io.github.svegon.utils.collections.ArrayUtil;

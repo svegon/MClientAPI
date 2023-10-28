@@ -24,14 +24,12 @@
  */
 package io.github.svegon.utils.fast.util.shorts;
 
-import com.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.fast.util.booleans.BooleanPipeline;
 import io.github.svegon.utils.optional.OptionalShort;
 import io.github.svegon.utils.fast.util.bytes.BytePipeline;
 import io.github.svegon.utils.fast.util.chars.CharPipeline;
 import io.github.svegon.utils.fast.util.floats.FloatPipeline;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.ObjectShortConsumer;
 import io.github.svegon.utils.fuck_modifiers.AbstractPipeline;
 import io.github.svegon.utils.fuck_modifiers.DoublePipeline;

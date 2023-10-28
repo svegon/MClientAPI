@@ -1,7 +1,6 @@
 package io.github.svegon.utils.fast.util.booleans;
 
 import io.github.svegon.utils.FunctionUtil;
-import com.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.fast.util.bytes.BytePipeline;
 import io.github.svegon.utils.fast.util.chars.CharPipeline;
@@ -26,7 +25,6 @@ import io.github.svegon.utils.fuck_modifiers.StreamOpFlag;
 import io.github.svegon.utils.fuck_modifiers.StreamShape;
 import io.github.svegon.utils.fuck_modifiers.StreamSpliterators;
 import io.github.svegon.utils.fuck_modifiers.WhileOps;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.ObjectBooleanBiConsumer;
 import io.github.svegon.utils.optional.OptionalBoolean;
 import io.github.svegon.utils.fuck_modifiers.*;

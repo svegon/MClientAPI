@@ -276,7 +276,7 @@ public final class ImmutableInt2ShortHashSortedMap extends ImmutableInt2ShortSor
 
         @Override
         public @NotNull Comparator<? super Entry> comparator() {
-            return nullsFirst(ComparingUtil.comparingInt(Entry::getIntKey,
+            return Comparator.nullsFirst(ComparingUtil.comparingInt(Entry::getIntKey,
                     ImmutableInt2ShortHashSortedMap.this.comparator()));
         }
 

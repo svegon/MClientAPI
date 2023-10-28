@@ -1,7 +1,6 @@
 package io.github.svegon.utils.math.geometry.space.shape;
 
 import io.github.svegon.utils.fast.util.objects.immutable.ImmutableObjectSet;
-import com.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.interfaces.function.DoubleDoubleDoubleTriConsumer;
 import io.github.svegon.utils.interfaces.function.HexaDoubleConsumer;
 import io.github.svegon.utils.interfaces.function.NonaDoubleConsumer;

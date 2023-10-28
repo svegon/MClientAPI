@@ -1,7 +1,6 @@
 package io.github.svegon.utils.collections;
 
 import io.github.svegon.utils.annotations.TrustedMutableArg;
-import com.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.fast.util.booleans.ImprovedBooleanCollection;
 import io.github.svegon.utils.fast.util.bytes.ImprovedByteCollection;

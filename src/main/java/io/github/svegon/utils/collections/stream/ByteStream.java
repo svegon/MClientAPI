@@ -2,7 +2,6 @@ package io.github.svegon.utils.collections.stream;
 
 import io.github.svegon.utils.fast.util.bytes.ByteCollector;
 import io.github.svegon.utils.fast.util.bytes.ByteSummaryStatistics;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.optional.OptionalByte;
 import io.github.svegon.utils.collections.ArrayUtil;
 import io.github.svegon.utils.collections.spliterator.SpliteratorUtil;

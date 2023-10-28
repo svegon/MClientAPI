@@ -24,7 +24,6 @@
  */
 package io.github.svegon.utils.fuck_modifiers;
 
-import com.github.svegon.utils.optional.*;
 import io.github.svegon.utils.optional.*;
 import org.jetbrains.annotations.Nullable;
 

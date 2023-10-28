@@ -1,6 +1,5 @@
 package io.github.svegon.utils.fast.util.ints.immutable;
 
-import com.github.svegon.utils.collections.*;
 import io.github.svegon.utils.fast.util.shorts.ShortMultiset;
 import io.github.svegon.utils.collections.CollectionUtil;
 import io.github.svegon.utils.collections.MapUtil;

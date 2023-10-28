@@ -61,7 +61,6 @@ import io.github.svegon.utils.fast.util.longs.transform.objects.L2JTransformingL
 import io.github.svegon.utils.fast.util.objects.OnNextComputeObjectIterator;
 import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SRATransformingList;
 import io.github.svegon.utils.fast.util.shorts.transform.objects.L2STransformingList;
-import com.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.math.MathUtil;
 import com.google.common.base.Preconditions;

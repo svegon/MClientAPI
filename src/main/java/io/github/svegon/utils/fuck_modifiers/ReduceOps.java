@@ -32,8 +32,6 @@ import io.github.svegon.utils.fast.util.floats.FloatCollector;
 import io.github.svegon.utils.fast.util.ints.collector.IntCollector;
 import io.github.svegon.utils.fast.util.longs.LongCollector;
 import io.github.svegon.utils.fast.util.shorts.ShortCollector;
-import com.github.svegon.utils.interfaces.function.*;
-import com.github.svegon.utils.optional.*;
 import io.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.optional.*;
 import it.unimi.dsi.fastutil.booleans.BooleanBinaryOperator;

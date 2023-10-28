@@ -3,7 +3,6 @@ package io.github.svegon.utils.fast.util.chars;
 import it.unimi.dsi.fastutil.chars.CharConsumer;
 
 import java.util.stream.Collector;
-import java.util.stream.DoubleStream;
 
 /**
  * A state objects for collecting statistics such as count, min, max, sum, and
@@ -13,17 +12,17 @@ import java.util.stream.DoubleStream;
  * {@linkplain java.util.stream streams}. For example, you can compute
  * summary statistics on a stream of doubles with:
  * <pre> {@code
- * FloatSummaryStatistics stats = doubleStream.collect(FloatSummaryStatistics::new,
- *                                                      FloatSummaryStatistics::accept,
- *                                                      FloatSummaryStatistics::combine);
+ * CharSummaryStatistics stats = doubleStream.collect(CharSummaryStatistics::new,
+ *                                                      CharSummaryStatistics::accept,
+ *                                                      CharSummaryStatistics::combine);
  * }</pre>
  *
- * <p>{@code FloatSummaryStatistics} can be used as a
+ * <p>{@code CharSummaryStatistics} can be used as a
  * {@linkplain java.util.stream.Stream#collect(Collector) reduction}
  * target for a {@linkplain java.util.stream.Stream stream}. For example:
  *
  * <pre> {@code
- * FloatSummaryStatistics stats = people.stream()
+ * CharSummaryStatistics stats = people.stream()
  *     .collect(Collectors.summarizingDouble(Person::getWeight));
  *}</pre>
  *
@@ -68,7 +67,7 @@ public class CharSummaryStatistics implements CharConsumer {
      * </ul>
      * @apiNote
      * The enforcement of argument correctness means that the retrieved set of
-     * recorded values obtained from a {@code FloatSummaryStatistics} source
+     * recorded values obtained from a {@code CharSummaryStatistics} source
      * instance may not be a legal set of arguments for this constructor due to
      * arithmetic overflow of the source's recorded count of values.
      * The consistent argument conditions are not sufficient to prevent the
@@ -89,11 +88,6 @@ public class CharSummaryStatistics implements CharConsumer {
         } else if (count > 0L) {
             if (min > max)
                 throw new IllegalArgumentException("Minimum greater than maximum");
-
-            // All NaN or non NaN
-            var ncount = DoubleStream.of(min, max, sum).filter(Double::isNaN).count();
-            if (ncount > 0 && ncount < 3)
-                throw new IllegalArgumentException("Some, not all, of the minimum, maximum, or sum is NaN");
 
             this.count = count;
             this.sum = sum;
@@ -120,10 +114,10 @@ public class CharSummaryStatistics implements CharConsumer {
     }
 
     /**
-     * Combines the state of another {@code FloatSummaryStatistics} into this
+     * Combines the state of another {@code CharSummaryStatistics} into this
      * one.
      *
-     * @param other another {@code FloatSummaryStatistics}
+     * @param other another {@code CharSummaryStatistics}
      * @throws NullPointerException if {@code other} is null
      */
     public void combine(CharSummaryStatistics other) {

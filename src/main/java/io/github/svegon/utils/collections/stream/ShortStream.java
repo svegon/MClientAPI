@@ -2,7 +2,6 @@ package io.github.svegon.utils.collections.stream;
 
 import io.github.svegon.utils.fast.util.shorts.ShortCollector;
 import io.github.svegon.utils.fast.util.shorts.ShortSummaryStatistics;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.ShortSupplier;
 import io.github.svegon.utils.optional.OptionalShort;
 import io.github.svegon.utils.collections.ArrayUtil;

@@ -72,7 +72,6 @@ import io.github.svegon.utils.fast.util.shorts.transform.objects.L2STransforming
 import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2STransformingBidirectionalIterator;
 import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2STransformingIterator;
 import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2STransformingListIterator;
-import com.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.interfaces.function.*;
 import com.google.common.base.Preconditions;
 import io.github.svegon.utils.interfaces.function.Object2ByteFunction;

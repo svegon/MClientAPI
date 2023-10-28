@@ -3,7 +3,6 @@ package io.github.svegon.utils.collections.stream;
 import io.github.svegon.utils.fast.util.booleans.BooleanPipeline;
 import io.github.svegon.utils.fast.util.floats.FloatPipeline;
 import io.github.svegon.utils.fast.util.shorts.ShortPipeline;
-import com.github.svegon.utils.fuck_modifiers.*;
 import io.github.svegon.utils.interfaces.function.Object2ByteFunction;
 import io.github.svegon.utils.interfaces.function.Object2CharFunction;
 import io.github.svegon.utils.interfaces.function.Object2FloatFunction;

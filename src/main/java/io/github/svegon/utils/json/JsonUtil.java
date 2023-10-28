@@ -1,6 +1,5 @@
 package io.github.svegon.utils.json;
 
-import com.github.svegon.utils.optional.*;
 import com.google.gson.*;
 import io.github.svegon.utils.optional.*;
 

@@ -2,7 +2,6 @@ package io.github.svegon.capi.mixin;
 
 import io.github.svegon.capi.event.entity.EntityTargetUpdateCallback;
 import io.github.svegon.capi.event.input.CrosshairTargetUpdateListener;
-import com.github.svegon.capi.event.render.*;
 import io.github.svegon.capi.event.render.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

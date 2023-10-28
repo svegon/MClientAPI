@@ -1,15 +1,14 @@
 package io.github.svegon.utils.collections.stream;
 
-import io.github.svegon.utils.fast.util.booleans.BooleanCollector;
-import com.github.svegon.utils.fuck_modifiers.*;
-import io.github.svegon.utils.interfaces.function.ObjectBooleanBiConsumer;
-import io.github.svegon.utils.optional.OptionalBoolean;
 import io.github.svegon.utils.collections.ArrayUtil;
 import io.github.svegon.utils.collections.spliterator.SpliteratorUtil;
+import io.github.svegon.utils.fast.util.booleans.BooleanCollector;
 import io.github.svegon.utils.fuck_modifiers.SpinedBuffer;
 import io.github.svegon.utils.fuck_modifiers.StreamSpliterators;
 import io.github.svegon.utils.fuck_modifiers.Streams;
 import io.github.svegon.utils.fuck_modifiers.WhileOps;
+import io.github.svegon.utils.interfaces.function.ObjectBooleanBiConsumer;
+import io.github.svegon.utils.optional.OptionalBoolean;
 import it.unimi.dsi.fastutil.booleans.*;
 
 import java.util.Objects;

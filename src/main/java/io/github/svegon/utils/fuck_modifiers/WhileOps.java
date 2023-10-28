@@ -24,7 +24,6 @@
  */
 package io.github.svegon.utils.fuck_modifiers;
 
-import com.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.collections.stream.*;
 import io.github.svegon.utils.fast.util.booleans.BooleanPipeline;
 import io.github.svegon.utils.fast.util.bytes.BytePipeline;
