@@ -5,14 +5,26 @@
 
   "name": "MClientAPI",
   "description": "API for client mods",
-  "authors": [],
-  "contact": {},
+  "authors": ["Svegon"],
+  "contact": {
+    "repo": "https://github.com/svegon/MClientAPI"
+  },
 
-  "license": "All-Rights-Reserved",
+  "license": "MIT",
   "icon": "assets/capi/icon.png",
 
-  "environment": "client",
-  "entrypoints": {},
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.svegon.capi.CAPIMain"
+    ],
+    "main": [
+      "io.github.svegon.capi.CAPIMain"
+    ],
+    "server": [
+      "io.github.svegon.capi.CAPIMain"
+    ]
+  },
 
       "mixins": [
         "capi.mixins.json"
