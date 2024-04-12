@@ -1,5 +1,6 @@
 #!/bin/bash
 export JAVA_HOME="$JAVA17_HOME"
+
 cd ..
-./gradlew genSources --stacktrace
 ./gradlew build
+mv build/libs/
