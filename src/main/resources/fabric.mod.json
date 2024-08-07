@@ -13,18 +13,29 @@
   },
 
   "license": "MIT",
-  "icon": "assets/{modid}/icon.png",
+  "icon": "assets/${modid}/icon.png",
 
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "io.github.svegon.${modid}.client.MClientAPI"
+    ],
+    "main": [
+      "io.github.svegon.${modid}.MClientAPI"
+    ]
   },
   "mixins": [
-  	"{modid}.mixins.json"
+    "${modid}.mixins.json",
+    {
+      "config": "${modid}.client.mixins.json",
+      "environment": "client"
+    }
   ],
-
+  "accessWidener" : "${modid}.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "fabric": ">={fabric_version}",
+    "fabric-language-kotlin": ">=${kotlin_loader_version}",
+    "fabric": ">=${fabric_version}",
     "minecraft": ">=${minecraft_version}"
   }
 }
