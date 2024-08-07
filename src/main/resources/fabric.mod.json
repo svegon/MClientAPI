@@ -1,38 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "capi",
+  "id": "${modid}",
   "version": "${version}",
 
   "name": "MClientAPI",
-  "description": "API for client mods",
-  "authors": ["Svegon"],
+  "description": "API for (client) mods",
+  "authors": [
+  	"Svegon"
+  ],
   "contact": {
     "repo": "https://github.com/svegon/MClientAPI"
   },
 
   "license": "MIT",
-  "icon": "assets/capi/icon.png",
+  "icon": "assets/{modid}/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "io.github.svegon.capi.CAPIMain"
-    ],
-    "main": [
-      "io.github.svegon.capi.CAPIMain"
-    ],
-    "server": [
-      "io.github.svegon.capi.CAPIMain"
-    ]
   },
-
-      "mixins": [
-        "capi.mixins.json"
-      ],
+  "mixins": [
+  	"{modid}.mixins.json"
+  ],
 
   "depends": {
     "fabricloader": ">=${loader_version}",
-        "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "fabric": ">={fabric_version}",
+    "minecraft": ">=${minecraft_version}"
   }
 }
