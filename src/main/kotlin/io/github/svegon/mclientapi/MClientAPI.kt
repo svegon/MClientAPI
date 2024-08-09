@@ -4,8 +4,10 @@ import net.fabricmc.api.ModInitializer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-object MClientAPI : ModInitializer {
-    val LOGGER: Logger = LogManager.getLogger("MClientAPI")
+class MClientAPI : ModInitializer {
+    companion object {
+        val LOGGER: Logger = LogManager.getLogger("MClientAPI")
+    }
 
     override fun onInitialize() {}
 }

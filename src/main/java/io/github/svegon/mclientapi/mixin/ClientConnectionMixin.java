@@ -33,7 +33,7 @@ public abstract class ClientConnectionMixin extends SimpleChannelInboundHandler<
         try {
             ((IPacketListener<?>) listener).getPacketReceivedEvent().invoker().intercept(packet, ci);
         } catch (ClassCastException e) {
-            MClientAPI.INSTANCE.getLOGGER().warn("class missmatch while intercepting packet " + packet
+            MClientAPI.Companion.getLOGGER().warn("class missmatch while intercepting packet " + packet
                     + " listened by " + listener);
         }
     }
