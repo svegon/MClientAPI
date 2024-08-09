@@ -1,4 +1,4 @@
-package io.github.svegon.capi.argument_types
+package io.github.svegon.mclientapi.argument_types
 
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
@@ -14,8 +14,8 @@ import java.util.function.Supplier
 
 class MappedArgumentType<T, U> private constructor(
     private val model: ArgumentType<T>, private val mapper: Function<in T, out U>,
-    private val suggestionCompleter: BiFunction<in CommandContext<out CommandSource>, in SuggestionsBuilder, out CompletableFuture<Suggestions>>,
-    private val examples: Collection<String>
+    private val suggestionCompleter: BiFunction<in CommandContext<out CommandSource>, in SuggestionsBuilder,
+            out CompletableFuture<Suggestions>>, private val examples: Collection<String>
 ) : ArgumentType<U> {
     @Throws(CommandSyntaxException::class)
     override fun parse(reader: StringReader): U {

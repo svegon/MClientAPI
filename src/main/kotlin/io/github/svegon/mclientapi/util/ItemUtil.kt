@@ -1,4 +1,4 @@
-package io.github.svegon.capi.util
+package io.github.svegon.mclientapi.util
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventories
@@ -20,200 +20,194 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.function.ToIntFunction
 
-class ItemUtil private constructor() {
-    init {
-        throw UnsupportedOperationException()
+object ItemUtil {
+    val PERMANENT_SLOT: Predicate<Slot> = Predicate { slot: Slot -> slot.javaClass == Slot::class.java }
+    val ITEM_CONTAINER_SLOT: Predicate<Slot> = Predicate { slot: Slot? ->
+        !(slot is FurnaceOutputSlot
+                || slot is CraftingResultSlot || slot is TradeOutputSlot)
     }
 
-    companion object {
-        val PERMANENT_SLOT: Predicate<Slot> = Predicate { slot: Slot -> slot.javaClass == Slot::class.java }
-        val ITEM_CONTAINER_SLOT: Predicate<Slot> = Predicate { slot: Slot? ->
-            !(slot is FurnaceOutputSlot
-                    || slot is CraftingResultSlot || slot is TradeOutputSlot)
+    fun Inventory.getSlotMatching(
+        itemPredicate: Predicate<ItemStack>
+    ): Int {
+        for (i in 0 until size()) {
+            if (itemPredicate.test(getStack(i))) return i
         }
 
-        fun getSlotMatching(
-            inv: Inventory,
-            itemPredicate: Predicate<ItemStack>
-        ): Int {
-            for (i in 0 until inv.size()) {
-                if (itemPredicate.test(inv.getStack(i))) return i
-            }
+        return -1
+    }
 
-            return -1
-        }
+    fun Inventory.getSlotWithItem(item: Item): Int {
+        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
+    }
 
-        fun getSlotWithItem(inv: Inventory, item: Item): Int {
-            return getSlotMatching(inv) { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
-        }
+    fun ScreenHandler.getSlotMatching(
+        slotPredicate: Predicate<Slot>,
+        itemPredicate: Predicate<ItemStack>
+    ): Int {
+        for (i in slots.indices) {
+            val slot = slots[i]
 
-        fun getSlotMatching(
-            handler: ScreenHandler,
-            slotPredicate: Predicate<Slot>,
-            itemPredicate: Predicate<ItemStack>
-        ): Int {
-            for (i in handler.slots.indices) {
-                val slot = handler.slots[i]
+            if (slotPredicate.test(slot)) {
+                val stack = slot.stack
 
-                if (slotPredicate.test(slot)) {
-                    val stack = slot.stack
-
-                    if (itemPredicate.test(stack)) {
-                        return i
-                    }
+                if (itemPredicate.test(stack)) {
+                    return i
                 }
             }
-
-            return -1
         }
 
-        fun getSlotMatching(
-            handler: ScreenHandler,
-            itemPredicate: Predicate<ItemStack>
-        ): Int {
-            return getSlotMatching(handler, ITEM_CONTAINER_SLOT, itemPredicate)
-        }
+        return -1
+    }
 
-        fun getSlotMatching(handler: ScreenHandler, slotPredicate: Predicate<Slot>, item: Item): Int {
-            return getSlotMatching(handler, slotPredicate) { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
-        }
+    fun ScreenHandler.getSlotMatching(
+        itemPredicate: Predicate<ItemStack>
+    ): Int {
+        return getSlotMatching(ITEM_CONTAINER_SLOT, itemPredicate)
+    }
 
-        fun getSlotWithItem(handler: ScreenHandler, item: Item): Int {
-            return getSlotMatching(handler, ITEM_CONTAINER_SLOT, item)
-        }
+    fun ScreenHandler.getSlotMatching(slotPredicate: Predicate<Slot>, item: Item): Int {
+        return getSlotMatching(slotPredicate) { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
+    }
 
-        fun getSlotWithAny(inv: Inventory, items: Collection<Item?>): Int {
-            return getSlotMatching(inv) { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
-        }
+    fun ScreenHandler.getSlotWithItem(item: Item): Int {
+        return getSlotMatching(ITEM_CONTAINER_SLOT, item)
+    }
 
-        fun getSlotWithAny(handler: ScreenHandler, items: Collection<Item?>): Int {
-            return getSlotMatching(handler) { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
-        }
+    fun Inventory.getSlotWithAny(items: Collection<Item?>): Int {
+        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
+    }
 
-        fun getEmptySlot(handler: ScreenHandler): Int {
-            return getSlotMatching(handler) { obj: ItemStack -> obj.isEmpty }
-        }
+    fun ScreenHandler.getSlotWithAny(items: Collection<Item?>): Int {
+        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
+    }
 
-        /**
-         * taken from Item.raycast
-         *
-         * @param world
-         * @param player
-         * @param fluidHandling
-         * @return
-         */
-        fun raycast(
-            world: World, player: PlayerEntity,
-            fluidHandling: FluidHandling
-        ): BlockHitResult {
-            val f = player.pitch
-            val g = player.yaw
-            val vec3d = player.getCameraPosVec(1.0f)
-            val h = MathHelper.cos(-g * 0.017453292f - 3.1415927f)
-            val i = MathHelper.sin(-g * 0.017453292f - 3.1415927f)
-            val j = -MathHelper.cos(-f * 0.017453292f)
-            val k = MathHelper.sin(-f * 0.017453292f)
-            val l = i * j
-            val n = h * j
-            val vec3d2 = vec3d.add(l.toDouble() * 5.0, k.toDouble() * 5.0, n.toDouble() * 5.0)
-            return world.raycast(
-                RaycastContext(
-                    vec3d, vec3d2,
-                    RaycastContext.ShapeType.OUTLINE, fluidHandling, player
-                )
+    fun ScreenHandler.getEmptySlot(): Int {
+        return getSlotMatching { obj: ItemStack -> obj.isEmpty }
+    }
+
+    /**
+     * taken from Item.raycast
+     *
+     * @param world
+     * @param player
+     * @param fluidHandling
+     * @return
+     */
+    fun raycast(
+        world: World, player: PlayerEntity,
+        fluidHandling: FluidHandling
+    ): BlockHitResult {
+        val f = player.pitch
+        val g = player.yaw
+        val vec3d = player.getCameraPosVec(1.0f)
+        val h = MathHelper.cos(-g * 0.017453292f - 3.1415927f)
+        val i = MathHelper.sin(-g * 0.017453292f - 3.1415927f)
+        val j = -MathHelper.cos(-f * 0.017453292f)
+        val k = MathHelper.sin(-f * 0.017453292f)
+        val l = i * j
+        val n = h * j
+        val vec3d2 = vec3d.add(l.toDouble() * 5.0, k.toDouble() * 5.0, n.toDouble() * 5.0)
+        return world.raycast(
+            RaycastContext(
+                vec3d, vec3d2,
+                RaycastContext.ShapeType.OUTLINE, fluidHandling, player
             )
+        )
+    }
+
+    fun Inventory.countItems(stackToCount: ToIntFunction<ItemStack>): Int {
+        var count = 0
+
+        for (slot in 0..size()) {
+            count += stackToCount.applyAsInt(getStack(slot))
         }
 
-        fun countItems(inv: Inventory, stackToCount: ToIntFunction<ItemStack>): Int {
-            var count = 0
+        return count
+    }
 
-            for (slot in 0 until inv.size()) {
-                count += stackToCount.applyAsInt(inv.getStack(slot))
+    fun Inventory.countItems(item: Item): Int {
+        return countItems { stack: ItemStack -> if (!stack.isEmpty && stack.isOf(item)) stack.count else 0 }
+    }
+
+    fun Inventory.asList(): MutableList<ItemStack> {
+        return object : AbstractMutableList<ItemStack>() {
+            override fun get(index: Int): ItemStack {
+                return getStack(index)
             }
 
-            return count
-        }
+            override val size: Int
+                get() = size()
 
-        fun countItems(inv: Inventory, item: Item): Int {
-            return countItems(inv) { stack: ItemStack -> if (!stack.isEmpty && stack.isOf(item)) stack.count else 0 }
-        }
+            override fun add(index: Int, element: ItemStack) {
+                throw UnsupportedOperationException()
+            }
 
-        fun asList(inv: Inventory): List<ItemStack> {
-            return object : AbstractList<ItemStack>() {
-                override fun get(index: Int): ItemStack {
-                    return inv.getStack(index)
-                }
+            override fun set(index: Int, element: ItemStack): ItemStack {
+                val result = get(index)
+                setStack(index, element)
+                return result
+            }
 
-                override fun set(index: Int, element: ItemStack): ItemStack {
-                    val result = get(index)
-                    inv.setStack(index, element)
-                    return result
-                }
+            override fun isEmpty(): Boolean {
+                return isEmpty
+            }
 
-                override fun remove(index: Int): ItemStack {
-                    return Inventories.removeStack(this, index)
-                }
-
-                override fun size(): Int {
-                    return inv.size()
-                }
-
-                override fun isEmpty(): Boolean {
-                    return inv.isEmpty
-                }
+            override fun removeAt(index: Int): ItemStack {
+                return Inventories.removeStack(this, index)
             }
         }
+    }
 
-        fun asInv(screenHandler: ScreenHandler): Inventory {
-            return object : Inventory {
-                override fun size(): Int {
-                    return screenHandler.slots.size
+    fun ScreenHandler.asInv(): Inventory {
+        return object : Inventory {
+            override fun size(): Int {
+                return slots.size
+            }
+
+            override fun isEmpty(): Boolean {
+                return slots.isEmpty()
+            }
+
+            override fun getStack(slot: Int): ItemStack {
+                return getSlot(slot).stack
+            }
+
+            override fun removeStack(slot: Int, amount: Int): ItemStack {
+                val stack = getStack(slot)
+                stack.decrement(amount)
+                return stack
+            }
+
+            override fun removeStack(slot: Int): ItemStack {
+                if (slot < 0 || slot >= size()) {
+                    return ItemStack.EMPTY
                 }
 
-                override fun isEmpty(): Boolean {
-                    return screenHandler.slots.isEmpty()
-                }
+                val s = getSlot(slot)
+                val result = s.stack
+                s.stack = ItemStack.EMPTY
+                return result
+            }
 
-                override fun getStack(slot: Int): ItemStack {
-                    return screenHandler.getSlot(slot).stack
-                }
+            override fun setStack(slot: Int, stack: ItemStack) {
+                getSlot(slot).stack = stack
+            }
 
-                override fun removeStack(slot: Int, amount: Int): ItemStack {
-                    val stack = getStack(slot)
-                    stack.decrement(amount)
-                    return stack
-                }
+            override fun markDirty() {
+            }
 
-                override fun removeStack(slot: Int): ItemStack {
-                    if (slot < 0 || slot >= size()) {
-                        return ItemStack.EMPTY
-                    }
+            override fun canPlayerUse(player: PlayerEntity): Boolean {
+                return canUse(player)
+            }
 
-                    val s = screenHandler.getSlot(slot)
-                    val result = s.stack
-                    s.stack = ItemStack.EMPTY
-                    return result
-                }
-
-                override fun setStack(slot: Int, stack: ItemStack) {
-                    screenHandler.getSlot(slot).stack = stack
-                }
-
-                override fun markDirty() {
-                }
-
-                override fun canPlayerUse(player: PlayerEntity): Boolean {
-                    return screenHandler.canUse(player)
-                }
-
-                override fun clear() {
-                    screenHandler.slots.forEach(Consumer { slot: Slot -> slot.stack = ItemStack.EMPTY })
-                }
+            override fun clear() {
+                slots.forEach(Consumer { slot: Slot -> slot.stack = ItemStack.EMPTY })
             }
         }
+    }
 
-        fun asList(screenHandler: ScreenHandler): List<ItemStack> {
-            return asList(asInv(screenHandler))
-        }
+    fun ScreenHandler.asList(): List<ItemStack> {
+        return asInv().asList()
     }
 }

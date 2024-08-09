@@ -1,6 +1,6 @@
-package io.github.svegon.capi.mixin;
+package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.capi.mixininterface.IStatHandler;
+import io.github.svegon.mclientapi.mixininterface.IStatHandler;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
@@ -22,6 +22,6 @@ public abstract class StatHandlerMixin implements IStatHandler {
     @Override
     public void copyFrom(StatHandler statHandler) {
         statMap.clear();
-        statMap.putAll(((IStatHandler) statHandler).statMap);
+        statMap.putAll(((IStatHandler) statHandler).getStatMap());
     }
 }

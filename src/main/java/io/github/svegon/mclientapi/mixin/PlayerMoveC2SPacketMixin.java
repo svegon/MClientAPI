@@ -1,6 +1,6 @@
-package io.github.svegon.capi.mixin;
+package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.capi.mixininterface.IPlayerMoveC2SPacket;
+import io.github.svegon.mclientapi.mixininterface.IPlayerMoveC2SPacket;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -84,6 +84,11 @@ public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacke
     @Override
     public void setPitch(float pitch) {
         this.pitch = pitch;
+    }
+
+    @Override
+    public boolean getOnGround() {
+        return onGround;
     }
 
     @Override

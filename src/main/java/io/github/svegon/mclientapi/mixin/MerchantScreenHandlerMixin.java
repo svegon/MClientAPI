@@ -1,11 +1,12 @@
-package io.github.svegon.capi.mixin;
+package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.capi.mixininterface.IMerchantScreenHandler;
+import io.github.svegon.mclientapi.mixininterface.IMerchantScreenHandler;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.village.Merchant;
 import net.minecraft.village.MerchantInventory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,27 +28,17 @@ public abstract class MerchantScreenHandlerMixin extends ScreenHandler implement
     }
 
     @Override
-    public Merchant getMerchant() {
+    public @NotNull Merchant getMerchant() {
         return merchant;
     }
 
     @Override
-    public void setMerchant(Merchant merchant) {
-        this.merchant = merchant;
-    }
-
-    @Override
-    public MerchantInventory getMerchantInventory() {
+    public @NotNull MerchantInventory getMerchantInventory() {
         return merchantInventory;
     }
 
     @Override
-    public void setMerchantInventory(MerchantInventory merchantInventory) {
-        this.merchantInventory = merchantInventory;
-    }
-
-    @Override
-    public void playYesSoundServer() {
+    public void playYesSoundAsServer() {
         playYesSound();
     }
 }

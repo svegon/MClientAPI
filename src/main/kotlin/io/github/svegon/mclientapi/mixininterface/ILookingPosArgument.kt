@@ -1,4 +1,4 @@
-package io.github.svegon.capi.mixininterface
+package io.github.svegon.mclientapi.mixininterface
 
 interface ILookingPosArgument {
     val x: Double

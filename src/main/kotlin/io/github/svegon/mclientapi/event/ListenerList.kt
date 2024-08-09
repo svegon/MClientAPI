@@ -1,6 +1,4 @@
-package io.github.svegon.capi.event
+package io.github.svegon.mclientapi.event
 
-import java.util.function.Function
-
-class ListenerList<L> internal constructor(listeners: List<L>, invokerFactory: Function<List<L>, L>) :
-    ListenerCollection<L, List<L>?>(listeners, invokerFactory)
+class ListenerList<L> internal constructor(listeners: MutableList<L>, invokerFactory: (MutableList<L>) -> L) :
+    ListenerCollection<L, MutableList<L>>(listeners, invokerFactory)

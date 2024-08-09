@@ -1,16 +1,14 @@
-package io.github.svegon.capi.block_search
+package io.github.svegon.mclientapi.block_search
 
 import com.google.common.collect.Lists
-import io.github.svegon.capi.block_search.BlockSearchManager
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
-class ChunkSearcher(manager: BlockSearchManager, private val chunk: ChunkPos) {
+class ChunkSearcher(private val manager: BlockSearchManager, private val chunk: ChunkPos) {
     private val intermediateResult: MutableCollection<BlockPos> = Lists.newLinkedList()
-    private val manager: BlockSearchManager = manager
     private var status = Status.IDLE
     private var future: Future<*>? = null
 
@@ -31,12 +29,12 @@ class ChunkSearcher(manager: BlockSearchManager, private val chunk: ChunkPos) {
         check(status0 == Status.SEARCHING)
 
         // clear out chunk
-        manager.results.removeIf { pos -> pos.getX() shr 4 === chunk.x && pos.getZ() shr 4 === chunk.z }
+        manager.results.removeIf { pos -> pos.x shr 4 == chunk.x && pos.z shr 4 == chunk.z }
 
         BlockSearchManager.search(
-            BlockPos(chunk.startX, manager.getMinHeight(), chunk.startZ),
-            BlockPos(chunk.endX, manager.getMaxHeight(), chunk.endZ), manager.getBlockCondition(),
-            { pos -> status == Status.INTERRUPTED || manager.limitReached() },
+            BlockPos(chunk.startX, manager.minHeight, chunk.startZ),
+            BlockPos(chunk.endX, manager.maxHeight, chunk.endZ), manager.blockCondition,
+            this::shouldStop,
             intermediateResult
         )
 
@@ -47,9 +45,8 @@ class ChunkSearcher(manager: BlockSearchManager, private val chunk: ChunkPos) {
     }
 
     fun cancelSearching() {
-        Thread(
-            { this.cancelNow() }, "ChunkSearcher-canceller-#"
-                    + BlockSearchManager.UNIQUE_ID_SUPPLIER.getAndIncrement()
+        Thread(this::cancelNow, "ChunkSearcher-canceller-#"
+                + BlockSearchManager.UNIQUE_ID_SUPPLIER.getAndIncrement()
         ).start()
     }
 
@@ -66,6 +63,10 @@ class ChunkSearcher(manager: BlockSearchManager, private val chunk: ChunkPos) {
         }
 
         status = Status.IDLE
+    }
+
+    fun shouldStop(currentBlock: BlockPos.Mutable): Boolean {
+        return status == Status.INTERRUPTED || manager.limitReached()
     }
 
     fun terminated(): Boolean {

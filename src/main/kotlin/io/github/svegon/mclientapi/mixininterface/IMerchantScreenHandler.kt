@@ -1,12 +1,12 @@
-package io.github.svegon.capi.mixininterface
+package io.github.svegon.mclientapi.mixininterface
 
 import net.minecraft.village.Merchant
 import net.minecraft.village.MerchantInventory
 
 interface IMerchantScreenHandler {
-    var merchant: Merchant?
+    val merchant: Merchant
 
-    var merchantInventory: MerchantInventory?
+    val merchantInventory: MerchantInventory
 
-    fun playYesSoundServer()
+    fun playYesSoundAsServer()
 }

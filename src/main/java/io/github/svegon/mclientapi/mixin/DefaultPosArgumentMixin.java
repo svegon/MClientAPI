@@ -1,6 +1,6 @@
-package io.github.svegon.capi.mixin;
+package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.capi.mixininterface.IDefaultPosArgument;
+import io.github.svegon.mclientapi.mixininterface.IDefaultPosArgument;
 import net.minecraft.command.argument.CoordinateArgument;
 import net.minecraft.command.argument.DefaultPosArgument;
 import net.minecraft.command.argument.PosArgument;

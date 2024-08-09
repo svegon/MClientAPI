@@ -1,7 +1,7 @@
-package io.github.svegon.capi.mixin;
+package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.capi.event.block.BlockStateShapeEvents;
-import io.github.svegon.capi.event.render.BlockRenderTypeCallback;
+import io.github.svegon.mclientapi.event.block.BlockRenderTypeCallback;
+import io.github.svegon.mclientapi.event.block.BlockStateShapeEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -27,7 +27,7 @@ public abstract class AbstractBlockStateMixin {
     @Inject(method = "getOutlineShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;" +
             "Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;", at = @At("RETURN"),
             cancellable = true)
-    private void onGetOultineShape(BlockView world, BlockPos pos, ShapeContext context,
+    private void onGetOutlineShape(BlockView world, BlockPos pos, ShapeContext context,
                                    CallbackInfoReturnable<VoxelShape> cir) {
         BlockStateShapeEvents.OUTLINE_SHAPE.invoker().getOutlineShape(asBlockState(), world, pos, context, cir);
     }

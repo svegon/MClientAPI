@@ -1,6 +1,5 @@
-package io.github.svegon.capi.event.entity
+package io.github.svegon.mclientapi.event.entity
 
-import io.github.svegon.capi.event.entity.EntityHorizontalSpeedMultiplierCallback
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.entity.Entity

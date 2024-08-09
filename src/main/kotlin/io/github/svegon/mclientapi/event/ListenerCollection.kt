@@ -1,20 +1,17 @@
-package io.github.svegon.capi.event
+package io.github.svegon.mclientapi.event
 
-import com.google.common.base.Preconditions
-import java.util.function.Function
-
-abstract class ListenerCollection<L, C : Collection<L>?> internal constructor(
+abstract class ListenerCollection<L, C : MutableCollection<L>> internal constructor(
     private val listeners: C,
-    invokerFactory: Function<C, L>
+    invokerFactory: (C) -> L
 ) {
-    private val invoker = invokerFactory.apply(this.listeners)
+    private val invoker = invokerFactory(this.listeners)
 
     fun invoker(): L {
         return invoker
     }
 
     fun register(listener: L): Boolean {
-        return listeners.add(Preconditions.checkNotNull<L>(listener))
+        return listeners.add(listener)
     }
 
     fun unregister(listener: L): Boolean {

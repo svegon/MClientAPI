@@ -1,12 +1,11 @@
-package io.github.svegon.capi.mixininterface
+package io.github.svegon.mclientapi.mixininterface
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap
 import net.minecraft.stat.Stat
 import net.minecraft.stat.StatHandler
 
 interface IStatHandler {
-    @JvmField
-    val statMap: Object2IntMap<Stat<*>?>?
+    val statMap: Object2IntMap<Stat<*>>
 
-    fun copyFrom(statHandler: StatHandler?)
+    fun copyFrom(statHandler: StatHandler)
 }

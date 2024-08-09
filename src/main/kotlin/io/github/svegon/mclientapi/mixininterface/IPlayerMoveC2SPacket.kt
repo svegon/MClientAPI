@@ -1,4 +1,4 @@
-package io.github.svegon.capi.mixininterface
+package io.github.svegon.mclientapi.mixininterface
 
 interface IPlayerMoveC2SPacket {
     var x: Double
@@ -11,5 +11,5 @@ interface IPlayerMoveC2SPacket {
 
     var pitch: Float
 
-    fun setOnGround(onGround: Boolean)
+    var onGround: Boolean
 }

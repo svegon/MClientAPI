@@ -1,4 +1,4 @@
-package io.github.svegon.capi.util
+package io.github.svegon.mclientapi.util
 
 import com.google.common.collect.Lists
 import net.minecraft.client.world.ClientWorld
@@ -6,26 +6,20 @@ import net.minecraft.entity.Entity
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 
-class EntityUtil private constructor() {
-    init {
-        throw UnsupportedOperationException()
+object EntityUtil {
+    fun ClientWorld.getEntitiesStream(parallel: Boolean): Stream<Entity> {
+        return StreamSupport.stream(entities.spliterator(), parallel)
     }
 
-    companion object {
-        fun getEntitiesStream(world: ClientWorld, parallel: Boolean): Stream<Entity> {
-            return StreamSupport.stream(world.getEntities().spliterator(), parallel)
-        }
+    fun ClientWorld.getEntitiesStream(): Stream<Entity> {
+        return getEntitiesStream(false)
+    }
 
-        fun getEntitiesStream(world: ClientWorld): Stream<Entity> {
-            return getEntitiesStream(world, false)
-        }
+    fun ClientWorld.getEntitiesParallelStream(): Stream<Entity> {
+        return getEntitiesStream(true)
+    }
 
-        fun getEntitiesParallelStream(world: ClientWorld): Stream<Entity> {
-            return getEntitiesStream(world, true)
-        }
-
-        fun getEntitiesList(world: ClientWorld): List<Entity> {
-            return Lists.newArrayList(world.getEntities())
-        }
+    fun ClientWorld.getEntitiesList(): List<Entity> {
+        return Lists.newArrayList(entities)
     }
 }

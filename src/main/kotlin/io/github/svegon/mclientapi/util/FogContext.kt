@@ -1,35 +1,29 @@
-package io.github.svegon.capi.util
+package io.github.svegon.mclientapi.util
 
-import com.google.common.base.Preconditions
+import net.minecraft.client.render.BackgroundRenderer
+import net.minecraft.client.render.FogShape
 
-class FogContext(fogData: FogData) {
-    private val fogData: FogData = fogData
+class FogContext(private val fogData: BackgroundRenderer.FogData) {
+    val fogType: BackgroundRenderer.FogType
+        get() {
+            return fogData.fogType
+        }
 
-    fun fogType(): FogType {
-        return fogData.fogType
-    }
+    val fogStart: Float
+        get() {
+            return fogData.fogStart
+        }
 
-    fun fogStart(): Float {
-        return fogData.fogStart
-    }
+    val fogEnd: Float
+        get() {
+            return fogData.fogEnd
+        }
 
-    fun fogStart(start: Float) {
-        fogData.fogStart = start
-    }
-
-    fun fogEnd(): Float {
-        return fogData.fogEnd
-    }
-
-    fun fogEnd(end: Float) {
-        fogData.fogEnd = end
-    }
-
-    fun fogShape(): FogShape {
-        return fogData.fogShape
-    }
-
-    fun fogShape(shape: FogShape?) {
-        fogData.fogShape = Preconditions.checkNotNull<Any>(shape)
-    }
+    var fogShape: FogShape
+        get() {
+            return fogData.fogShape
+        }
+        set(shape) {
+            fogData.fogShape = shape
+        }
 }
