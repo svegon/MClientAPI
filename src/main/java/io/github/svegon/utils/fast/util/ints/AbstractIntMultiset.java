@@ -5,6 +5,7 @@ import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.objects.AbstractObjectIterator;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -153,23 +154,39 @@ public abstract class AbstractIntMultiset extends AbstractMultiset<Integer> impl
 
             @Override
             public ObjectIterator<IntMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().int2IntEntrySet().iterator(),
-                        e -> new Entry() {
+                final var it = entriesFrame().int2IntEntrySet().iterator();
+                return new AbstractObjectIterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public IntMultiset.Entry next() {
+                        final var e = it.next();
+                        return new Entry() {
                             @Override
                             public int setValue(int value) {
                                 return setCount(getIntElement(), value);
                             }
 
                             @Override
-                    public int getIntElement() {
-                        return e.getIntKey();
+                            public int getIntElement() {
+                                return e.getIntKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public void remove() {
+                        it.remove();
                     }
-                });
+                };
             }
 
             @Override

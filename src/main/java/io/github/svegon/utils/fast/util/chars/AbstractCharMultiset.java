@@ -1,7 +1,6 @@
 package io.github.svegon.utils.fast.util.chars;
 
 import io.github.svegon.utils.collections.AbstractMultiset;
-import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import it.unimi.dsi.fastutil.chars.*;
@@ -152,19 +151,35 @@ public abstract class AbstractCharMultiset extends AbstractMultiset<Character> i
             }
 
             @Override
-            public ObjectIterator<CharMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().char2IntEntrySet().iterator(),
-                        e -> new CharMultiset.Entry() {
+            public @NotNull ObjectIterator<CharMultiset.Entry> iterator() {
+                final var it = entriesFrame().char2IntEntrySet().iterator();
+                return new ObjectIterator<>() {
                     @Override
-                    public char getCharElement() {
-                        return e.getCharKey();
+                    public boolean hasNext() {
+                        return it.hasNext();
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public CharMultiset.Entry next() {
+                        final var e = it.next();
+                        return new CharMultiset.Entry() {
+                            @Override
+                            public char getCharElement() {
+                                return e.getCharKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
-                });
+
+                    @Override
+                    public void remove() {
+                        it.remove();
+                    }
+                };
             }
 
             @Override
@@ -201,7 +216,7 @@ public abstract class AbstractCharMultiset extends AbstractMultiset<Character> i
             private final Set<CharMultiset.Entry> es = charEntrySet();
 
             @Override
-            public CharIterator iterator() {
+            public @NotNull CharIterator iterator() {
                 return new CharIterator() {
                     private final Iterator<CharMultiset.Entry> it = es.iterator();
 
@@ -267,6 +282,53 @@ public abstract class AbstractCharMultiset extends AbstractMultiset<Character> i
                 return AbstractCharMultiset.this.contains(value);
             }
         };
+    }
+
+    @Override
+    public char[] toCharArray() {
+        return toArray(CharArrays.DEFAULT_EMPTY_ARRAY);
+    }
+
+    @Override
+    public char[] toArray(char[] a) {
+        if (a == null || a.length < size()) {
+            return CharIterators.unwrap(iterator());
+        }
+
+        var i = iterator();
+        var unwrapped = 0;
+
+        while ((unwrapped += CharIterators.unwrap(i, a)) < size()) {
+            a = CharArrays.ensureCapacity(a, size());
+        }
+
+        return a;
+    }
+
+    @Override
+    public boolean addAll(CharCollection c) {
+        boolean changed = false;
+
+        for (char ch : c) {
+            changed |= add(ch);
+        }
+
+        return changed;
+    }
+
+    @Override
+    public boolean containsAll(CharCollection c) {
+        return c.intParallelStream().allMatch(ch -> contains((char) ch));
+    }
+
+    @Override
+    public boolean removeAll(CharCollection c) {
+        return removeIf(c::contains);
+    }
+
+    @Override
+    public boolean retainAll(CharCollection c) {
+        return removeIf(ch -> !c.contains(ch));
     }
 
     public static abstract class Entry extends AbstractMultiset.Entry<Character> implements CharMultiset.Entry,

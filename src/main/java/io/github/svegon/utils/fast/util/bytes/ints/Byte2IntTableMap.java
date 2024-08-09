@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.bytes.*;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -293,7 +293,24 @@ public class Byte2IntTableMap extends AbstractByte2IntMap {
     private final class EntrySet extends AbstractObjectSet<Byte2IntMap.Entry> implements FastEntrySet {
         @Override
         public ObjectIterator<Byte2IntMap.Entry> iterator() {
-            return IterationUtil.transformToObj(fastIterator(), e -> new Entry(e.getByteKey()));
+            final var it = fastIterator();
+            return new ObjectIterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public Byte2IntMap.Entry next() {
+                    final var e = it.next();
+                    return new Entry(e.getByteKey());
+                }
+
+                @Override
+                public void remove() {
+                    it.remove();
+                }
+            };
         }
 
         @Override

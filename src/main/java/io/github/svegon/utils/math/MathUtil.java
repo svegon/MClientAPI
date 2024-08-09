@@ -3,10 +3,8 @@ package io.github.svegon.utils.math;
 import it.unimi.dsi.fastutil.SafeMath;
 import org.jetbrains.annotations.Range;
 
-public final class MathUtil {
-    private MathUtil() {
-        throw new AssertionError();
-    }
+public enum MathUtil {
+    ;
 
     public static final float PI = (float) Math.PI;
     public static final float DEGREE_TO_RAD_RATIO = PI / 180F;

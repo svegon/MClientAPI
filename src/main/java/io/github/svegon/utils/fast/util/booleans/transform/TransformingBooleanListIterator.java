@@ -1,15 +1,14 @@
 package io.github.svegon.utils.fast.util.booleans.transform;
 
-import com.google.common.base.Preconditions;
+import io.github.svegon.utils.fast.util.booleans.transform.objects.TransformingBooleanIterator;
 import it.unimi.dsi.fastutil.booleans.BooleanListIterator;
 
 import java.util.ListIterator;
 
-public abstract class TransformingBooleanListIterator<E, I extends ListIterator<E>> implements BooleanListIterator {
-    protected final I itr;
-
+public abstract class TransformingBooleanListIterator<E, I extends ListIterator<E>> extends TransformingBooleanIterator<E, I>
+        implements BooleanListIterator {
     protected TransformingBooleanListIterator(I itr) {
-        this.itr = Preconditions.checkNotNull(itr);
+        super(itr);
     }
 
     @Override
@@ -25,10 +24,5 @@ public abstract class TransformingBooleanListIterator<E, I extends ListIterator<
     @Override
     public final int previousIndex() {
         return itr.previousIndex();
-    }
-
-    @Override
-    public final boolean hasNext() {
-        return itr.hasNext();
     }
 }

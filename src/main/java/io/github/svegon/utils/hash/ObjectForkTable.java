@@ -1,5 +1,6 @@
 package io.github.svegon.utils.hash;
 
+import io.github.svegon.mclientapi.util.HashUtil;
 import io.github.svegon.utils.collections.ListUtil;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
@@ -20,7 +21,7 @@ public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E
 
     public ObjectForkTable(int branchFactor, Hash.Strategy<? super K> strategy) {
         super(branchFactor);
-        this.strategy = strategy != null ? strategy : HashUtil.defaultStrategy();
+        this.strategy = strategy != null ? strategy : HashUtil.DefaultStrategy.INSTANCE;
     }
 
     public ObjectForkTable(Hash.Strategy<? super K> strategy) {

@@ -3,7 +3,7 @@ package io.github.svegon.utils.fast.util.chars.chars;
 import io.github.svegon.utils.fast.util.chars.ImprovedCharList;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.chars.CharListIterator;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.ConcurrentModificationException;
 

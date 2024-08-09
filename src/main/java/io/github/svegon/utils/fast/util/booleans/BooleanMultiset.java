@@ -2,6 +2,8 @@ package io.github.svegon.utils.fast.util.booleans;
 
 import com.google.common.collect.Multiset;
 import it.unimi.dsi.fastutil.booleans.*;
+import it.unimi.dsi.fastutil.bytes.ByteArrays;
+import it.unimi.dsi.fastutil.bytes.ByteIterators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,11 +11,11 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanCollection {
+public interface BooleanMultiset extends Multiset<Boolean>, BooleanCollection {
     @Deprecated
     @Override
-    default void forEach(Consumer<? super Boolean> action) {
-        ImprovedBooleanCollection.super.forEach(action);
+    default void forEach(@NotNull Consumer<? super Boolean> action) {
+        BooleanCollection.super.forEach(action);
     }
 
     @Override
@@ -38,14 +40,14 @@ public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanColle
     int add(boolean bl, int i);
 
     @Override
-    default BooleanSpliterator spliterator() {
-        return ImprovedBooleanCollection.super.spliterator();
+    default @NotNull BooleanSpliterator spliterator() {
+        return BooleanCollection.super.spliterator();
     }
 
     @Deprecated
     @Override
     default boolean add(Boolean aBoolean) {
-        return ImprovedBooleanCollection.super.add(aBoolean);
+        return BooleanCollection.super.add(aBoolean);
     }
 
     @Deprecated
@@ -59,7 +61,7 @@ public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanColle
     @Deprecated
     @Override
     default boolean remove(@Nullable Object o) {
-        return ImprovedBooleanCollection.super.remove(o);
+        return BooleanCollection.super.remove(o);
     }
 
     @Deprecated
@@ -78,12 +80,13 @@ public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanColle
     boolean setCount(boolean value, int i, int i1);
 
     @Override
+    @NotNull
     BooleanSet elementSet();
 
     @Deprecated
     @Override
     @SuppressWarnings("unchecked")
-    default Set<Multiset.Entry<Boolean>> entrySet() {
+    default @NotNull Set<Multiset.Entry<Boolean>> entrySet() {
         return (Set<Multiset.Entry<Boolean>>) (Object) booleanEntrySet();
     }
 
@@ -92,7 +95,7 @@ public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanColle
     @Deprecated
     @Override
     default boolean contains(@Nullable Object o) {
-        return ImprovedBooleanCollection.super.contains(o);
+        return BooleanCollection.super.contains(o);
     }
 
     @Deprecated
@@ -115,6 +118,42 @@ public interface BooleanMultiset extends Multiset<Boolean>, ImprovedBooleanColle
     default boolean retainAll(final @NotNull Collection<?> collection) {
         return collection instanceof BooleanCollection ? retainAll((BooleanCollection) collection)
                 : removeIf((bl) -> !collection.contains(bl));
+    }
+
+    @Override
+    default boolean[] toBooleanArray() {
+        return toArray(BooleanArrays.DEFAULT_EMPTY_ARRAY);
+    }
+
+    @Override
+    default boolean[] toArray(boolean[] a) {
+        if (a == null || a.length < size()) {
+            return BooleanIterators.unwrap(iterator());
+        }
+
+        var i = iterator();
+        var unwrapped = 0;
+
+        while ((unwrapped += BooleanIterators.unwrap(i, a)) < size()) {
+            a = BooleanArrays.ensureCapacity(a, size());
+        }
+
+        return a;
+    }
+
+    @Override
+    default boolean containsAll(BooleanCollection c) {
+        return c.parallelStream().allMatch(this::contains);
+    }
+
+    @Override
+    default boolean removeAll(BooleanCollection c) {
+        return removeIf(c::contains);
+    }
+
+    @Override
+    default boolean retainAll(BooleanCollection c) {
+        return removeIf(bl -> !c.contains(bl));
     }
 
     interface Entry extends Multiset.Entry<Boolean> {

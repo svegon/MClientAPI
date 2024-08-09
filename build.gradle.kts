@@ -28,7 +28,7 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        register("some") {
+        register("MClientAPI") {
             sourceSet("main")
             sourceSet("client")
         }
@@ -67,8 +67,7 @@ tasks.processResources {
             "loader_version" to project.property("loader_version"),
             "kotlin_loader_version" to project.property("kotlin_loader_version"),
 			"modid" to project.property("modid"),
-			"fabric_version" to project.property("fabric_version"),
-			"accesswidener" to project.property("accesswidener")
+			"fabric_version" to project.property("fabric_version")
         )
     }
 }

@@ -3,10 +3,7 @@ package io.github.svegon.utils.collections;
 import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
-import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import it.unimi.dsi.fastutil.objects.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,18 +116,35 @@ public abstract class AbstractMultiset<E> extends AbstractCollection<E> implemen
 
             @Override
             public ObjectIterator<Multiset.Entry<E>> iterator() {
-                return IterationUtil.transformToObj(frameEntries().object2IntEntrySet().iterator(),
-                        e -> new Multiset.Entry<E>() {
+                final var it = frameEntries().object2IntEntrySet().iterator();
+                return new AbstractObjectIterator<>() {
+
                     @Override
-                    public E getElement() {
-                        return e.getKey();
+                    public boolean hasNext() {
+                        return it.hasNext();
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public Multiset.Entry<E> next() {
+                        final var e = it.next();
+                        return new Multiset.Entry<E>() {
+                            @Override
+                            public E getElement() {
+                                return e.getKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
-                });
+
+                    @Override
+                    public void remove() {
+                        it.remove();
+                    }
+                };
             }
 
             @Override

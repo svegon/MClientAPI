@@ -2,8 +2,6 @@ package io.github.svegon.utils.collections;
 
 import io.github.svegon.utils.fast.util.booleans.transform.bytes.B2ZRATransformingList;
 import io.github.svegon.utils.fast.util.booleans.transform.bytes.B2ZTransformingList;
-import io.github.svegon.utils.fast.util.booleans.transform.objects.L2ZRATransformingList;
-import io.github.svegon.utils.fast.util.booleans.transform.objects.L2ZTransformingList;
 import io.github.svegon.utils.fast.util.chars.transform.objects.L2CRATransformingList;
 import io.github.svegon.utils.fast.util.chars.transform.objects.L2CTransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.booleans.Z2DRATransformingList;
@@ -12,55 +10,15 @@ import io.github.svegon.utils.fast.util.doubles.transform.bytes.B2DRATransformin
 import io.github.svegon.utils.fast.util.doubles.transform.bytes.B2DTransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.chars.C2DRATransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.chars.C2DTransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.doubles.D2DRATransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.doubles.D2DTransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.floats.F2DRATransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.floats.F2DTransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.ints.I2DRATransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.ints.I2DTransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.longs.J2DRATransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.longs.J2DTransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.objects.L2DRATransformingList;
-import io.github.svegon.utils.fast.util.doubles.transform.objects.L2DTransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.shorts.S2DRATransformingList;
 import io.github.svegon.utils.fast.util.doubles.transform.shorts.S2DTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.booleans.Z2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.booleans.Z2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.bytes.B2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.bytes.B2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.chars.C2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.chars.C2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.doubles.D2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.doubles.D2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.floats.F2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.floats.F2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.ints.I2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.ints.I2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.longs.J2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.longs.J2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.objects.L2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.objects.L2FTransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.shorts.S2FRATransformingList;
-import io.github.svegon.utils.fast.util.floats.transform.shorts.S2FTransformingList;
 import io.github.svegon.utils.fast.util.ints.transform.booleans.Z2IRATransformingList;
 import io.github.svegon.utils.fast.util.ints.transform.booleans.Z2ITransformingList;
 import io.github.svegon.utils.fast.util.ints.transform.bytes.B2IRATransformingList;
 import io.github.svegon.utils.fast.util.ints.transform.bytes.B2ITransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.doubles.D2IRATransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.doubles.D2ITransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.ints.I2IRATranformingList;
-import io.github.svegon.utils.fast.util.ints.transform.ints.I2ITransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.longs.J2IRATranformingList;
-import io.github.svegon.utils.fast.util.ints.transform.longs.J2ITransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.objects.L2IRATransformingList;
-import io.github.svegon.utils.fast.util.ints.transform.objects.L2ITransformingList;
-import io.github.svegon.utils.fast.util.longs.transform.doubles.D2JRATransformingList;
-import io.github.svegon.utils.fast.util.longs.transform.doubles.D2JTransformingList;
-import io.github.svegon.utils.fast.util.longs.transform.objects.L2JRATransformingList;
-import io.github.svegon.utils.fast.util.longs.transform.objects.L2JTransformingList;
 import io.github.svegon.utils.fast.util.objects.OnNextComputeObjectIterator;
-import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SRATransformingList;
-import io.github.svegon.utils.fast.util.shorts.transform.objects.L2STransformingList;
 import io.github.svegon.utils.interfaces.function.*;
 import io.github.svegon.utils.math.MathUtil;
 import com.google.common.base.Preconditions;
@@ -84,7 +42,6 @@ import it.unimi.dsi.fastutil.floats.FloatList;
 import it.unimi.dsi.fastutil.floats.FloatUnaryOperator;
 import it.unimi.dsi.fastutil.ints.Int2FloatFunction;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
 import it.unimi.dsi.fastutil.longs.Long2FloatFunction;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.AbstractObjectBigList;
@@ -93,8 +50,6 @@ import it.unimi.dsi.fastutil.shorts.Short2FloatFunction;
 import it.unimi.dsi.fastutil.shorts.ShortList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import io.github.svegon.utils.fast.util.bytes.transform.objects.L2BRATransformingList;
-import io.github.svegon.utils.fast.util.bytes.transform.objects.L2BTransformingList;
 
 import java.math.RoundingMode;
 import java.util.*;
@@ -109,25 +64,25 @@ public final class ListUtil {
         return new Vector<>();
     }
 
-    public static <E> FixedCacheCombinedList<E> newFixedCacheCombinedList(ImmutableList<List<E>> cache) {
-        return new FixedCacheCombinedList<>(cache);
+    public static <E> FixedBackendCombinedList<E> newFixedCacheCombinedList(ImmutableList<List<E>> cache) {
+        return new FixedBackendCombinedList<>(cache);
     }
 
-    public static <E> FixedCacheCombinedList<E> newFixedCacheCombinedList(List<? extends E>... collections) {
-        return new FixedCacheCombinedList<>(collections);
+    public static <E> FixedBackendCombinedList<E> newFixedCacheCombinedList(List<? extends E>... collections) {
+        return new FixedBackendCombinedList<>(collections);
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> FixedCacheCombinedList<E> newFixedCacheCombinedList(Iterable<? extends Collection<? extends E>>
+    public static <E> FixedBackendCombinedList<E> newFixedCacheCombinedList(Iterable<? extends Collection<? extends E>>
                                                                                   collections) {
         return collections instanceof Collection
-                ? new FixedCacheCombinedList<>((Collection<? extends Collection<? extends E>>) collections)
-                : new FixedCacheCombinedList<>(Lists.newArrayList(collections));
+                ? new FixedBackendCombinedList<>((Collection<? extends Collection<? extends E>>) collections)
+                : new FixedBackendCombinedList<>(Lists.newArrayList(collections));
     }
 
-    public static <E> FixedCacheCombinedList<E> newFixedCacheCombinedList(final Iterator<? extends Collection<? extends E>>
+    public static <E> FixedBackendCombinedList<E> newFixedCacheCombinedList(final Iterator<? extends Collection<? extends E>>
                                                                                   collections) {
-        return new FixedCacheCombinedList<>(Lists.newArrayList(collections));
+        return new FixedBackendCombinedList<>(Lists.newArrayList(collections));
     }
 
     public static <E> ExposedArrayList<E> newExposedArrayList() {
@@ -185,39 +140,14 @@ public final class ListUtil {
         return new Partition<>(list, size);
     }
 
-    public static <E> BooleanList transformToBoolean(List<E> list, IntObjectBiPredicate<? super E> function) {
-        return list instanceof RandomAccess ? new L2ZRATransformingList<>(list, function)
-                : new L2ZTransformingList<>(list, function);
-    }
-
-    public static <E> BooleanList transformToBoolean(List<E> list, Predicate<? super E> transformer) {
-        Preconditions.checkNotNull(transformer);
-        return transformToBoolean(list, (i, o) -> transformer.test(o));
-    }
-
     public static BooleanList mapToBoolean(ByteList list, BytePredicate function) {
         return list instanceof RandomAccess ? new B2ZRATransformingList(list, function)
                 : new B2ZTransformingList(list, function);
     }
 
-    public static <E> ByteList transformToByte(List<E> list, Object2ByteFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2BRATransformingList<>(list, function)
-                : new L2BTransformingList<>(list, function);
-    }
-
     public static <E> CharList transformToChar(List<E> list, Object2CharFunction<? super E> function) {
         return list instanceof RandomAccess ? new L2CRATransformingList<>(list, function)
                 : new L2CTransformingList<>(list, function);
-    }
-
-    public static <E> ShortList transformToShort(List<E> list, Object2ShortFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2SRATransformingList<>(list, function)
-                : new L2STransformingList<>(list, function);
-    }
-
-    public static <E> IntList transformToInt(List<E> list, ToIntFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2IRATransformingList<>(list, function)
-                : new L2ITransformingList<>(list, function);
     }
 
     public static IntList mapToInt(BooleanList list, Boolean2IntFunction function) {
@@ -228,81 +158,6 @@ public final class ListUtil {
     public static IntList mapToInt(ByteList list, Byte2IntFunction function) {
         return list instanceof RandomAccess ? new B2IRATransformingList(list, function)
                 : new B2ITransformingList(list, function);
-    }
-
-    public static IntList mapToInt(IntList list, IntUnaryOperator function) {
-        return list instanceof RandomAccess ? new I2IRATranformingList(list, function)
-                : new I2ITransformingList(list, function);
-    }
-
-    public static IntList mapToInt(LongList list, LongToIntFunction function) {
-        return list instanceof RandomAccess ? new J2IRATranformingList(list, function)
-                : new J2ITransformingList(list, function);
-    }
-
-    public static IntList mapToInt(DoubleList list, DoubleToIntFunction function) {
-        return list instanceof RandomAccess ? new D2IRATransformingList(list, function)
-                : new D2ITransformingList(list, function);
-    }
-
-    public static <E> LongList transformToLong(List<E> list, ToLongFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2JRATransformingList<>(list, function)
-                : new L2JTransformingList<>(list, function);
-    }
-
-    public static LongList mapToLong(DoubleList list, DoubleToLongFunction function) {
-        return list instanceof RandomAccess ? new D2JRATransformingList(list, function)
-                : new D2JTransformingList(list, function);
-    }
-
-    public static <E> FloatList transformToFloat(List<E> list, Object2FloatFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2FRATransformingList<>(list, function)
-                : new L2FTransformingList<>(list, function);
-    }
-
-    public static FloatList mapToFloat(BooleanList list, Boolean2FloatFunction function) {
-        return list instanceof RandomAccess ? new Z2FRATransformingList(list, function)
-                : new Z2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(ByteList list, Byte2FloatFunction function) {
-        return list instanceof RandomAccess ? new B2FRATransformingList(list, function)
-                : new B2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(CharList list, Char2FloatFunction function) {
-        return list instanceof RandomAccess ? new C2FRATransformingList(list, function)
-                : new C2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(ShortList list, Short2FloatFunction function) {
-        return list instanceof RandomAccess ? new S2FRATransformingList(list, function)
-                : new S2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(IntList list, Int2FloatFunction function) {
-        return list instanceof RandomAccess ? new I2FRATransformingList(list, function)
-                : new I2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(LongList list, Long2FloatFunction function) {
-        return list instanceof RandomAccess ? new J2FRATransformingList(list, function)
-                : new J2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(FloatList list, FloatUnaryOperator function) {
-        return list instanceof RandomAccess ? new F2FRATransformingList(list, function)
-                : new F2FTransformingList(list, function);
-    }
-
-    public static FloatList mapToFloat(DoubleList list, Double2FloatFunction function) {
-        return list instanceof RandomAccess ? new D2FRATransformingList(list, function)
-                : new D2FTransformingList(list, function);
-    }
-
-    public static <E> DoubleList transformToDouble(List<E> list, ToDoubleFunction<? super E> function) {
-        return list instanceof RandomAccess ? new L2DRATransformingList<>(list, function)
-                : new L2DTransformingList<>(list, function);
     }
 
     public static DoubleList mapToDouble(BooleanList list, Boolean2DoubleFunction function) {
@@ -325,24 +180,9 @@ public final class ListUtil {
                 : new S2DTransformingList(list, function);
     }
 
-    public static DoubleList mapToDouble(IntList list, IntToDoubleFunction function) {
-        return list instanceof RandomAccess ? new I2DRATransformingList(list, function)
-                : new I2DTransformingList(list, function);
-    }
-
-    public static DoubleList mapToDouble(LongList list, LongToDoubleFunction function) {
-        return list instanceof RandomAccess ? new J2DRATransformingList(list, function)
-                : new J2DTransformingList(list, function);
-    }
-
     public static DoubleList mapToDouble(FloatList list, Float2DoubleFunction function) {
         return list instanceof RandomAccess ? new F2DRATransformingList(list, function)
                 : new F2DTransformingList(list, function);
-    }
-
-    public static DoubleList mapToDouble(DoubleList list, DoubleUnaryOperator function) {
-        return list instanceof RandomAccess ? new D2DRATransformingList(list, function)
-                : new D2DTransformingList(list, function);
     }
 
     public static <E> void replaceAll(List<E> list,
@@ -390,7 +230,7 @@ public final class ListUtil {
         }
 
         return new VectorIterationBasedList<>(new int[]{i, j}, (matrixIndices) -> elementAccessor.apply(
-                matrixIndices.getInt(0), matrixIndices.getInt(1)));
+                matrixIndices[0], matrixIndices[1]));
     }
 
     public static <E> List<E> iterate(IntIntInt2ObjectFunction<E> elementAccessor, int i, int j, int k) {
@@ -401,10 +241,10 @@ public final class ListUtil {
         }
 
         return new VectorIterationBasedList<>(new int[]{i, j, k}, (matrixIndices) -> elementAccessor.apply(
-                matrixIndices.getInt(0), matrixIndices.getInt(1), matrixIndices.getInt(2)));
+                matrixIndices[0], matrixIndices[1], matrixIndices[2]));
     }
 
-    public static <E> List<E> iterate(Function<? super IntList, ? extends E> elementAccessor,
+    public static <E> List<E> iterate(Function<? super int[], ? extends E> elementAccessor,
                                       int... dimensions) {
         dimensions = dimensions.clone();
 
@@ -644,11 +484,11 @@ public final class ListUtil {
 
     private static final class VectorIterationBasedList<E> extends AbstractList<E> implements RandomAccess {
         private final int[] dimensions;
-        private final Function<? super IntList, ? extends E> elementAccessor;
+        private final Function<? super int[], ? extends E> elementAccessor;
         private final int size;
 
         private VectorIterationBasedList(final int[] dimensions,
-                                         @NotNull final Function<? super IntList, ? extends E> elementAccessor) {
+                                         @NotNull final Function<? super int[], ? extends E> elementAccessor) {
             this.dimensions = dimensions;
             this.elementAccessor = elementAccessor;
             this.size = (int) Math.min(MathUtil.product(dimensions), Integer.MAX_VALUE);
@@ -660,7 +500,7 @@ public final class ListUtil {
                 throw new IndexOutOfBoundsException(index);
             }
 
-            return elementAccessor.apply(ArrayUtil.asList(MathUtil.compressedIndexToMatrixIndexes(index, dimensions)));
+            return elementAccessor.apply(MathUtil.compressedIndexToMatrixIndexes(index, dimensions));
         }
 
         @Override
@@ -701,27 +541,25 @@ public final class ListUtil {
     }
 
     private static final class VectorIndexedIterator<E> extends OnNextComputeObjectIterator<E> {
-        private final Function<? super IntList, ? extends E> elementAccessor;
+        private final Function<? super int[], ? extends E> elementAccessor;
         private final int[] dimensions;
-        private final int[] matrixIndexes;
-        private final IntList exposedMatrixIndexes;
+        private final int[] matrixIndices;
 
-        private VectorIndexedIterator(Function<? super IntList, ? extends E> elementAccessor, int[] dimensions) {
+        private VectorIndexedIterator(Function<? super int[], ? extends E> elementAccessor, int[] dimensions) {
             this.elementAccessor = elementAccessor;
             this.dimensions = dimensions;
-            this.matrixIndexes = new int[dimensions.length];
-            this.exposedMatrixIndexes = IntLists.unmodifiable(ArrayUtil.asList(matrixIndexes));
+            this.matrixIndices = new int[dimensions.length];
         }
 
         @Override
         protected E computeNext() {
             try {
-                E result = elementAccessor.apply(exposedMatrixIndexes);
-                matrixIndexes[matrixIndexes.length - 1]++;
+                E result = elementAccessor.apply(matrixIndices);
+                matrixIndices[matrixIndices.length - 1]++;
 
-                for (int i = matrixIndexes.length - 1; matrixIndexes[i] >= dimensions[i]; --i) {
-                    matrixIndexes[i] = 0;
-                    matrixIndexes[i - 1]++;
+                for (int i = matrixIndices.length - 1; matrixIndices[i] >= dimensions[i]; --i) {
+                    matrixIndices[i] = 0;
+                    matrixIndices[i - 1]++;
                 }
 
                 return result;

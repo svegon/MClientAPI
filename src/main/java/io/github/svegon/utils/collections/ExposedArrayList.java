@@ -2,8 +2,8 @@ package io.github.svegon.utils.collections;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.ObjectArrays;
-import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.*;
 import java.util.function.Predicate;

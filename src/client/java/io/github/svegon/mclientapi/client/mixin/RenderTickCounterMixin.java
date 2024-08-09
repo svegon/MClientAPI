@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RenderTickCounter.class)
-public abstract class RenderTickCounterMixin {
+public interface RenderTickCounterMixin {
     @Mixin(RenderTickCounter.Dynamic.class)
-    public static abstract class Dynamic implements RenderTickCounter,
+    abstract class Dynamic implements RenderTickCounter,
             IRenderTickCounter {
         @Shadow
         private float tickDeltaBeforePause;

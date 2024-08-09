@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrays;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.Arrays;
 import java.util.Objects;

@@ -7,8 +7,9 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.fastutil.shorts.AbstractShort2LongMap;
 import it.unimi.dsi.fastutil.shorts.Short2LongFunction;
 import it.unimi.dsi.fastutil.shorts.Short2LongMap;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -242,7 +243,7 @@ public class Short2LongTableMap extends AbstractShort2LongMap {
         @SuppressWarnings("unchecked")
         public ObjectIterator<Short2LongMap.Entry> iterator() {
             return ObjectIterators.asObjectIterator((Iterator<Short2LongMap.Entry>) (Object)
-                    Iterators.filter(ArrayUtil.asList(table).iterator(), Objects::nonNull));
+                    Iterators.filter(Arrays.asList(table).iterator(), Objects::nonNull));
         }
 
         @Override

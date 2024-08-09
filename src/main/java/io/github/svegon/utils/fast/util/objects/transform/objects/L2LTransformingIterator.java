@@ -1,7 +1,9 @@
 package io.github.svegon.utils.fast.util.objects.transform.objects;
 
-import io.github.svegon.utils.fast.util.objects.transform.TransformingObjectIterator;
 import com.google.common.base.Preconditions;
+import io.github.svegon.utils.fast.util.objects.transform.TransformingObjectIterator;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectFunction;
+import it.unimi.dsi.fastutil.shorts.ShortIterator;
 
 import java.util.Iterator;
 import java.util.function.Function;

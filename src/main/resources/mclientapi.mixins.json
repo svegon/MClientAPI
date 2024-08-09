@@ -20,9 +20,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "RenderTickCounterMixin$Dynamic",
-    "ScreenMixin"
-  ]
+  }
 }

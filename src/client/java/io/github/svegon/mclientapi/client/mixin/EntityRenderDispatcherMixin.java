@@ -1,11 +1,11 @@
 package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.client.event.render.ShouldEntityRenderListener;
-import io.github.svegon.utils.math.geometry.vector.Vec3d;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.resource.SynchronousResourceReloader;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

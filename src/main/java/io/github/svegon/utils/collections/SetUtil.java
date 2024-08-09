@@ -1,7 +1,6 @@
 package io.github.svegon.utils.collections;
 
 import io.github.svegon.utils.FunctionUtil;
-import io.github.svegon.utils.collections.stream.StreamUtil;
 import io.github.svegon.utils.fast.util.booleans.BooleanSortedSet;
 import io.github.svegon.utils.fast.util.chars.transform.booleans.Z2CTransformingSet;
 import io.github.svegon.utils.fast.util.chars.transform.booleans.Z2CTransformingSortedSet;
@@ -19,21 +18,14 @@ import io.github.svegon.utils.fast.util.objects.transform.bytes.B2LTransformingS
 import io.github.svegon.utils.fast.util.objects.transform.bytes.B2LTransformingSortedSet;
 import io.github.svegon.utils.fast.util.objects.transform.chars.C2LTransformingSet;
 import io.github.svegon.utils.fast.util.objects.transform.chars.C2LTransformingSortedSet;
-import io.github.svegon.utils.fast.util.objects.transform.ints.I2LTransformingSet;
-import io.github.svegon.utils.fast.util.objects.transform.ints.I2LTransformingSortedSet;
 import io.github.svegon.utils.fast.util.objects.transform.objects.L2LTransformingSet;
 import io.github.svegon.utils.fast.util.objects.transform.shorts.S2LTransformingSet;
 import io.github.svegon.utils.fast.util.objects.transform.shorts.S2LTransformingSortedSet;
 import io.github.svegon.utils.fast.util.shorts.transform.booleans.Z2STransformingSet;
 import io.github.svegon.utils.fast.util.shorts.transform.booleans.Z2STransformingSortedSet;
 import io.github.svegon.utils.fast.util.shorts.transform.bytes.B2STransformingSet;
-import io.github.svegon.utils.fast.util.shorts.transform.bytes.B2STransformingSortedSet;
 import io.github.svegon.utils.fast.util.shorts.transform.chars.C2STransformingSet;
 import io.github.svegon.utils.fast.util.shorts.transform.chars.C2STransformingSortedSet;
-import io.github.svegon.utils.fast.util.shorts.transform.ints.I2STransformingSet;
-import io.github.svegon.utils.fast.util.shorts.transform.ints.I2STransformingSortedSet;
-import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2STransformingSet;
-import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2STransformingSortedSet;
 import io.github.svegon.utils.interfaces.function.Object2BooleanFunction;
 import io.github.svegon.utils.interfaces.function.Object2ByteFunction;
 import io.github.svegon.utils.interfaces.function.Object2CharFunction;
@@ -53,8 +45,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.ToIntFunction;
 
 public final class SetUtil {
     private SetUtil() {
@@ -73,8 +63,8 @@ public final class SetUtil {
             return 0;
         }
 
-        short min = StreamUtil.shortStream(c.spliterator(), true).min().get();
-        short max = StreamUtil.shortStream(c.spliterator(), true).max().get();
+        short min = (short) c.intParallelStream().min().getAsInt();
+        short max = (short) c.intParallelStream().max().getAsInt();
 
         return (max - min + 1D) / c.size();
     }
@@ -106,8 +96,8 @@ public final class SetUtil {
             return 0;
         }
 
-        char min = StreamUtil.charStream(c.spliterator(), true).min().get();
-        char max = StreamUtil.charStream(c.spliterator(), true).max().get();
+        char min = (char) c.intParallelStream().min().getAsInt();
+        char max = (char) c.intParallelStream().max().getAsInt();
 
         return (max - min + 1D) / c.size();
     }
@@ -117,8 +107,8 @@ public final class SetUtil {
             return 0;
         }
 
-        int min = StreamUtil.floatStream(c.spliterator(), true).mapToInt(Float::floatToIntBits).min().getAsInt();
-        int max = StreamUtil.floatStream(c.spliterator(), true).mapToInt(Float::floatToIntBits).max().getAsInt();
+        int min = c.doubleParallelStream().mapToInt(d -> Float.floatToIntBits((float) d)).min().getAsInt();
+        int max = c.doubleParallelStream().mapToInt(d -> Float.floatToIntBits((float) d)).max().getAsInt();
 
         return (max - min + 1D) / c.size();
     }
@@ -191,18 +181,6 @@ public final class SetUtil {
                                                            final @NotNull Short2ObjectFunction<? extends E> forwardingTransformer,
                                                            final @NotNull Object2ShortFunction<? super E> backingTransformer) {
         return new S2LTransformingSortedSet<>(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static <E> I2LTransformingSet<E> mapToObj(final @NotNull IntSet set,
-                                                     final @NotNull IntFunction<? extends E> forwardingTransformer,
-                                                     final @NotNull ToIntFunction<? super E> backingTransformer) {
-        return new I2LTransformingSet<>(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static <E> I2LTransformingSortedSet<E> mapToObj(final @NotNull IntSortedSet set,
-                                                           final @NotNull IntFunction<? extends E> forwardingTransformer,
-                                                           final @NotNull ToIntFunction<? super E> backingTransformer) {
-        return new I2LTransformingSortedSet<>(set, forwardingTransformer, backingTransformer);
     }
 
     public static Z2CTransformingSet mapToChar(final @NotNull BooleanSet set,
@@ -283,12 +261,6 @@ public final class SetUtil {
         return new B2STransformingSet(set, forwardingTransformer, backingTransformer);
     }
 
-    public static B2STransformingSortedSet mapToShort(final @NotNull ByteSortedSet set,
-                                                      final @NotNull Byte2ShortFunction forwardingTransformer,
-                                                      final @NotNull Short2ByteFunction backingTransformer) {
-        return new B2STransformingSortedSet(set, forwardingTransformer, backingTransformer);
-    }
-
     public static C2STransformingSet mapToShort(final @NotNull CharSet set,
                                                 final @NotNull Char2ShortFunction forwardingTransformer,
                                                 final @NotNull Short2CharFunction backingTransformer) {
@@ -299,29 +271,5 @@ public final class SetUtil {
                                                       final @NotNull Char2ShortFunction forwardingTransformer,
                                                       final @NotNull Short2CharFunction backingTransformer) {
         return new C2STransformingSortedSet(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static S2STransformingSet mapToShort(final @NotNull ShortSet set,
-                                                final @NotNull ShortUnaryOperator forwardingTransformer,
-                                                final @NotNull ShortUnaryOperator backingTransformer) {
-        return new S2STransformingSet(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static S2STransformingSortedSet mapToShort(final @NotNull ShortSortedSet set,
-                                                      final @NotNull ShortUnaryOperator forwardingTransformer,
-                                                      final @NotNull ShortUnaryOperator backingTransformer) {
-        return new S2STransformingSortedSet(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static I2STransformingSet mapToShort(final @NotNull IntSet set,
-                                                final @NotNull Int2ShortFunction forwardingTransformer,
-                                                final @NotNull Short2IntFunction backingTransformer) {
-        return new I2STransformingSet(set, forwardingTransformer, backingTransformer);
-    }
-
-    public static I2STransformingSortedSet mapToShort(final @NotNull IntSortedSet set,
-                                                      final @NotNull Int2ShortFunction forwardingTransformer,
-                                                      final @NotNull Short2IntFunction backingTransformer) {
-        return new I2STransformingSortedSet(set, forwardingTransformer, backingTransformer);
     }
 }

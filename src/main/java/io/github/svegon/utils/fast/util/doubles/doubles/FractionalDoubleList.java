@@ -1,7 +1,7 @@
 package io.github.svegon.utils.fast.util.doubles.doubles;
 
 import it.unimi.dsi.fastutil.doubles.AbstractDoubleList;
-import net.jcip.annotations.Immutable;
+import oshi.annotation.concurrent.Immutable;
 
 @Immutable
 public final class FractionalDoubleList extends AbstractDoubleList {

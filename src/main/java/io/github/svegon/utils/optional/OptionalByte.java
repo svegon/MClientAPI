@@ -2,12 +2,12 @@ package io.github.svegon.utils.optional;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.bytes.*;
-import io.github.svegon.utils.collections.stream.ByteStream;
 import io.github.svegon.utils.interfaces.function.ByteSupplier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class OptionalByte implements Comparable<OptionalByte> {
     private static final OptionalByte EMPTY = new OptionalByte();
@@ -511,22 +511,22 @@ public class OptionalByte implements Comparable<OptionalByte> {
     }
 
     /**
-     * If a value is present, returns a sequential {@link ByteStream} containing
-     * only that value, otherwise returns an empty {@code ByteStream}.
+     * If a value is present, returns a sequential {@link IntStream} containing
+     * only that value, otherwise returns an empty {@code IntStream}.
      *
      * @apiNote
      * This method can be used to transform a {@code Stream} of optional longs
-     * to an {@code ByteStream} of present longs:
+     * to an {@code IntStream} of present longs:
      * <pre>{@code
      *     Stream<OptionalLong> os = ..
-     *     ByteStream s = os.flatMapToLong(OptionalByte::stream)
+     *     IntStream s = os.flatMapToLong(OptionalByte::stream)
      * }</pre>
      *
-     * @return the optional value as an {@code ByteStream}
+     * @return the optional value as an {@code IntStream}
      * @since 1.0.0
      */
-    public ByteStream stream() {
-        return ByteStream.empty();
+    public IntStream stream() {
+        return IntStream.empty();
     }
 
     /**
@@ -1102,23 +1102,23 @@ public class OptionalByte implements Comparable<OptionalByte> {
         }
 
         /**
-         * If a value is present, returns a sequential {@link ByteStream} containing
-         * only that value, otherwise returns an empty {@code ByteStream}.
+         * If a value is present, returns a sequential {@link IntStream} containing
+         * only that value, otherwise returns an empty {@code IntStream}.
          *
          * @apiNote
          * This method can be used to transform a {@code Stream} of optional bytes
-         * to an {@code ByteStream} of present longs:
+         * to an {@code IntStream} of present longs:
          * <pre>{@code
          *     Stream<OptionalByte> os = ..
-         *     ByteStream s = os.flatMapToLong(OptionalByte::stream)
+         *     IntStream s = os.flatMapToLong(OptionalByte::stream)
          * }</pre>
          *
-         * @return the optional value as an {@code ByteStream}
+         * @return the optional value as an {@code IntStream}
          * @since 16.0.1
          */
         @Override
-        public ByteStream stream() {
-            return ByteStream.of(value);
+        public IntStream stream() {
+            return IntStream.of(value);
         }
 
         /**

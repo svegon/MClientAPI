@@ -1,8 +1,8 @@
 package io.github.svegon.utils.string;
 
 import io.github.svegon.utils.fast.util.chars.ImprovedCharList;
-import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
+import oshi.annotation.concurrent.Immutable;
 
 import java.util.RandomAccess;
 

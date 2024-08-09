@@ -1,6 +1,7 @@
 package io.github.svegon.utils.fast.util.chars;
 
 import com.google.common.collect.Multiset;
+import it.unimi.dsi.fastutil.chars.CharCollection;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.chars.CharSpliterator;
 import org.jetbrains.annotations.NotNull;
@@ -10,26 +11,23 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface CharMultiset extends Multiset<Character>, ImprovedCharCollection {
+public interface CharMultiset extends Multiset<Character>, CharCollection {
     @Deprecated
     @Override
-    @SuppressWarnings("deprecation")
     default boolean removeAll(@NotNull Collection<?> collection) {
-        return ImprovedCharCollection.super.removeAll(collection);
+        return removeIf(collection::contains);
     }
 
     @Deprecated
     @Override
-    @SuppressWarnings("deprecation")
     default boolean retainAll(@NotNull Collection<?> collection) {
-        return ImprovedCharCollection.super.retainAll(collection);
+        return removeIf(c -> !collection.contains(c));
     }
 
     @Deprecated
     @Override
-    @SuppressWarnings("deprecation")
     default boolean containsAll(@NotNull Collection<?> collection) {
-        return ImprovedCharCollection.super.containsAll(collection);
+        return collection.parallelStream().allMatch(this::contains);
     }
 
     @Deprecated
@@ -44,7 +42,7 @@ public interface CharMultiset extends Multiset<Character>, ImprovedCharCollectio
     @Override
     @SuppressWarnings("deprecation")
     default void forEach(@NotNull Consumer<? super Character> action) {
-        ImprovedCharCollection.super.forEach(action);
+        CharCollection.super.forEach(action);
     }
 
     @Deprecated
@@ -56,15 +54,15 @@ public interface CharMultiset extends Multiset<Character>, ImprovedCharCollectio
     int add(char value, int i);
 
     @Override
-    default CharSpliterator spliterator() {
-        return ImprovedCharCollection.super.spliterator();
+    default @NotNull CharSpliterator spliterator() {
+        return CharCollection.super.spliterator();
     }
 
     @Deprecated
     @Override
     @SuppressWarnings("deprecation")
     default boolean add(Character aChar) {
-        return ImprovedCharCollection.super.add(aChar);
+        return CharCollection.super.add(aChar);
     }
 
     @Deprecated
@@ -79,7 +77,7 @@ public interface CharMultiset extends Multiset<Character>, ImprovedCharCollectio
     @Override
     @SuppressWarnings("deprecation")
     default boolean remove(@Nullable Object o) {
-        return ImprovedCharCollection.super.remove(o);
+        return CharCollection.super.remove(o);
     }
 
     @Deprecated
@@ -98,12 +96,13 @@ public interface CharMultiset extends Multiset<Character>, ImprovedCharCollectio
     boolean setCount(char value, int prev, int count);
 
     @Override
+    @NotNull
     CharSet elementSet();
 
     @Deprecated
     @Override
     @SuppressWarnings("unchecked")
-    default Set<Multiset.Entry<Character>> entrySet() {
+    default @NotNull Set<Multiset.Entry<Character>> entrySet() {
         return (Set<Multiset.Entry<Character>>) (Object) charEntrySet();
     }
 
@@ -113,7 +112,7 @@ public interface CharMultiset extends Multiset<Character>, ImprovedCharCollectio
     @Override
     @SuppressWarnings("deprecation")
     default boolean contains(@Nullable Object o) {
-        return ImprovedCharCollection.super.contains(o);
+        return CharCollection.super.contains(o);
     }
 
     interface Entry extends Multiset.Entry<Character> {

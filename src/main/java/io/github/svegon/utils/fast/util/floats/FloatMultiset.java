@@ -1,9 +1,9 @@
 package io.github.svegon.utils.fast.util.floats;
 
 import com.google.common.collect.Multiset;
-import it.unimi.dsi.fastutil.floats.FloatCollection;
-import it.unimi.dsi.fastutil.floats.FloatSet;
-import it.unimi.dsi.fastutil.floats.FloatSpliterator;
+import it.unimi.dsi.fastutil.floats.*;
+import it.unimi.dsi.fastutil.shorts.ShortArrays;
+import it.unimi.dsi.fastutil.shorts.ShortIterators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection {
+public interface FloatMultiset extends Multiset<Float>, FloatCollection {
     @Deprecated
     @Override
     default int count(Object o) {
@@ -24,7 +24,7 @@ public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection 
     @Override
     @SuppressWarnings("deprecation")
     default void forEach(@NotNull Consumer<? super Float> action) {
-        ImprovedFloatCollection.super.forEach(action);
+        FloatCollection.super.forEach(action);
     }
 
     @Override
@@ -42,14 +42,14 @@ public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection 
 
     @Override
     default FloatSpliterator spliterator() {
-        return ImprovedFloatCollection.super.spliterator();
+        return FloatCollection.super.spliterator();
     }
 
     @Deprecated
     @Override
     @SuppressWarnings("deprecation")
     default boolean add(Float aFloat) {
-        return ImprovedFloatCollection.super.add(aFloat);
+        return FloatCollection.super.add(aFloat);
     }
 
     @Deprecated
@@ -64,7 +64,7 @@ public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection 
     @Override
     @SuppressWarnings("deprecation")
     default boolean remove(@Nullable Object o) {
-        return ImprovedFloatCollection.super.remove(o);
+        return FloatCollection.super.remove(o);
     }
 
     @Override
@@ -108,7 +108,7 @@ public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection 
     @Override
     @SuppressWarnings("deprecation")
     default boolean contains(@Nullable Object o) {
-        return ImprovedFloatCollection.super.contains(o);
+        return FloatCollection.super.contains(o);
     }
 
     @Deprecated
@@ -131,6 +131,27 @@ public interface FloatMultiset extends Multiset<Float>, ImprovedFloatCollection 
     default boolean retainAll(final @NotNull Collection<?> collection) {
         return collection instanceof FloatCollection ? retainAll((FloatCollection) collection)
                 : removeIf((bl) -> !collection.contains(bl));
+    }
+
+    @Override
+    default float[] toFloatArray() {
+        return toArray(FloatArrays.DEFAULT_EMPTY_ARRAY);
+    }
+
+    @Override
+    default float[] toArray(float[] a) {
+        if (a == null || a.length < size()) {
+            return FloatIterators.unwrap(iterator());
+        }
+
+        var i = iterator();
+        var unwrapped = 0;
+
+        while ((unwrapped += FloatIterators.unwrap(i, a)) < size()) {
+            a = FloatArrays.ensureCapacity(a, size());
+        }
+
+        return a;
     }
 
     interface Entry extends Multiset.Entry<Float> {

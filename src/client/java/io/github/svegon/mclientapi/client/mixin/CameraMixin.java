@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.client.mixin;
 
-import io.github.svegon.mclientapi.event.render.CameraSubmersionTypeCallback;
+import io.github.svegon.mclientapi.client.event.render.CameraSubmersionTypeCallback;
 import net.minecraft.block.enums.CameraSubmersionType;
 import net.minecraft.client.render.Camera;
 import org.spongepowered.asm.mixin.Mixin;

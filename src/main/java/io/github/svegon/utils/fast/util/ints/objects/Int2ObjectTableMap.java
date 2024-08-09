@@ -7,8 +7,9 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -226,7 +227,7 @@ public class Int2ObjectTableMap<V> extends AbstractInt2ObjectMap<V> {
         @SuppressWarnings("unchecked")
         public ObjectIterator<Int2ObjectMap.Entry<V>> iterator() {
             return ObjectIterators.asObjectIterator((Iterator<Int2ObjectMap.Entry<V>>) (Object)
-                    Iterators.filter(ArrayUtil.asList(table).iterator(), Objects::nonNull));
+                    Iterators.filter(Arrays.asList(table).iterator(), Objects::nonNull));
         }
 
         @Override

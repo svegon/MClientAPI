@@ -3,10 +3,10 @@ package io.github.svegon.utils.optional;
 import io.github.svegon.utils.interfaces.function.ShortSupplier;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.shorts.*;
-import io.github.svegon.utils.collections.stream.ShortStream;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class OptionalShort {
     private static final OptionalShort EMPTY = new OptionalShort();
@@ -500,22 +500,22 @@ public class OptionalShort {
     }
 
     /**
-     * If a value is present, returns a sequential {@link ShortStream} containing
-     * only that value, otherwise returns an empty {@code ShortStream}.
+     * If a value is present, returns a sequential {@link IntStream} containing
+     * only that value, otherwise returns an empty {@code IntStream}.
      *
      * @apiNote
      * This method can be used to transform a {@code Stream} of optional Shorts
-     * to an {@code ShortStream} of present Shorts:
+     * to an {@code IntStream} of present Shorts:
      * <pre>{@code
      *     Stream<OptionalShort> os = ..
-     *     ShortStream s = os.flatMapToShort(OptionalShort::stream)
+     *     IntStream s = os.flatMapToShort(OptionalShort::stream)
      * }</pre>
      *
-     * @return the optional value as an {@code ShortStream}
+     * @return the optional value as an {@code IntStream}
      * @since 9
      */
-    public ShortStream stream() {
-        return ShortStream.empty();
+    public IntStream stream() {
+        return IntStream.empty();
     }
 
     /**
@@ -1086,23 +1086,23 @@ public class OptionalShort {
         }
 
         /**
-         * If a value is present, returns a sequential {@link ShortStream} containing
-         * only that value, otherwise returns an empty {@code ShortStream}.
+         * If a value is present, returns a sequential {@link IntStream} containing
+         * only that value, otherwise returns an empty {@code IntStream}.
          *
          * @apiNote
          * This method can be used to transform a {@code Stream} of optional Shorts
-         * to an {@code ShortStream} of present Shorts:
+         * to an {@code IntStream} of present Shorts:
          * <pre>{@code
          *     Stream<OptionalShort> os = ..
-         *     ShortStream s = os.flatMapToShort(OptionalShort::stream)
+         *     IntStream s = os.flatMapToShort(OptionalShort::stream)
          * }</pre>
          *
-         * @return the optional value as an {@code ShortStream}
+         * @return the optional value as an {@code IntStream}
          * @since 9
          */
         @Override
-        public ShortStream stream() {
-            return ShortStream.of(value);
+        public IntStream stream() {
+            return IntStream.of(value);
         }
 
         /**

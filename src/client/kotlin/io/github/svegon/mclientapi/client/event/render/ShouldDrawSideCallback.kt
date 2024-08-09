@@ -11,23 +11,29 @@ import kotlin.Array
 import kotlin.Boolean
 import kotlin.invoke
 
-interface ShouldDrawSideCallback {
+fun interface ShouldDrawSideCallback {
     fun shouldDrawSide(
-        state: BlockState?, world: BlockView?, pos: BlockPos?, side: Direction?, neighbor: BlockPos?,
-        callback: CallbackInfoReturnable<Boolean?>?
+        state: BlockState, world: BlockView, pos: BlockPos, side: Direction, neighbor: BlockPos,
+        callback: CallbackInfoReturnable<Boolean>
     )
 
     companion object {
         @JvmField
-        val EVENT: Event<ShouldDrawSideCallback?> = EventFactory.createArrayBacked(
+        val EVENT: Event<ShouldDrawSideCallback> = EventFactory.createArrayBacked(
             ShouldDrawSideCallback::class.java,
-            ShouldDrawSideCallback { state: BlockState?, world: BlockView?, pos: BlockPos?, side: Direction?, otherPos: BlockPos?, callback: CallbackInfoReturnable<Boolean?>? -> },
-            Function { listeners: Array<ShouldDrawSideCallback?>? ->
-                ShouldDrawSideCallback { state: BlockState?, world: BlockView?, pos: BlockPos?, side: Direction?, neighbor: BlockPos?, callback: CallbackInfoReturnable<Boolean?>? ->
-                    for (listener in listeners) {
-                        listener.shouldDrawSide(state, world, pos, side, neighbor, callback)
+            ShouldDrawSideCallback { state: BlockState, world: BlockView, pos: BlockPos, side: Direction,
+                                     neighbor: BlockPos, callback: CallbackInfoReturnable<Boolean> -> }
+        ) { listeners: Array<ShouldDrawSideCallback> ->
+            ShouldDrawSideCallback { state: BlockState, world: BlockView, pos: BlockPos, side: Direction,
+                                     neighbor: BlockPos, callback: CallbackInfoReturnable<Boolean> ->
+                for (listener in listeners) {
+                    listener.shouldDrawSide(state, world, pos, side, neighbor, callback)
+
+                    if (callback.isCancelled) {
+                        return@ShouldDrawSideCallback
                     }
                 }
-            })
+            }
+        }
     }
 }

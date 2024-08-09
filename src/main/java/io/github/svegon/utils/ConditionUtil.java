@@ -1,8 +1,8 @@
 package io.github.svegon.utils;
 
-import io.github.svegon.utils.fast.util.chars.booleans.CharCompressedTableSet;
-import io.github.svegon.utils.fast.util.shorts.booleans.ShortCompressedTableSet;
+import io.github.svegon.mclientapi.util.collections.chars.CharCompressedTableSet;
 import com.google.common.collect.Sets;
+import io.github.svegon.utils.collections.SetUtil;
 import it.unimi.dsi.fastutil.booleans.BooleanPredicate;
 import it.unimi.dsi.fastutil.bytes.ByteArraySet;
 import it.unimi.dsi.fastutil.bytes.BytePredicate;
@@ -95,7 +95,8 @@ public final class ConditionUtil {
 
     public static ShortPredicate shortUniquenessPredicate() {
         return new ShortPredicate() {
-            private final ShortSet presentElements = new ShortCompressedTableSet();
+            private final ShortSet presentElements = SetUtil.mapToShort(new CharCompressedTableSet(),
+                    c -> (short) c, s -> (char) s);
 
             @Override
             public boolean test(short o) {

@@ -6,7 +6,8 @@
 *.iws
 
 # IntelliJ
-out/
+/out/
+/.kotlin/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
@@ -101,7 +102,6 @@ $RECYCLE.BIN/
 *.lnk
 
 .gradle
-build/
 
 # Ignore Gradle GUI config
 gradle-app.setting

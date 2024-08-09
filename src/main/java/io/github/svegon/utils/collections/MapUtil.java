@@ -1,15 +1,9 @@
 package io.github.svegon.utils.collections;
 
 import io.github.svegon.utils.FunctionUtil;
-import io.github.svegon.utils.fast.util.bytes.transform.bytes.L2BKL2BVDefRetValueRedirectingTranformingMap;
-import io.github.svegon.utils.fast.util.bytes.transform.bytes.L2BKL2BVTranformingMap;
 import io.github.svegon.utils.fast.util.objects.LateBindingSupplier;
-import io.github.svegon.utils.fast.util.objects.transform.objects.L2LKI2IVTranformingMap;
-import io.github.svegon.utils.fast.util.objects.transform.objects.L2LKL2LVDefRetValueRedirectingTranformingMap;
 import io.github.svegon.utils.fast.util.objects.transform.objects.L2LKL2LVTranformingMap;
-import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SKL2LVDefRetValueRedirectingTransformingMap;
 import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SKL2LVTranformingMap;
-import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SKL2SVDefRetValueRedirectingTransformingMap;
 import io.github.svegon.utils.fast.util.shorts.transform.objects.L2SKL2SVTranformingMap;
 import io.github.svegon.utils.fast.util.shorts.transform.shorts.S2SKS2SVTranformingMap;
 import com.google.common.collect.ImmutableList;
@@ -18,8 +12,9 @@ import it.unimi.dsi.fastutil.chars.Char2IntMap;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.fastutil.shorts.*;
-import net.jcip.annotations.Immutable;
+import net.minecraft.block.enums.CameraSubmersionType;
 import org.jetbrains.annotations.NotNull;
+import oshi.annotation.concurrent.Immutable;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -29,12 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.IntUnaryOperator;
 
-public final class MapUtil {
-    private MapUtil() {
-        throw new UnsupportedOperationException();
-    }
+public enum MapUtil {
+    ;
 
     /**
      * approximately the amount of items in a hash map and a table map
@@ -94,18 +86,7 @@ public final class MapUtil {
             Function<? super K_OUT, ? extends K_IN> backingKeyTransformer,
             Function<? super V_IN, ? extends V_OUT> forwardingValueTransformer,
             Function<? super V_OUT, ? extends V_IN> backingValueTransformer) {
-        return map instanceof Object2ObjectMap<K_IN, V_IN> m ? new L2LKL2LVDefRetValueRedirectingTranformingMap<>(m,
-                forwardingKeyTransformer, backingKeyTransformer, forwardingValueTransformer, backingValueTransformer) :
-                new L2LKL2LVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
-                forwardingValueTransformer, backingValueTransformer);
-    }
-
-    public static <K_IN, K_OUT> Object2IntMap<K_OUT> transformKToObjectVToInt(Object2IntMap<K_IN> map,
-                                                      Function<? super K_IN, ? extends K_OUT> forwardingKeyTransformer,
-                                                      Function<? super K_OUT, ? extends K_IN> backingKeyTransformer,
-                                                      IntUnaryOperator forwardingValueTransformer,
-                                                      IntUnaryOperator backingValueTransformer) {
-        return new L2LKI2IVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
+        return new L2LKL2LVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
                 forwardingValueTransformer, backingValueTransformer);
     }
 
@@ -114,9 +95,7 @@ public final class MapUtil {
             Short2ObjectFunction<? extends K_IN> backingKeyTransformer,
             Function<? super V_IN, ? extends V_OUT> forwardingValueTransformer,
             Function<? super V_OUT, ? extends V_IN> backingValueTransformer) {
-        return map instanceof Object2ObjectMap<K_IN, V_IN> m ? new L2SKL2LVDefRetValueRedirectingTransformingMap<>(m,
-                forwardingKeyTransformer, backingKeyTransformer, forwardingValueTransformer, backingValueTransformer) :
-                new L2SKL2LVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
+        return new L2SKL2LVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
                         forwardingValueTransformer, backingValueTransformer);
     }
 
@@ -125,9 +104,7 @@ public final class MapUtil {
             Short2ObjectFunction<? extends K_IN> backingKeyTransformer,
             Object2ShortFunction<? super V_IN> forwardingValueTransformer,
             Short2ObjectFunction<? extends V_IN> backingValueTransformer) {
-        return map instanceof Object2ObjectMap<K_IN, V_IN> m ? new L2SKL2SVDefRetValueRedirectingTransformingMap<>(m,
-                forwardingKeyTransformer, backingKeyTransformer, forwardingValueTransformer, backingValueTransformer) :
-                new L2SKL2SVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
+        return new L2SKL2SVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
                         forwardingValueTransformer, backingValueTransformer);
     }
 
@@ -138,29 +115,11 @@ public final class MapUtil {
                         forwardingValueTransformer, backingValueTransformer);
     }
 
-    public static <K_IN, V_IN> L2BKL2BVTranformingMap<K_IN, V_IN> transformKToByteVToByte(
-            Map<K_IN, V_IN> map, Object2ByteFunction<? super K_IN> forwardingKeyTransformer,
-            Byte2ObjectFunction<? extends K_IN> backingKeyTransformer,
-            Object2ByteFunction<? super V_IN> forwardingValueTransformer,
-            Byte2ObjectFunction<? extends V_IN> backingValueTransformer) {
-        return map instanceof Object2ObjectMap<K_IN, V_IN> m ? new L2BKL2BVDefRetValueRedirectingTranformingMap<>(m,
-                forwardingKeyTransformer, backingKeyTransformer, forwardingValueTransformer, backingValueTransformer) :
-                new L2BKL2BVTranformingMap<>(map, forwardingKeyTransformer, backingKeyTransformer,
-                        forwardingValueTransformer, backingValueTransformer);
-    }
-
     public static <K_IN, V, K_OUT> Object2ObjectMap<K_OUT, V> transformKToObject(
             Map<K_IN, V> map, Function<? super K_IN, ? extends K_OUT> forwardingKeyTransformer,
             Function<? super K_OUT, ? extends K_IN> backingKeyTransformer) {
         return transformKToObjectVToObject(map, forwardingKeyTransformer, backingKeyTransformer,
                 FunctionUtil.identityOperator(), FunctionUtil.identityOperator());
-    }
-
-    public static <K_IN, K_OUT> Object2IntMap<K_OUT> transformKToObject(
-            Object2IntMap<K_IN> map, Function<? super K_IN, ? extends K_OUT> forwardingKeyTransformer,
-            Function<? super K_OUT, ? extends K_IN> backingKeyTransformer) {
-        return transformKToObjectVToInt(map, forwardingKeyTransformer, backingKeyTransformer,
-                FunctionUtil.intIdentityOperator(), FunctionUtil.intIdentityOperator());
     }
 
     public static <K, V_IN, V_OUT> Object2ObjectMap<K, V_OUT> transformVToObject(Map<K, V_IN> map,
@@ -174,15 +133,7 @@ public final class MapUtil {
         return derefK(original, WeakReference::new);
     }
 
-    public static <K> Object2IntMap<K> derefWeakRefK(final Object2IntMap<WeakReference<K>> original) {
-        return derefK(original, WeakReference::new);
-    }
-
     public static <K, V> Object2ObjectMap<K, V> derefSoftRefK(final Map<SoftReference<K>, V> original) {
-        return derefK(original, SoftReference::new);
-    }
-
-    public static <K> Object2IntMap<K> derefSoftRefK(final Object2IntMap<SoftReference<K>> original) {
         return derefK(original, SoftReference::new);
     }
 
@@ -205,23 +156,6 @@ public final class MapUtil {
 
             return k;
         }, backingKeyTranformer);
-    }
-
-    public static <K, R extends Reference<K>> Object2IntMap<K> derefK(final @NotNull Object2IntMap<R> original,
-                                            final @NotNull Function<? super K, ? extends R> backingKeyTransformer) {
-        return transformKToObject(original, ref -> {
-            if (ref == null) {
-                return null;
-            }
-
-            K k = ref.get();
-
-            if (k == null) {
-                original.removeInt(ref);
-            }
-
-            return k;
-        }, (k) -> k == null ? null : backingKeyTransformer.apply(k));
     }
 
     public static <K, V, R extends Reference<V>> Object2ObjectMap<K, V> derefV(final Map<K, R> original,

@@ -1,17 +1,18 @@
 package io.github.svegon.utils.fast.util.chars.booleans;
 
 import io.github.svegon.utils.collections.iteration.IterationUtil;
-import io.github.svegon.utils.fast.util.ints.immutable.ImmutableIntList;
-import io.github.svegon.utils.fast.util.chars.ImprovedCharCollection;
 import it.unimi.dsi.fastutil.booleans.BooleanArrays;
 import it.unimi.dsi.fastutil.chars.AbstractCharSet;
 import it.unimi.dsi.fastutil.chars.CharIterable;
 import it.unimi.dsi.fastutil.chars.CharIterator;
-import net.jcip.annotations.NotThreadSafe;
+import it.unimi.dsi.fastutil.chars.CharIterators;
 import org.jetbrains.annotations.NotNull;
+import oshi.annotation.concurrent.NotThreadSafe;
+
+import java.util.stream.IntStream;
 
 @NotThreadSafe
-public class CharTableSet extends AbstractCharSet implements ImprovedCharCollection {
+public class CharTableSet extends AbstractCharSet {
     private boolean[] table;
 
     public CharTableSet() {
@@ -36,8 +37,8 @@ public class CharTableSet extends AbstractCharSet implements ImprovedCharCollect
 
     @Override
     public CharIterator iterator() {
-        return IterationUtil.mapToChar(IterationUtil.filter(ImmutableIntList.range(0, table.length).iterator(),
-                (i) -> table[i]), (i) -> (char) i);
+        return IterationUtil.filter(CharIterators.asCharIterator(IntStream.range(0, table.length).iterator()),
+                (i) -> table[i]);
     }
 
     @Override

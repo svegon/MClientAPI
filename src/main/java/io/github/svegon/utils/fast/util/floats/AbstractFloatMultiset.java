@@ -4,6 +4,7 @@ import io.github.svegon.utils.collections.AbstractMultiset;
 import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
+import it.unimi.dsi.fastutil.objects.AbstractObjectIterator;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -152,23 +153,39 @@ public abstract class AbstractFloatMultiset extends AbstractMultiset<Float> impl
 
             @Override
             public ObjectIterator<FloatMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().float2IntEntrySet().iterator(),
-                        e -> new Entry() {
+                final var it = entriesFrame().float2IntEntrySet().iterator();
+                return new AbstractObjectIterator<FloatMultiset.Entry>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public FloatMultiset.Entry next() {
+                        final var e = it.next();
+                        return  new Entry() {
                             @Override
                             public int setValue(int value) {
                                 return setCount(getFloatElement(), value);
                             }
 
                             @Override
-                    public float getFloatElement() {
-                        return e.getFloatKey();
+                            public float getFloatElement() {
+                                return e.getFloatKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public void remove() {
+                        it.remove();
                     }
-                });
+                };
             }
 
             @Override
@@ -197,6 +214,22 @@ public abstract class AbstractFloatMultiset extends AbstractMultiset<Float> impl
                 return map;
             }
         };
+    }
+
+    @Override
+    public boolean addAll(FloatCollection c) {
+        boolean modified = false;
+
+        for (float f : c) {
+            modified |= add(f);
+        }
+
+        return modified;
+    }
+
+    @Override
+    public boolean containsAll(FloatCollection c) {
+        return c.doubleParallelStream().allMatch(f -> contains((float) f));
     }
 
     @Override

@@ -1,16 +1,12 @@
 package io.github.svegon.utils.string;
 
 import io.github.svegon.utils.ConditionUtil;
-import io.github.svegon.utils.collections.collecting.CollectingUtil;
-import io.github.svegon.utils.collections.stream.StreamUtil;
 import io.github.svegon.utils.math.MathUtil;
-import io.github.svegon.utils.math.really_big_math.InfiniFloat;
-import io.github.svegon.utils.math.really_big_math.InfiniMathUtil;
-import io.github.svegon.utils.math.really_big_math.InfiniNumber;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.chars.CharImmutableList;
 import it.unimi.dsi.fastutil.chars.CharList;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,15 +26,24 @@ public final class StringUtil {
     }
 
     public static final String NaN = "NaN";
-    public static final String POSITIVE_INFINITY = "\u221e";
+    public static final String POSITIVE_INFINITY = "∞";
     public static final String NEGATIVE_INFINITY = "-" + POSITIVE_INFINITY;
 
     public static final List<String> DECIMAL_DIGITS = ImmutableList.of("0", "1", "2", "3", "4", "5", "6", "7", "8",
             "9");
-    public static final String DEFAULT_POINTER = ".";
+    public static final String DEFAULT_DECIMAL_SEPARATOR = ".";
     public static final Pair<String, String> STANDARD_SIGNS = Pair.of("", "-");
-    public static final CharList DECIMAL_DIGIT_CHARS = StreamUtil.mapToChar(DECIMAL_DIGITS.stream(),
-            (s) -> s.charAt(0)).collect(CollectingUtil.toImmutableCharList());
+    public static final CharList DECIMAL_DIGIT_CHARS;
+
+    static {
+        char[] digits = new char[DECIMAL_DIGITS.size()];
+
+        for (int i = 0; i < digits.length; i++) {
+            digits[i] = DECIMAL_DIGITS.get(i).charAt(0);
+        }
+
+        DECIMAL_DIGIT_CHARS = CharImmutableList.of(digits);
+    }
 
     public static final ImmutableMap<Pattern, BiFunction<String, Object, String>> STANDARD_STRICT_FORMAT;
 
@@ -69,7 +74,7 @@ public final class StringUtil {
         double floatPart = d - intPart;
 
         if (intPart == 0) {
-            builder.append(digitSet.get(0));
+            builder.append(digitSet.getFirst());
         } else {
             while (intPart != 0) {
                 builder.insert(0, digitSet.get((int) Math.floor(intPart % base)));
@@ -91,154 +96,6 @@ public final class StringUtil {
         }
 
         return builder.toString();
-    }
-
-    public static String toString(@NotNull InfiniNumber n, List<String> digitSet, String pointer, Pair<String,
-            String> signs) {
-        StringBuilder builder = new StringBuilder();
-
-        if (n.compareTo(0) < 0) {
-            n = n.neg();
-            builder.append(signs.right());
-        } else {
-            builder.append(signs.left());
-        }
-
-        int base = digitSet.size();
-        InfiniNumber intPart = n.floor();
-        InfiniNumber floatPart = n.substract(intPart);
-        Pair<? extends InfiniNumber, ? extends InfiniNumber> charAndRemainder;
-
-        if (intPart.compareTo(0) == 0) {
-            builder.append(digitSet.get(0));
-        } else {
-            while (intPart.compareTo(0) != 0) {
-                charAndRemainder = intPart.divMod(base);
-                builder.insert(0, digitSet.get(charAndRemainder.right().intValue()));
-                intPart = charAndRemainder.left();
-            }
-        }
-
-        if (floatPart.compareTo(0) == 0) {
-            return builder.toString();
-        }
-
-        builder.append(pointer);
-
-        while (floatPart.compareTo(0) != 0) {
-            charAndRemainder = floatPart.mul(base).divMod(1);
-            builder.append(digitSet.get(charAndRemainder.left().intValue()));
-            floatPart = charAndRemainder.right();
-        }
-
-        return builder.toString();
-    }
-
-    public static String toString(InfiniNumber n, List<String> charSet, String pointer) {
-        return toString(n, charSet, pointer, STANDARD_SIGNS);
-    }
-
-    public static String toString(InfiniNumber n, List<String> charSet) {
-        return toString(n, charSet, DEFAULT_POINTER);
-    }
-
-    public static String toString(InfiniNumber n) {
-        return toString(n, DECIMAL_DIGITS);
-    }
-
-    public static InfiniNumber parseInfiniNumber(String s, CharList charSet, String pointer, Pair<String,
-            String> signs) {
-        if (s.equals(NaN)) {
-            return InfiniMathUtil.NaN;
-        }
-
-        if (s.equals(POSITIVE_INFINITY) || s.equals(String.valueOf(Double.POSITIVE_INFINITY))) {
-            return InfiniMathUtil.POSITIVE_INFINITY;
-        }
-
-        if (s.equals(NEGATIVE_INFINITY) || s.equals(String.valueOf(Double.NEGATIVE_INFINITY))) {
-            return InfiniMathUtil.NEGATIVE_INFINITY;
-        }
-
-        boolean sign;
-
-        if (s.startsWith(signs.first())) {
-            sign = false;
-            s = s.substring(signs.first().length());
-        } else if (s.startsWith(signs.right())) {
-            sign = true;
-            s = s.substring(signs.right().length());
-        } else {
-            throw new NumberFormatException("invalid signum");
-        }
-
-        String[] var = s.split(pointer);
-
-        switch (var.length) {
-            case 0 -> {
-                return InfiniFloat.ZERO;
-            }
-
-            case 1 -> {
-                InfiniFloat base = InfiniFloat.valueOf(charSet.size());
-                int length = s.length();
-                InfiniNumber result = InfiniFloat.ZERO;
-
-                for (int i = 0; i < length; i++) {
-                    int digit = charSet.indexOf(s.charAt(i));
-
-                    if (digit < 0) {
-                        throw new NumberFormatException();
-                    }
-
-                    result = result.add(InfiniFloat.valueOf(digit)
-                            .mul(base.pow(InfiniFloat.valueOf(length - i - 1))));
-                    // invert is a programming shortcut for -1-i
-                }
-
-                return sign ? result.neg() : result;
-            }
-
-            case 2 -> {
-                InfiniNumber result = InfiniFloat.ZERO;
-                int length = s.length();
-                InfiniFloat base = InfiniFloat.valueOf(charSet.size());
-                s = var[1];
-
-                for (int i = 0; i < length; i++) {
-                    int digit = charSet.indexOf(s.charAt(i));
-
-                    if (digit < 0) {
-                        throw new NumberFormatException();
-                    }
-
-                    result = result.add(InfiniFloat.valueOf(digit)
-                            .mul(base.pow(InfiniFloat.valueOf(~i)))); // invert is a programming shortcut for -1-i
-                }
-
-                result = result.add(parseInfiniNumber(var[0], charSet, pointer, signs));
-
-                if (sign) {
-                    result = result.neg();
-                }
-
-                return result;
-            }
-
-            default -> throw new NumberFormatException();
-        }
-    }
-
-    public static InfiniNumber parseInfiniNumber(String s, CharList charSet, String pointer) {
-        return parseInfiniNumber(s, charSet, pointer, STANDARD_SIGNS);
-    }
-
-    public static InfiniNumber parseInfiniNumber(String s, CharList charSet) {
-        return parseInfiniNumber(s, charSet, DEFAULT_POINTER);
-    }
-
-    public static InfiniNumber parseInfiniNumber(String s) {
-        return parseInfiniNumber(s, DECIMAL_DIGIT_CHARS);
     }
 
     public static StringAsList asList(final String string, final int startingIndex, final int endingIndex) {

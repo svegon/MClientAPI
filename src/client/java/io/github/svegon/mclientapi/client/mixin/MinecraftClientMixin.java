@@ -39,9 +39,8 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
     @Final
     private WindowProvider windowProvider;
     @Shadow
-    @Final
     @Mutable
-    private RenderTickCounter renderTickCounter;
+    private @Final RenderTickCounter.Dynamic renderTickCounter;
     @Shadow
     private int itemUseCooldown;
     @Shadow

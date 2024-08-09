@@ -2,11 +2,11 @@ package io.github.svegon.utils.optional;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.booleans.*;
-import io.github.svegon.utils.collections.stream.BooleanStream;
 
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public enum OptionalBoolean {
     DEFAULT {
@@ -150,8 +150,8 @@ public enum OptionalBoolean {
         }
 
         @Override
-        public BooleanStream stream() {
-            return BooleanStream.empty();
+        public IntStream stream() {
+            return IntStream.empty();
         }
 
         @Override
@@ -302,8 +302,8 @@ public enum OptionalBoolean {
         }
 
         @Override
-        public BooleanStream stream() {
-            return BooleanStream.of(false);
+        public IntStream stream() {
+            return IntStream.of(0);
         }
 
         @Override
@@ -454,8 +454,8 @@ public enum OptionalBoolean {
         }
 
         @Override
-        public BooleanStream stream() {
-            return BooleanStream.of(true);
+        public IntStream stream() {
+            return IntStream.of(1);
         }
 
         @Override
@@ -913,21 +913,21 @@ public enum OptionalBoolean {
     public abstract OptionalBoolean or(Supplier<? extends OptionalBoolean> supplier);
 
     /**
-     * If a value is present, returns a sequential {@link BooleanStream} containing
-     * only that value, otherwise returns an empty {@code BooleanStream}.
+     * If a value is present, returns a sequential {@link IntStream} containing
+     * only that value, otherwise returns an empty {@code IntStream}.
      *
      * @apiNote
      * This method can be used to transform a {@code Stream} of optional
-     * elements to a {@code BooleanStream} of present value elements:
+     * elements to a {@code IntStream} of present value elements:
      * <pre>{@code
      *     Stream<OptionalBoolean> os = ..
-     *     BooleanStream s = StreamUtil.flatMapToBoolean(os, OptionalBoolean::stream)
+     *     IntStream s = StreamUtil.flatMapToBoolean(os, OptionalBoolean::stream)
      * }</pre>
      *
      * @return the optional value as a {@code Stream}
      * @since 1.0.0
      */
-    public abstract BooleanStream stream();
+    public abstract IntStream stream();
 
     /**
      * If a value is present, returns the value, otherwise returns

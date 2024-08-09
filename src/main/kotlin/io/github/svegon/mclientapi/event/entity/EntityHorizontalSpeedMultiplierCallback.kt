@@ -9,24 +9,24 @@ import kotlin.Array
 import kotlin.Float
 import kotlin.invoke
 
-interface EntityHorizontalSpeedMultiplierCallback {
-    fun getEntityHorizontalSpeedMultiplier(entity: Entity?, cir: CallbackInfoReturnable<Float?>?)
+fun interface EntityHorizontalSpeedMultiplierCallback {
+    fun getEntityHorizontalSpeedMultiplier(entity: Entity, cir: CallbackInfoReturnable<Float>)
 
     companion object {
         @JvmField
-        val EVENT: Event<EntityHorizontalSpeedMultiplierCallback?> = EventFactory.createArrayBacked(
+        val EVENT: Event<EntityHorizontalSpeedMultiplierCallback> = EventFactory.createArrayBacked(
             EntityHorizontalSpeedMultiplierCallback::class.java,
-            EntityHorizontalSpeedMultiplierCallback { entity: Entity?, cir: CallbackInfoReturnable<Float?>? -> },
-            Function { listeners: Array<EntityHorizontalSpeedMultiplierCallback?>? ->
-                EntityHorizontalSpeedMultiplierCallback { entity: Entity?, cir: CallbackInfoReturnable<Float?>? ->
-                    for (listener in listeners) {
-                        listener.getEntityHorizontalSpeedMultiplier(entity, cir)
+            EntityHorizontalSpeedMultiplierCallback { entity: Entity, cir: CallbackInfoReturnable<Float> -> }
+        ) { listeners: Array<EntityHorizontalSpeedMultiplierCallback> ->
+            EntityHorizontalSpeedMultiplierCallback { entity: Entity, cir: CallbackInfoReturnable<Float> ->
+                for (listener in listeners) {
+                    listener.getEntityHorizontalSpeedMultiplier(entity, cir)
 
-                        if (cir.isCancelled()) {
-                            return@EntityHorizontalSpeedMultiplierCallback
-                        }
+                    if (cir.isCancelled) {
+                        return@EntityHorizontalSpeedMultiplierCallback
                     }
                 }
-            })
+            }
+        }
     }
 }

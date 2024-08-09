@@ -4,6 +4,7 @@ import io.github.svegon.utils.collections.AbstractMultiset;
 import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
+import it.unimi.dsi.fastutil.objects.AbstractObjectIterator;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -189,18 +190,34 @@ public abstract class AbstractLongMultiset extends AbstractMultiset<Long> implem
 
             @Override
             public ObjectIterator<LongMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().long2IntEntrySet().iterator(),
-                        e -> new LongMultiset.Entry() {
+                final var it = entriesFrame().long2IntEntrySet().iterator();
+                return new AbstractObjectIterator<>() {
                     @Override
-                    public long getLongElement() {
-                        return e.getLongKey();
+                    public boolean hasNext() {
+                        return it.hasNext();
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public LongMultiset.Entry next() {
+                        final var e = it.next();
+                        return new LongMultiset.Entry() {
+                            @Override
+                            public long getLongElement() {
+                                return e.getLongKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
-                });
+
+                    @Override
+                    public void remove() {
+                        it.remove();
+                    }
+                };
             }
 
             @Override

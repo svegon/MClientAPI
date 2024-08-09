@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
-public abstract class ImprovedCharList extends AbstractCharList implements ImprovedCharCollection, CharSequence {
+public abstract class ImprovedCharList extends AbstractCharList implements CharSequence {
     @Override
     public ImprovedCharList subList(int from, int to) {
         return new SubList(this, from, to);

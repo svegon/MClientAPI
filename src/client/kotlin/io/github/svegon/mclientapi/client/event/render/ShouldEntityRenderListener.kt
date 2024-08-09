@@ -1,14 +1,12 @@
 package io.github.svegon.mclientapi.client.event.render
 
-import io.github.svegon.utils.math.geometry.vector.Vec3d
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.render.Camera
 import net.minecraft.client.render.Frustum
 import net.minecraft.client.render.entity.EntityRenderDispatcher
 import net.minecraft.entity.Entity
+import net.minecraft.util.math.Vec3d
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import java.util.function.Function
 
 fun interface ShouldEntityRenderListener {
     fun shouldRenderEntity(

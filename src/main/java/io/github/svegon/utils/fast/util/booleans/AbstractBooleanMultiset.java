@@ -33,7 +33,7 @@ public abstract class AbstractBooleanMultiset extends AbstractMultiset<Boolean> 
 
     @Override
     public boolean contains(final boolean key) {
-        return parallelBooleanStream().anyMatch((bl) -> bl == key);
+        return parallelStream().anyMatch((bl) -> bl == key);
     }
 
     @Override
@@ -76,6 +76,17 @@ public abstract class AbstractBooleanMultiset extends AbstractMultiset<Boolean> 
     @Override
     public @NotNull BooleanSet elementSet() {
         return (BooleanSet) super.elementSet();
+    }
+
+    @Override
+    public boolean addAll(BooleanCollection c) {
+        boolean modified = false;
+
+        for (boolean bl : c) {
+            modified |= add(bl);
+        }
+
+        return modified;
     }
 
     @Override

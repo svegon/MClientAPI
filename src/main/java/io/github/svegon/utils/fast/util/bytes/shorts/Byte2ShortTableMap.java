@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.bytes.*;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -293,7 +293,23 @@ public class Byte2ShortTableMap extends AbstractByte2ShortMap {
     private final class EntrySet extends AbstractObjectSet<Byte2ShortMap.Entry> implements FastEntrySet {
         @Override
         public ObjectIterator<Byte2ShortMap.Entry> iterator() {
-            return IterationUtil.transformToObj(fastIterator(), e -> new Entry(e.getByteKey()));
+            final var it = fastIterator();
+            return new ObjectIterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public Byte2ShortMap.Entry next() {
+                    return new Entry(it.next().getByteKey());
+                }
+
+                @Override
+                public void remove() {
+                    it.remove();
+                }
+            };
         }
 
         @Override

@@ -2,7 +2,7 @@ package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.client.event.render.FogModifierCallback;
 import io.github.svegon.mclientapi.client.mixinterface.IStatusEffectFogModifier;
-import io.github.svegon.mclientapi.util.FogContext;
+import io.github.svegon.mclientapi.client.util.FogContext;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

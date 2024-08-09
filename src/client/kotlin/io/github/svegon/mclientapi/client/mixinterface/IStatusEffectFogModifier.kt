@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import io.github.svegon.mclientapi.util.FogContext
+import io.github.svegon.mclientapi.client.util.FogContext
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectInstance

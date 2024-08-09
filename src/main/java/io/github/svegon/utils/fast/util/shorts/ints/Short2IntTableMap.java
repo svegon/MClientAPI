@@ -1,13 +1,12 @@
 package io.github.svegon.utils.fast.util.shorts.ints;
 
-import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import it.unimi.dsi.fastutil.shorts.*;
-import net.jcip.annotations.NotThreadSafe;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -356,7 +355,24 @@ public class Short2IntTableMap extends AbstractShort2IntMap {
     private final class EntrySet extends AbstractObjectSet<Short2IntMap.Entry> implements FastEntrySet {
         @Override
         public ObjectIterator<Short2IntMap.Entry> iterator() {
-            return IterationUtil.transformToObj(fastIterator(), e -> new Entry(e.getShortKey()));
+            final var it = fastIterator();
+            return new ObjectIterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public Short2IntMap.Entry next() {
+                    final var e = it.next();
+                    return new Entry(e.getShortKey());
+                }
+
+                @Override
+                public void remove() {
+                    it.remove();
+                }
+            };
         }
 
         @Override

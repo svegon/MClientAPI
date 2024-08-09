@@ -3,11 +3,11 @@ package io.github.svegon.utils.optional;
 import io.github.svegon.utils.interfaces.function.CharSupplier;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.chars.*;
-import io.github.svegon.utils.collections.stream.CharStream;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 public class OptionalChar {
@@ -521,8 +521,8 @@ public class OptionalChar {
      * @return the optional value as an {@code LongStream}
      * @since 9
      */
-    public CharStream stream() {
-        return CharStream.empty();
+    public IntStream stream() {
+        return IntStream.empty();
     }
 
     /**
@@ -1093,23 +1093,23 @@ public class OptionalChar {
         }
 
         /**
-         * If a value is present, returns a sequential {@link CharStream} containing
-         * only that value, otherwise returns an empty {@code CharStream}.
+         * If a value is present, returns a sequential {@link IntStream} containing
+         * only that value, otherwise returns an empty {@code IntStream}.
          *
          * @apiNote
          * This method can be used to transform a {@code Stream} of optional longs
-         * to an {@code CharStream} of present longs:
+         * to an {@code IntStream} of present longs:
          * <pre>{@code
          *     Stream<OptionalLong> os = ..
-         *     CharStream s = os.flatMapToLong(OptionalChar::stream)
+         *     IntStream s = os.flatMapToLong(OptionalChar::stream)
          * }</pre>
          *
          * @return the optional value as an {@code LongStream}
          * @since 9
          */
         @Override
-        public CharStream stream() {
-            return CharStream.of(value);
+        public IntStream stream() {
+            return IntStream.of(value);
         }
 
         /**

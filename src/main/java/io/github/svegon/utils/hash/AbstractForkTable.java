@@ -6,9 +6,9 @@ import io.github.svegon.utils.collections.ArrayUtil;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.Size64;
 import it.unimi.dsi.fastutil.objects.*;
-import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import oshi.annotation.concurrent.NotThreadSafe;
 
 import java.util.*;
 import java.util.function.BiFunction;

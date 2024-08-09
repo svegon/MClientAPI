@@ -1,6 +1,5 @@
 package io.github.svegon.utils.fast.util.objects.transform.objects;
 
-import io.github.svegon.utils.collections.iteration.IterationUtil;
 import io.github.svegon.utils.fast.util.objects.transform.TransformingObjectMultiset;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -19,7 +18,7 @@ public class L2LTransformingMultiset<T, E> extends TransformingObjectMultiset<T,
 
     @Override
     public ObjectIterator<E> iterator() {
-        return IterationUtil.transformToObj(col.iterator(), forwardingTransformer);
+        return new L2LTransformingIterator<>(col.iterator(), forwardingTransformer);
     }
 
     @Override

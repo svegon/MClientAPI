@@ -1,7 +1,6 @@
 package io.github.svegon.utils.fast.util.bytes;
 
 import io.github.svegon.utils.collections.AbstractMultiset;
-import io.github.svegon.utils.collections.iteration.IterationUtil;
 import io.github.svegon.utils.fast.util.bytes.ints.Byte2IntTableMap;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
@@ -48,7 +47,7 @@ public abstract class AbstractByteMultiset extends AbstractMultiset<Byte> implem
     }
 
     @Override
-    public abstract ByteIterator iterator();
+    public abstract @NotNull ByteIterator iterator();
 
     @Override
     public boolean add(byte key) {
@@ -155,24 +154,37 @@ public abstract class AbstractByteMultiset extends AbstractMultiset<Byte> implem
             }
 
             @Override
-            public ObjectIterator<ByteMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().byte2IntEntrySet().iterator(),
-                        e -> new Entry() {
+            public @NotNull ObjectIterator<ByteMultiset.Entry> iterator() {
+                final var it = entriesFrame().byte2IntEntrySet().iterator();
+
+                return new ObjectIterator<>() {
                     @Override
-                    public byte getByteElement() {
-                        return e.getByteKey();
+                    public boolean hasNext() {
+                        return it.hasNext();
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
-                    }
+                    public ByteMultiset.Entry next() {
+                        final var e = it.next();
+
+                        return new Entry() {
+                            @Override
+                            public byte getByteElement() {
+                                return e.getByteKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
 
                             @Override
                             public int setValue(int value) {
                                 return setCount(getByteElement(), value);
                             }
-                        });
+                        };
+                    }
+                };
             }
 
             @Override
@@ -209,7 +221,7 @@ public abstract class AbstractByteMultiset extends AbstractMultiset<Byte> implem
             private final Set<ByteMultiset.Entry> es = byteEntrySet();
 
             @Override
-            public ByteIterator iterator() {
+            public @NotNull ByteIterator iterator() {
                 return new ByteIterator() {
                     private final Iterator<ByteMultiset.Entry> it = es.iterator();
 
@@ -293,5 +305,42 @@ public abstract class AbstractByteMultiset extends AbstractMultiset<Byte> implem
         public final byte getByteKey() {
             return getByteElement();
         }
+    }
+
+    @Override
+    public boolean containsAll(ByteCollection c) {
+        return c.intParallelStream().allMatch(i -> contains((byte) i));
+    }
+
+    @Override
+    public final byte[] toByteArray() {
+        return toArray(ByteArrays.DEFAULT_EMPTY_ARRAY);
+    }
+
+    @Override
+    public byte[] toArray(byte[] a) {
+        if (a == null || a.length < size()) {
+            return ByteIterators.unwrap(iterator());
+        }
+
+        var i = iterator();
+        var unwrapped = 0;
+
+        while ((unwrapped += ByteIterators.unwrap(i, a)) < size()) {
+            a = ByteArrays.ensureCapacity(a, size());
+        }
+
+        return a;
+    }
+
+    @Override
+    public boolean addAll(ByteCollection c) {
+        boolean changed = false;
+
+        for (byte b : c) {
+            changed |= add(b);
+        }
+
+        return changed;
     }
 }

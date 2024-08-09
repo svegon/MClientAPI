@@ -30,6 +30,11 @@ public abstract class OnNextComputeIterator<E> implements Iterator<E> {
         }
     }
 
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
     protected final void finish() {
         state = State.FINISHED;
     }

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface ByteMultiset extends Multiset<Byte>, ImprovedByteCollection {
+public interface ByteMultiset extends Multiset<Byte>, ByteCollection {
     @Deprecated
     @Override
     default int count(Object o) {
@@ -23,7 +23,7 @@ public interface ByteMultiset extends Multiset<Byte>, ImprovedByteCollection {
     @Deprecated
     @Override
     default void forEach(@NotNull Consumer<? super Byte> action) {
-        ImprovedByteCollection.super.forEach(action);
+        ByteCollection.super.forEach(action);
     }
 
     @Override
@@ -41,13 +41,13 @@ public interface ByteMultiset extends Multiset<Byte>, ImprovedByteCollection {
 
     @Override
     default ByteSpliterator spliterator() {
-        return ImprovedByteCollection.super.spliterator();
+        return ByteCollection.super.spliterator();
     }
 
     @Deprecated
     @Override
     default boolean add(Byte aByte) {
-        return ImprovedByteCollection.super.add(aByte);
+        return ByteCollection.super.add(aByte);
     }
 
     @Deprecated
@@ -61,7 +61,7 @@ public interface ByteMultiset extends Multiset<Byte>, ImprovedByteCollection {
     @Deprecated
     @Override
     default boolean remove(@Nullable Object o) {
-        return ImprovedByteCollection.super.remove(o);
+        return ByteCollection.super.remove(o);
     }
 
     @Override
@@ -104,7 +104,7 @@ public interface ByteMultiset extends Multiset<Byte>, ImprovedByteCollection {
     @Deprecated
     @Override
     default boolean contains(@Nullable Object o) {
-        return ImprovedByteCollection.super.contains(o);
+        return ByteCollection.super.contains(o);
     }
 
     @Deprecated

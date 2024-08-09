@@ -1,7 +1,7 @@
 package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.event.entity.EntityHorizontalSpeedMultiplierCallback;
-import io.github.svegon.mclientapi.event.entity.EntityMoveCallback;
+import io.github.svegon.mclientapi.event.entity.EntityMoveListener;
 import io.github.svegon.mclientapi.event.entity.EntityTeamColorCallback;
 import io.github.svegon.mclientapi.event.entity.IsInvisibleToListener;
 import net.minecraft.entity.Entity;
@@ -34,6 +34,6 @@ public abstract class EntityMixin {
 
     @Inject(method = "move", at = @At("HEAD"), cancellable = true)
     private void onMove(MovementType movementType, Vec3d movement, CallbackInfo ci) {
-        EntityMoveCallback.EVENT.invoker().moveEntity((Entity) (Object) this, movementType, movement, ci);
+        EntityMoveListener.EVENT.invoker().moveEntity((Entity) (Object) this, movementType, movement, ci);
     }
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection {
+public interface ShortMultiset extends Multiset<Short>, ShortCollection {
     @Deprecated
     @Override
     default int count(Object o) {
@@ -24,7 +24,7 @@ public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection 
     @Override
     @SuppressWarnings("deprecation")
     default void forEach(@NotNull Consumer<? super Short> action) {
-        ImprovedShortCollection.super.forEach(action);
+        ShortCollection.super.forEach(action);
     }
 
     @Override
@@ -41,15 +41,15 @@ public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection 
     int add(short value, int i);
 
     @Override
-    default ShortSpliterator spliterator() {
-        return ImprovedShortCollection.super.spliterator();
+    default @NotNull ShortSpliterator spliterator() {
+        return ShortCollection.super.spliterator();
     }
 
     @Deprecated
     @Override
     @SuppressWarnings("deprecation")
     default boolean add(Short aShort) {
-        return ImprovedShortCollection.super.add(aShort);
+        return ShortCollection.super.add(aShort);
     }
 
     @Deprecated
@@ -64,7 +64,7 @@ public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection 
     @Override
     @SuppressWarnings("deprecation")
     default boolean remove(@Nullable Object o) {
-        return ImprovedShortCollection.super.remove(o);
+        return ShortCollection.super.remove(o);
     }
 
     @Override
@@ -93,12 +93,13 @@ public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection 
     boolean setCount(short value, int prev, int count);
 
     @Override
+    @NotNull
     ShortSet elementSet();
 
     @Deprecated
     @Override
     @SuppressWarnings("unchecked")
-    default Set<Multiset.Entry<Short>> entrySet() {
+    default @NotNull Set<Multiset.Entry<Short>> entrySet() {
         return (Set<Multiset.Entry<Short>>) (Object) shortEntrySet();
     }
 
@@ -108,7 +109,7 @@ public interface ShortMultiset extends Multiset<Short>, ImprovedShortCollection 
     @Override
     @SuppressWarnings("deprecation")
     default boolean contains(@Nullable Object o) {
-        return ImprovedShortCollection.super.contains(o);
+        return ShortCollection.super.contains(o);
     }
 
     @Deprecated

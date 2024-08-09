@@ -3,10 +3,10 @@ package io.github.svegon.utils.optional;
 import io.github.svegon.utils.interfaces.function.FloatSupplier;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.floats.*;
-import io.github.svegon.utils.collections.stream.FloatStream;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.DoubleStream;
 
 public class OptionalFloat {
     private static final OptionalFloat EMPTY = new OptionalFloat();
@@ -500,22 +500,22 @@ public class OptionalFloat {
     }
 
     /**
-     * If a value is present, returns a sequential {@link FloatStream} containing
-     * only that value, otherwise returns an empty {@code FloatStream}.
+     * If a value is present, returns a sequential {@link DoubleStream} containing
+     * only that value, otherwise returns an empty {@code DoubleStream}.
      *
      * @apiNote
      * This method can be used to transform a {@code Stream} of optional Floats
-     * to an {@code FloatStream} of present Floats:
+     * to an {@code DoubleStream} of present Floats:
      * <pre>{@code
      *     Stream<OptionalFloat> os = ..
-     *     FloatStream s = os.flatMapToFloat(OptionalFloat::stream)
+     *     DoubleStream s = os.flatMapToFloat(OptionalFloat::stream)
      * }</pre>
      *
-     * @return the optional value as an {@code FloatStream}
+     * @return the optional value as an {@code DoubleStream}
      * @since 9
      */
-    public FloatStream stream() {
-        return FloatStream.empty();
+    public DoubleStream stream() {
+        return DoubleStream.empty();
     }
 
     /**
@@ -1086,23 +1086,23 @@ public class OptionalFloat {
         }
 
         /**
-         * If a value is present, returns a sequential {@link FloatStream} containing
-         * only that value, otherwise returns an empty {@code FloatStream}.
+         * If a value is present, returns a sequential {@link DoubleStream} containing
+         * only that value, otherwise returns an empty {@code DoubleStream}.
          *
          * @apiNote
          * This method can be used to transform a {@code Stream} of optional Floats
-         * to an {@code FloatStream} of present Floats:
+         * to an {@code DoubleStream} of present Floats:
          * <pre>{@code
          *     Stream<OptionalFloat> os = ..
-         *     FloatStream s = os.flatMapToFloat(OptionalFloat::stream)
+         *     DoubleStream s = os.flatMapToFloat(OptionalFloat::stream)
          * }</pre>
          *
-         * @return the optional value as an {@code FloatStream}
+         * @return the optional value as an {@code DoubleStream}
          * @since 9
          */
         @Override
-        public FloatStream stream() {
-            return FloatStream.of(value);
+        public DoubleStream stream() {
+            return DoubleStream.of(value);
         }
 
         /**

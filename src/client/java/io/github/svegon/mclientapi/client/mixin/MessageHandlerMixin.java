@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.client.mixin;
 
-import io.github.svegon.mclientapi.event.network.microsoft_validation.MessageStatusCallback;
+import io.github.svegon.mclientapi.client.event.network.microsoft_validation.MessageStatusCallback;
 import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.client.network.message.MessageTrustStatus;
 import net.minecraft.network.message.SignedMessage;

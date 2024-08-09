@@ -1,10 +1,10 @@
 package io.github.svegon.utils.fast.util.doubles;
 
 import io.github.svegon.utils.collections.AbstractMultiset;
-import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import it.unimi.dsi.fastutil.doubles.*;
+import it.unimi.dsi.fastutil.objects.AbstractObjectIterator;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -191,23 +191,39 @@ public abstract class AbstractDoubleMultiset extends AbstractMultiset<Double> im
 
             @Override
             public ObjectIterator<DoubleMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().double2IntEntrySet().iterator(),
-                        e -> new Entry() {
+                final var it = entriesFrame().double2IntEntrySet().iterator();
+                return new AbstractObjectIterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public DoubleMultiset.Entry next() {
+                        final var e = it.next();
+                        return new Entry() {
                             @Override
                             public int setValue(int value) {
                                 return setCount(getDoubleElement(), value);
                             }
 
                             @Override
-                    public double getDoubleElement() {
-                        return e.getDoubleKey();
+                            public double getDoubleElement() {
+                                return e.getDoubleKey();
+                            }
+
+                            @Override
+                            public int getCount() {
+                                return e.getIntValue();
+                            }
+                        };
                     }
 
                     @Override
-                    public int getCount() {
-                        return e.getIntValue();
+                    public void remove() {
+                        it.remove();
                     }
-                });
+                };
             }
 
             @Override

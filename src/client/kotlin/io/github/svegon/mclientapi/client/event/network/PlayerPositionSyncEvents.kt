@@ -42,42 +42,42 @@ object PlayerPositionSyncEvents {
 
     val AFTER_VEHICLE_PACKETS_SEND_EVENT: Event<AfterVehiclePacketsSend> =
         EventFactory.createArrayBacked(
-            AfterVehiclePacketsSend::class.java, { player: ClientPlayerEntity -> },
-            Function<Array<AfterVehiclePacketsSend>, AfterVehiclePacketsSend> { listeners: Array<AfterVehiclePacketsSend> ->
-                AfterVehiclePacketsSend { player: ClientPlayerEntity ->
-                    for (listener in listeners) {
-                        listener.afterVehiclePacketsSend(player)
-                    }
+            AfterVehiclePacketsSend::class.java, AfterVehiclePacketsSend { player: ClientPlayerEntity -> }
+        ) { listeners: Array<AfterVehiclePacketsSend> ->
+            AfterVehiclePacketsSend { player: ClientPlayerEntity ->
+                for (listener in listeners) {
+                    listener.afterVehiclePacketsSend(player)
                 }
-            })
+            }
+        }
 
     @JvmField
     val BEFORE_MOVEMENT_PACKETS_SEND_EVENT: Event<BeforeMovementPacketsSend> =
         EventFactory.createArrayBacked(
             BeforeMovementPacketsSend::class.java,
-            BeforeMovementPacketsSend { player: ClientPlayerEntity?, callback: CallbackInfo? -> },
-            Function<Array<BeforeMovementPacketsSend>, BeforeMovementPacketsSend> { listeners: Array<BeforeMovementPacketsSend> ->
-                BeforeMovementPacketsSend { player: ClientPlayerEntity?, callback: CallbackInfo ->
-                    for (listener in listeners) {
-                        listener.beforePacketsSend(player, callback)
+            BeforeMovementPacketsSend { player: ClientPlayerEntity, callback: CallbackInfo -> }
+        ) { listeners: Array<BeforeMovementPacketsSend> ->
+            BeforeMovementPacketsSend { player: ClientPlayerEntity, callback: CallbackInfo ->
+                for (listener in listeners) {
+                    listener.beforePacketsSend(player, callback)
 
-                        if (callback.isCancelled()) {
-                            return@BeforeMovementPacketsSend
-                        }
+                    if (callback.isCancelled) {
+                        return@BeforeMovementPacketsSend
                     }
                 }
-            })
+            }
+        }
 
     @JvmField
     val AFTER_MOVEMENT_PACKETS_SEND_EVENT: Event<AfterMovementPacketsSend> =
         EventFactory.createArrayBacked(
             AfterMovementPacketsSend::class.java,
-            AfterMovementPacketsSend { player: ClientPlayerEntity? -> },
-            Function<Array<AfterMovementPacketsSend>, AfterMovementPacketsSend> { listeners: Array<AfterMovementPacketsSend> ->
-                AfterMovementPacketsSend { player: ClientPlayerEntity? ->
-                    for (listener in listeners) {
-                        listener.afterPacketsSend(player)
-                    }
+            AfterMovementPacketsSend { player: ClientPlayerEntity -> }
+        ) { listeners: Array<AfterMovementPacketsSend> ->
+            AfterMovementPacketsSend { player: ClientPlayerEntity ->
+                for (listener in listeners) {
+                    listener.afterPacketsSend(player)
                 }
-            })
+            }
+        }
 }

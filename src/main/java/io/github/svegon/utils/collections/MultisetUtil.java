@@ -24,8 +24,7 @@ import it.unimi.dsi.fastutil.booleans.BooleanIterator;
 import it.unimi.dsi.fastutil.booleans.BooleanIterators;
 import it.unimi.dsi.fastutil.booleans.BooleanSet;
 import it.unimi.dsi.fastutil.booleans.BooleanSets;
-import it.unimi.dsi.fastutil.bytes.ByteIterator;
-import it.unimi.dsi.fastutil.bytes.ByteIterators;
+import it.unimi.dsi.fastutil.bytes.*;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
 import it.unimi.dsi.fastutil.bytes.ByteSets;
 import it.unimi.dsi.fastutil.chars.CharIterator;
@@ -53,16 +52,14 @@ import it.unimi.dsi.fastutil.shorts.ShortIterator;
 import it.unimi.dsi.fastutil.shorts.ShortIterators;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import it.unimi.dsi.fastutil.shorts.ShortSets;
-import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
+import oshi.annotation.concurrent.Immutable;
 
 import java.util.Map;
 import java.util.Objects;
 
-public final class MultisetUtil {
-    private MultisetUtil() {
-        throw new UnsupportedOperationException();
-    }
+public enum MultisetUtil {
+    ;
 
     public static final ObjectMultiset<?> EMPTY_OBJECT_MULTISET = new EmptyObjectMultiset();
     public static final BooleanMultiset EMPTY_BOOLEAN_MULTISET = new EmptyBooleanMultiset();
@@ -427,7 +424,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public ByteIterator iterator() {
+        public @NotNull ByteIterator iterator() {
             return ByteIterators.EMPTY_ITERATOR;
         }
 
@@ -438,6 +435,16 @@ public final class MultisetUtil {
 
         @Override
         public boolean contains(byte key) {
+            return false;
+        }
+
+        @Override
+        public byte[] toArray(byte[] a) {
+            return a != null ? a : ByteArrays.EMPTY_ARRAY;
+        }
+
+        @Override
+        public boolean addAll(it.unimi.dsi.fastutil.bytes.ByteCollection c) {
             return false;
         }
 
@@ -470,7 +477,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public ByteIterator iterator() {
+        public @NotNull ByteIterator iterator() {
             return ByteIterators.singleton(element);
         }
 
@@ -625,7 +632,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -680,7 +687,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public ShortIterator iterator() {
+        public @NotNull ShortIterator iterator() {
             return ShortIterators.singleton(element);
         }
 
@@ -730,7 +737,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -742,7 +749,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public IntIterator iterator() {
+        public @NotNull IntIterator iterator() {
             return IntIterators.EMPTY_ITERATOR;
         }
 
@@ -785,7 +792,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public IntIterator iterator() {
+        public @NotNull IntIterator iterator() {
             return IntIterators.singleton(element);
         }
 
@@ -835,7 +842,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -847,7 +854,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public LongIterator iterator() {
+        public @NotNull LongIterator iterator() {
             return LongIterators.EMPTY_ITERATOR;
         }
 
@@ -890,7 +897,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public LongIterator iterator() {
+        public @NotNull LongIterator iterator() {
             return LongIterators.singleton(element);
         }
 
@@ -940,7 +947,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -952,7 +959,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public FloatIterator iterator() {
+        public @NotNull FloatIterator iterator() {
             return FloatIterators.EMPTY_ITERATOR;
         }
 
@@ -1045,7 +1052,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -1057,7 +1064,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public DoubleIterator iterator() {
+        public @NotNull DoubleIterator iterator() {
             return DoubleIterators.EMPTY_ITERATOR;
         }
 
@@ -1100,7 +1107,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public DoubleIterator iterator() {
+        public @NotNull DoubleIterator iterator() {
             return DoubleIterators.singleton(element);
         }
 
@@ -1150,7 +1157,7 @@ public final class MultisetUtil {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return String.valueOf(element);
         }
     }
@@ -1167,8 +1174,8 @@ public final class MultisetUtil {
 
         @Override
         public boolean equals(Object obj) {
-            return this == obj || (obj instanceof Multiset.Entry e && getElement().equals(e.getElement())
-                    && getCount() == e.getCount()) || (obj instanceof Map.Entry entry
+            return this == obj || (obj instanceof Multiset.Entry<?> e && getElement().equals(e.getElement())
+                    && getCount() == e.getCount()) || (obj instanceof Map.Entry<?, ?> entry
                     && entry.getValue() instanceof Integer && getKey().equals(entry.getKey())
                     && ((int) entry.getValue()) == getCount());
         }
@@ -1203,8 +1210,8 @@ public final class MultisetUtil {
 
         @Override
         public boolean equals(Object obj) {
-            return this == obj || (obj instanceof Multiset.Entry e && e.getElement() == null
-                    && e.getCount() == getCount()) || (obj instanceof Map.Entry entry
+            return this == obj || (obj instanceof Multiset.Entry<?> e && e.getElement() == null
+                    && e.getCount() == getCount()) || (obj instanceof Map.Entry<?, ?> entry
                     && entry.getValue() instanceof Integer && entry.getKey() == null
                     && ((Integer) entry.getValue()) == getCount());
         }

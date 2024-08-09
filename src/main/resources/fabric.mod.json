@@ -18,10 +18,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "io.github.svegon.${modid}.client.MClientAPIClientMain"
+      "io.github.svegon.mclientapi.client.MClientAPIClientMain"
     ],
     "main": [
-      "io.github.svegon.${modid}.MClientAPI"
+      "io.github.svegon.mclientapi.MClientAPI"
     ]
   },
   "mixins": [

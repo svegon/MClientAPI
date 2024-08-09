@@ -4,6 +4,7 @@ import io.github.svegon.utils.collections.AbstractMultiset;
 import io.github.svegon.utils.collections.iteration.IterationUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
+import it.unimi.dsi.fastutil.objects.AbstractObjectIterator;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -155,8 +156,17 @@ public abstract class AbstractShortMultiset extends AbstractMultiset<Short> impl
 
             @Override
             public ObjectIterator<ShortMultiset.Entry> iterator() {
-                return IterationUtil.transformToObj(entriesFrame().short2IntEntrySet().iterator(),
-                        e -> new Entry() {
+                final var it = entriesFrame().short2IntEntrySet().iterator();
+                return new AbstractObjectIterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public ShortMultiset.Entry next() {
+                        final var e = it.next();
+                        return new Entry() {
                             @Override
                             public int setValue(int value) {
                                 return setCount(getShortElement(), value);
@@ -171,7 +181,14 @@ public abstract class AbstractShortMultiset extends AbstractMultiset<Short> impl
                             public int getCount() {
                                 return e.getIntValue();
                             }
-                        });
+                        };
+                    }
+
+                    @Override
+                    public void remove() {
+                        it.remove();
+                    }
+                };
             }
 
             @Override
@@ -274,6 +291,43 @@ public abstract class AbstractShortMultiset extends AbstractMultiset<Short> impl
                 return AbstractShortMultiset.this.contains(value);
             }
         };
+    }
+
+    @Override
+    public short[] toShortArray() {
+        return toArray(ShortArrays.DEFAULT_EMPTY_ARRAY);
+    }
+
+    @Override
+    public short[] toArray(short[] a) {
+        if (a == null || a.length < size()) {
+            return ShortIterators.unwrap(iterator());
+        }
+
+        var i = iterator();
+        var unwrapped = 0;
+
+        while ((unwrapped += ShortIterators.unwrap(i, a)) < size()) {
+            a = ShortArrays.ensureCapacity(a, size());
+        }
+
+        return a;
+    }
+
+    @Override
+    public boolean addAll(ShortCollection c) {
+        boolean changed = false;
+
+        for (short s : c) {
+            changed |= add(s);
+        }
+
+        return changed;
+    }
+
+    @Override
+    public boolean containsAll(ShortCollection c) {
+        return c.intParallelStream().allMatch(i -> contains((short) i));
     }
 
     public static abstract class Entry extends AbstractMultiset.Entry<Short> implements ShortMultiset.Entry,
