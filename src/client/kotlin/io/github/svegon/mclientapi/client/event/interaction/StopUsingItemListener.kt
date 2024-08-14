@@ -10,7 +10,7 @@ fun interface StopUsingItemListener {
     fun onStoppingUsingItem(
         interactionManager: ClientPlayerInteractionManager,
         player: PlayerEntity,
-        ci: CallbackInfo
+        callback: CallbackInfo
     )
 
     companion object {

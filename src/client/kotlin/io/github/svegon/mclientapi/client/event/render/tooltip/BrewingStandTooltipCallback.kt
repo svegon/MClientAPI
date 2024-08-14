@@ -10,19 +10,19 @@ import net.minecraft.text.Text
 
 fun interface BrewingStandTooltipCallback {
     fun appendBrewingStandTooltip(
-        block: BrewingStandBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>,
+        block: BrewingStandBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: MutableList<Text>,
         options: TooltipType
     )
 
     companion object {
         @JvmField
-        val EVENT: Event<BrewingStandTooltipCallback> = EventFactory.createArrayBacked<BrewingStandTooltipCallback>(
+        val EVENT: Event<BrewingStandTooltipCallback> = EventFactory.createArrayBacked(
             BrewingStandTooltipCallback::class.java,
             BrewingStandTooltipCallback { block: BrewingStandBlock, stack: ItemStack, context: Item.TooltipContext,
-                                          tooltip: List<Text>, options: TooltipType -> }) {
+                                          tooltip, options: TooltipType -> }) {
             listeners: Array<BrewingStandTooltipCallback> ->
             BrewingStandTooltipCallback { block: BrewingStandBlock, stack: ItemStack, context: Item.TooltipContext,
-                                          tooltip: List<Text>, options: TooltipType ->
+                                          tooltip, options: TooltipType ->
                 for (listener in listeners) {
                     listener.appendBrewingStandTooltip(block, stack, context, tooltip, options)
                 }

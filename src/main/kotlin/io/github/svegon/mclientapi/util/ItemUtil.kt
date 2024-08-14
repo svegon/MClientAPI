@@ -1,6 +1,7 @@
 package io.github.svegon.mclientapi.util
 
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.Inventories
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.Item
@@ -11,39 +12,38 @@ import net.minecraft.screen.slot.FurnaceOutputSlot
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.TradeOutputSlot
 import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.math.MathHelper
 import net.minecraft.world.RaycastContext
 import net.minecraft.world.RaycastContext.FluidHandling
+import net.minecraft.world.RaycastContext.ShapeType
 import net.minecraft.world.World
-import java.util.*
 import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.function.ToIntFunction
 
 object ItemUtil {
-    val PERMANENT_SLOT: Predicate<Slot> = Predicate { slot: Slot -> slot.javaClass == Slot::class.java }
-    val ITEM_CONTAINER_SLOT: Predicate<Slot> = Predicate { slot: Slot? ->
-        !(slot is FurnaceOutputSlot
-                || slot is CraftingResultSlot || slot is TradeOutputSlot)
+    val PERMANENT_SLOT = { slot: Slot -> slot::class == Slot::class }
+    val OUTPUT_SLOT = { slot: Slot ->
+        !(slot is FurnaceOutputSlot || slot is CraftingResultSlot || slot is TradeOutputSlot)
     }
+    val ITEM_CONTAINER_SLOT = { slot: Slot -> !OUTPUT_SLOT(slot)}
 
     fun Inventory.getSlotMatching(
-        itemPredicate: Predicate<ItemStack>
+        itemPredicate: (ItemStack) -> Boolean,
     ): Int {
         for (i in 0 until size()) {
-            if (itemPredicate.test(getStack(i))) return i
+            if (itemPredicate(getStack(i))) return i
         }
 
         return -1
     }
 
     fun Inventory.getSlotWithItem(item: Item): Int {
-        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
+        return getSlotMatching { stack: ItemStack -> stack.isOf(item) }
     }
 
     fun ScreenHandler.getSlotMatching(
         slotPredicate: Predicate<Slot>,
-        itemPredicate: Predicate<ItemStack>
+        itemPredicate: Predicate<ItemStack>,
     ): Int {
         for (i in slots.indices) {
             val slot = slots[i]
@@ -61,59 +61,29 @@ object ItemUtil {
     }
 
     fun ScreenHandler.getSlotMatching(
-        itemPredicate: Predicate<ItemStack>
+        itemPredicate: Predicate<ItemStack>,
     ): Int {
         return getSlotMatching(ITEM_CONTAINER_SLOT, itemPredicate)
     }
 
     fun ScreenHandler.getSlotMatching(slotPredicate: Predicate<Slot>, item: Item): Int {
-        return getSlotMatching(slotPredicate) { stack: ItemStack -> !stack.isEmpty && stack.isOf(item) }
+        return getSlotMatching(slotPredicate) { stack: ItemStack -> stack.isOf(item) }
     }
 
     fun ScreenHandler.getSlotWithItem(item: Item): Int {
         return getSlotMatching(ITEM_CONTAINER_SLOT, item)
     }
 
-    fun Inventory.getSlotWithAny(items: Collection<Item?>): Int {
-        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
+    fun Inventory.getSlotWithAny(items: Collection<Item>): Int {
+        return getSlotMatching { stack: ItemStack -> items.contains(stack.item) }
     }
 
-    fun ScreenHandler.getSlotWithAny(items: Collection<Item?>): Int {
-        return getSlotMatching { stack: ItemStack -> !stack.isEmpty && items.contains(stack.item) }
+    fun ScreenHandler.getSlotWithAny(items: Collection<Item>): Int {
+        return getSlotMatching { stack: ItemStack -> items.contains(stack.item) }
     }
 
     fun ScreenHandler.getEmptySlot(): Int {
         return getSlotMatching { obj: ItemStack -> obj.isEmpty }
-    }
-
-    /**
-     * taken from Item.raycast
-     *
-     * @param world
-     * @param player
-     * @param fluidHandling
-     * @return
-     */
-    fun raycast(
-        world: World, player: PlayerEntity,
-        fluidHandling: FluidHandling
-    ): BlockHitResult {
-        val f = player.pitch
-        val g = player.yaw
-        val vec3d = player.getCameraPosVec(1.0f)
-        val h = MathHelper.cos(-g * 0.017453292f - 3.1415927f)
-        val i = MathHelper.sin(-g * 0.017453292f - 3.1415927f)
-        val j = -MathHelper.cos(-f * 0.017453292f)
-        val k = MathHelper.sin(-f * 0.017453292f)
-        val l = i * j
-        val n = h * j
-        val vec3d2 = vec3d.add(l.toDouble() * 5.0, k.toDouble() * 5.0, n.toDouble() * 5.0)
-        return world.raycast(
-            RaycastContext(
-                vec3d, vec3d2,
-                RaycastContext.ShapeType.OUTLINE, fluidHandling, player
-            )
-        )
     }
 
     fun Inventory.countItems(stackToCount: ToIntFunction<ItemStack>): Int {
@@ -130,7 +100,52 @@ object ItemUtil {
         return countItems { stack: ItemStack -> if (!stack.isEmpty && stack.isOf(item)) stack.count else 0 }
     }
 
+    fun PlayerInventory.findHotbarSlotMatching(itemPredicate: (ItemStack) -> Boolean): Int {
+        for (i in 0..<PlayerInventory.getHotbarSize()) {
+            if (itemPredicate(main[i])) {
+                return i
+            }
+        }
+
+        return -1
+    }
+
+    fun PlayerInventory.findHotbarSlotWith(item: Item): Int {
+        return findHotbarSlotMatching { stack: ItemStack -> stack.isOf(item) }
+    }
+
+    fun PlayerInventory.findHotbarSlotWith(items: Collection<Item>): Int {
+        return findHotbarSlot { item: Item -> items.contains(item) }
+    }
+
+    fun PlayerInventory.findHotbarSlot(itemPredicate: (Item) -> Boolean): Int {
+        return findHotbarSlotMatching { stack: ItemStack -> itemPredicate(stack.item) }
+    }
+
+    fun PlayerInventory.getEmptyHotbarSlot(): Int {
+        return findHotbarSlotMatching { stack: ItemStack -> stack.isEmpty }
+    }
+
+    /**
+     * taken from Item.raycast
+     *
+     * @param world
+     * @param player
+     * @param fluidHandling
+     * @return
+     */
+    fun raycast(
+        world: World, player: PlayerEntity,
+        fluidHandling: FluidHandling,
+    ): BlockHitResult {
+        val vec3d = player.eyePos
+        val vec3d2 = vec3d.add(player.getRotationVector(player.pitch, player.yaw)
+            .multiply(player.blockInteractionRange))
+        return world.raycast(RaycastContext(vec3d, vec3d2, ShapeType.OUTLINE, fluidHandling, player))
+    }
+
     fun Inventory.asList(): MutableList<ItemStack> {
+        val inv = this
         return object : AbstractMutableList<ItemStack>() {
             override fun get(index: Int): ItemStack {
                 return getStack(index)
@@ -150,7 +165,7 @@ object ItemUtil {
             }
 
             override fun isEmpty(): Boolean {
-                return isEmpty
+                return inv.isEmpty
             }
 
             override fun removeAt(index: Int): ItemStack {

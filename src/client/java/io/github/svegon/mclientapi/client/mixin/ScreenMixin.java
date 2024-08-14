@@ -1,13 +1,18 @@
 package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.client.mixinterface.IScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.Objects;
 
 @Mixin(Screen.class)
 public abstract class ScreenMixin extends AbstractParentElement implements Drawable, IScreen {
@@ -22,6 +27,13 @@ public abstract class ScreenMixin extends AbstractParentElement implements Drawa
     @Shadow protected abstract void remove(Element child);
 
     @Shadow protected abstract void clearChildren();
+
+    @Shadow @Nullable protected MinecraftClient client;
+
+    @Override
+    public @NotNull MinecraftClient getClient() {
+        return Objects.requireNonNull(client);
+    }
 
     @Override
     public <T extends Element & Drawable & Selectable> T addDrawableElement(T drawableElement) {

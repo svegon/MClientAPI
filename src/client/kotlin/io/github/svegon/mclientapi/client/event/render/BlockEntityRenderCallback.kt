@@ -1,5 +1,6 @@
 package io.github.svegon.mclientapi.client.event.render
 
+import io.github.svegon.mclientapi.client.mixinterface.IRenderTickCounter
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.block.entity.BlockEntity

@@ -1,6 +1,7 @@
 package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.client.mixinterface.IClientWorld;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PendingUpdateManager;
 import net.minecraft.client.world.ClientWorld;
@@ -27,12 +28,19 @@ public abstract class ClientWorldMixin extends World implements IClientWorld {
     @Final
     private PendingUpdateManager pendingUpdateManager;
 
+    @Shadow @Final private MinecraftClient client;
+
     private ClientWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef,
                              DynamicRegistryManager registryManager, RegistryEntry<DimensionType> dimensionEntry,
                              Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long biomeAccess,
                              int maxChainedNeighborUpdates) {
         super(properties, registryRef, registryManager, dimensionEntry, profiler, isClient, debugWorld, biomeAccess,
                 maxChainedNeighborUpdates);
+    }
+
+    @Override
+    public @NotNull MinecraftClient getClient() {
+        return client;
     }
 
     @Override

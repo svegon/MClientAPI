@@ -11,7 +11,7 @@ import net.minecraft.text.Text
 fun interface SmeltingBlockTooltipCallback {
     fun appendSmeltingBlockTooltip(
         block: AbstractFurnaceBlock, stack: ItemStack, context: Item.TooltipContext,
-        tooltip: List<Text>, options: TooltipType
+        tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {
@@ -19,10 +19,10 @@ fun interface SmeltingBlockTooltipCallback {
         val EVENT: Event<SmeltingBlockTooltipCallback> = EventFactory.createArrayBacked<SmeltingBlockTooltipCallback>(
             SmeltingBlockTooltipCallback::class.java,
             SmeltingBlockTooltipCallback { block: AbstractFurnaceBlock, stack: ItemStack, context: Item.TooltipContext,
-                                           tooltip: List<Text>, options: TooltipType -> })
+                                           tooltip, options: TooltipType -> })
         { listeners: Array<SmeltingBlockTooltipCallback> -> SmeltingBlockTooltipCallback {
             block: AbstractFurnaceBlock, stack: ItemStack, context: Item.TooltipContext,
-            tooltip: List<Text>, options: TooltipType ->
+            tooltip, options: TooltipType ->
                 for (listener in listeners) {
                     listener.appendSmeltingBlockTooltip(block, stack, context, tooltip, options)
                 }

@@ -13,6 +13,8 @@
     "BrewingStandBlockMixin",
     "CameraMixin",
     "ChestBlockMixin",
+    "ClientConfigurationNetworkHandlerMixin",
+    "ClientLoginNetworkHandlerMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",

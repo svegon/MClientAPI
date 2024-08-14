@@ -78,8 +78,8 @@ public abstract class GameRendererMixin implements IGameRenderer {
         client.getProfiler().push("modded 2D renders");
 
         try {
-            GUIRenderListener.EVENT.invoker().onGUIRender(((IRenderTickCounter) tickCounter).getTimeMillis(), tick,
-                    drawContext, i, j, tickCounter.getLastFrameDuration());
+            GUIRenderListener.EVENT.invoker().onGUIRender((GameRenderer) (Object)
+                            this, tickCounter, tick, drawContext, i, j, tickCounter.getLastFrameDuration());
         } catch (Throwable t) {
             CrashReport crashReport = CrashReport.create(t, "Rendering GUI event (mods)");
             CrashReportSection crashReportSection = crashReport.addElement("GUI eventdetails");

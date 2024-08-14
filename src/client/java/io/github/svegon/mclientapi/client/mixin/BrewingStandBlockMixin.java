@@ -1,5 +1,6 @@
 package io.github.svegon.mclientapi.client.mixin;
 
+import io.github.svegon.mclientapi.client.event.render.tooltip.BrewingStandTooltipCallback;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.BrewingStandBlock;
 import net.minecraft.item.Item;
@@ -19,5 +20,7 @@ public abstract class BrewingStandBlockMixin extends BlockWithEntity {
     @Override
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
         super.appendTooltip(stack, context, tooltip, options);
+        BrewingStandTooltipCallback.EVENT.invoker().appendBrewingStandTooltip((BrewingStandBlock) (Object)
+                this, stack, context, tooltip, options);
     }
 }

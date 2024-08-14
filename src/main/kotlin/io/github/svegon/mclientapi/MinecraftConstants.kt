@@ -1,5 +1,7 @@
 package io.github.svegon.mclientapi
 
+import net.minecraft.network.PacketByteBuf
+
 object MinecraftConstants {
     /**
      * maximum number of pages in a writable/written book
@@ -38,6 +40,16 @@ object MinecraftConstants {
     const val SQUARED_BLOCK_REACH_DISTANCE: Int = 25
 
     /**
+     * maximum number of characters in a single chat message (not command)
+     */
+    const val MAX_CHAT_MESSAGE_LENGTH = 256
+
+    /**
+     * maximum number of characters in a single command string (not chat message)
+     */
+    const val MAX_COMMAND_LENGTH = PacketByteBuf.MAX_TEXT_LENGTH
+
+    /**
      * maximum number of rows in a sign's text
      */
     const val SIGN_TEXT_HEIGHT: Int = 4
@@ -51,10 +63,4 @@ object MinecraftConstants {
      * status effect duration applied when none is specified by a command
      */
     const val POTION_EFFECT_DEFAULT_DURATION: Int = 600
-    const val POTION_EFFECTS_NBT_KEY: String = "CustomPotionEffects"
-    const val POTION_EFFECT_AMPLIFIER_KEY: String = "Amplifier"
-    const val POTION_EFFECT_DURATION_KEY: String = "Duration"
-    const val POTION_EFFECT_ID_KEY: String = "Id"
-    const val FIREWORK_ENTITY_TAG: String = "Fireworks"
-    const val FIREWORKS_EXPLOSIONS_TAG: String = "Explosions"
 }

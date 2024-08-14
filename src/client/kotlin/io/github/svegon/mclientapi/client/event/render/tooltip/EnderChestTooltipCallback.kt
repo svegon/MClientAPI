@@ -10,7 +10,7 @@ import net.minecraft.text.Text
 
 fun interface EnderChestTooltipCallback {
     fun appendEnderChestTooltip(block: EnderChestBlock, stack: ItemStack, context: Item.TooltipContext,
-                                tooltip: List<Text>, options: TooltipType
+                                tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {

@@ -8,6 +8,7 @@ import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.network.ClientPlayerInteractionManager
 import net.minecraft.client.render.GameRenderer
 import net.minecraft.entity.Entity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -219,5 +220,10 @@ object ClientInteractionUtil {
 
     fun MinecraftClient.useItem(): ActionResult {
         return useItem(crosshairTarget, player!!, interactionManager!!, gameRenderer)
+    }
+
+    fun ClientPlayerInteractionManager.attack(player: PlayerEntity, target: Entity) {
+        attackEntity(player, target)
+        player.swingHand(Hand.MAIN_HAND)
     }
 }

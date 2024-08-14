@@ -10,7 +10,8 @@ import net.minecraft.text.Text
 
 fun interface BarrelTooltipCallback {
     fun appendBarrelTooltip(
-        block: BarrelBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>, options: TooltipType
+        block: BarrelBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: MutableList<Text>,
+        options: TooltipType
     )
 
     companion object {

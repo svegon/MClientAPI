@@ -10,7 +10,8 @@ import net.minecraft.text.Text
 
 fun interface ChestTooltipCallback {
     fun appendChestTooltip(
-        block: ChestBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>, options: TooltipType
+        block: ChestBlock, stack: ItemStack, context: Item.TooltipContext,
+        tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {

@@ -10,7 +10,8 @@ import net.minecraft.text.Text
 
 fun interface HopperTooltipCallback {
     fun appendHopperTooltip(
-        block: HopperBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>, options: TooltipType
+        block: HopperBlock, stack: ItemStack, context: Item.TooltipContext,
+        tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {
@@ -20,7 +21,7 @@ fun interface HopperTooltipCallback {
             HopperTooltipCallback { block: HopperBlock, stack: ItemStack, context: Item.TooltipContext,
                                     tooltip: List<Text>, options: TooltipType -> }) { listeners: Array<HopperTooltipCallback> ->
             HopperTooltipCallback { block: HopperBlock, stack: ItemStack, context: Item.TooltipContext,
-                                    tooltip: List<Text>, options: TooltipType ->
+                                    tooltip, options: TooltipType ->
                 for (listener in listeners) {
                     listener.appendHopperTooltip(block, stack, context, tooltip, options)
                 }

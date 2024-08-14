@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import io.github.svegon.mclientapi.mixininterface.IClientPlayPacketListener
+import io.github.svegon.mclientapi.mixininterface.network.IClientPlayPacketListener
 import net.minecraft.client.network.PlayerListEntry
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.registry.DynamicRegistryManager

@@ -10,7 +10,8 @@ import net.minecraft.text.Text
 
 fun interface DispenserOrDropperTooltipCallback {
     fun appendDispenserOrDropperTooltip(
-        block: DispenserBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>, options: TooltipType
+        block: DispenserBlock, stack: ItemStack, context: Item.TooltipContext,
+        tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {

@@ -1,8 +1,12 @@
-package io.github.svegon.mclientapi.event.network.packet_direct
+package io.github.svegon.mclientapi.event.network
 
 import net.minecraft.network.listener.ClientConfigurationPacketListener
+import net.minecraft.network.listener.PacketListener
+import net.minecraft.network.packet.Packet
 import net.minecraft.network.packet.s2c.common.*
 import net.minecraft.network.packet.s2c.config.*
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
+import java.util.function.Function
 
 interface S2CConfigurationPacketListener : S2CPacketListener, ClientConfigurationPacketListener {
     override fun onCookieRequest(packet: CookieRequestS2CPacket) {}
@@ -38,4 +42,22 @@ interface S2CConfigurationPacketListener : S2CPacketListener, ClientConfiguratio
     override fun onSelectKnownPacks(packet: SelectKnownPacksS2CPacket) {}
 
     override fun onResetChat(packet: ResetChatS2CPacket) {}
+
+    object EmptyInvoker : S2CConfigurationPacketListener
+
+    object InvokerFactory : Function<Array<S2CConfigurationPacketListener>, S2CConfigurationPacketListener> {
+        override fun apply(listeners: Array<S2CConfigurationPacketListener>): S2CConfigurationPacketListener {
+            return object : S2CConfigurationPacketListener {
+                override fun intercept(packet: Packet<out PacketListener>, callback: CallbackInfo) {
+                    for (listener in listeners) {
+                        listener.intercept(packet, callback)
+
+                        if (callback.isCancelled) {
+                            return
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

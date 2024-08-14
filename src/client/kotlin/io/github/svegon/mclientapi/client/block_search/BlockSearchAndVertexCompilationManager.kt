@@ -11,8 +11,8 @@ import java.util.function.IntSupplier
 import java.util.function.Predicate
 
 class BlockSearchAndVertexCompilationManager(
-    blockCondition: Predicate<in BlockPos.Mutable>,
-    limit: IntSupplier, minHeight: Int, maxHeight: Int
+    blockCondition: (BlockPos.Mutable) -> Boolean,
+    limit: () -> Int, minHeight: Int, maxHeight: Int
 ) : BlockSearchManager(blockCondition, limit, minHeight, maxHeight) {
     private var sideVertices: VertexBuffer? = null
     private var sideVertexesTask: ForkJoinTask<VertexBuffer>? = null
@@ -25,13 +25,13 @@ class BlockSearchAndVertexCompilationManager(
     }
 
     constructor(
-        blockCondition: Predicate<in BlockPos.Mutable>,
+        blockCondition: (BlockPos.Mutable) -> Boolean,
         minHeight: Int, maxHeight: Int
-    ) : this(blockCondition, object : IntSupplier {
+    ) : this(blockCondition, object : () -> Int {
         // approximately amount of BlockPos instances we can fit into the memory
-        val constant: Int = (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()).toInt() / 72
+        val constant = (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()).toInt() / 72
 
-        override fun getAsInt(): Int {
+        override fun invoke(): Int {
             return constant
         }
     }, minHeight, maxHeight)
@@ -67,18 +67,18 @@ class BlockSearchAndVertexCompilationManager(
             return (this as BlockSearchManager).compileOutlineVertices().also { outlineVerticesTask = it }
         }
 
-        if (outlineVerticesTask!!.isCompletedNormally()) {
-            outlineVertexes = outlineVerticesTask!!.getRawResult()
+        if (outlineVerticesTask!!.isCompletedNormally) {
+            outlineVertexes = outlineVerticesTask!!.rawResult
         }
 
-        if (!vertexesUpToDate && outlineVerticesTask!!.isDone()) {
+        if (!vertexesUpToDate && outlineVerticesTask!!.isDone) {
             return (this as BlockSearchManager).compileOutlineVertices().also { outlineVerticesTask = it }
         }
 
         return outlineVerticesTask!!
     }
 
-    fun getSideVertexes(): VertexBuffer {
+    fun getSideVertexes(): VertexBuffer? {
         val task: ForkJoinTask<VertexBuffer> = compileSideVertices()
 
         if (vertexesUpToDate) {

@@ -1,9 +1,9 @@
 package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.MClientAPI;
-import io.github.svegon.mclientapi.event.network.packet_direct.PacketReceiveListener;
-import io.github.svegon.mclientapi.event.network.packet_direct.PacketSendListener;
-import io.github.svegon.mclientapi.mixininterface.IPacketListener;
+import io.github.svegon.mclientapi.event.network.PacketReceiveListener;
+import io.github.svegon.mclientapi.event.network.PacketSendListener;
+import io.github.svegon.mclientapi.mixininterface.network.IPacketListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.network.ClientConnection;
@@ -20,21 +20,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientConnectionMixin extends SimpleChannelInboundHandler<Packet<?>> {
     @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;handlePacket(" +
-                    "Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;)V"))
-    @SuppressWarnings("unchecked")
+                    "Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;)V"),
+            cancellable = true)
     private void onChannelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo info) {
-        PacketReceiveListener.EVENT.invoker().onPacketReceive((ClientConnection) (Object) this, channelHandlerContext,
-                packet, info);
+        PacketReceiveListener.EVENT.invoker().onPacketReceive((ClientConnection) (Object)
+                        this, channelHandlerContext, packet, info);
     }
 
-    @Inject(at = @At("HEAD"), method = "handlePacket")
+    @Inject(at = @At("HEAD"), method = "handlePacket", cancellable = true)
     private static <T extends PacketListener> void onHandlePacket(Packet<T> packet, PacketListener listener,
                                                                   CallbackInfo ci) {
-        try {
-            ((IPacketListener<?>) listener).getPacketReceivedEvent().invoker().intercept(packet, ci);
-        } catch (ClassCastException e) {
-            MClientAPI.Companion.getLOGGER().warn("class missmatch while intercepting packet " + packet
-                    + " listened by " + listener);
+        if (listener instanceof IPacketListener<?, ?> iPacketListener) {
+            try {
+                iPacketListener.getPacketReceivedEvent().invoker().intercept(packet, ci);
+            } catch (ClassCastException e) {
+                MClientAPI.Companion.getLOGGER().warn("class missmatch while intercepting packet " + packet
+                        + " listened by " + listener);
+            }
         }
     }
 

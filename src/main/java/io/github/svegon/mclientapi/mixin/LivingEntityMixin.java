@@ -27,12 +27,12 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
         EntityStatusEffectCallback.EVENT.invoker().hasStatusEffect((LivingEntity) (Object) this, effect, cir);
     }
 
-    @Inject(method = "getAttributeValue", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "getAttributeValue", at = @At("RETURN"), cancellable = true)
     private void onGetAttributeValue(RegistryEntry<EntityAttribute> attribute, CallbackInfoReturnable<Double> cir) {
         EntityAttributeCallback.EVENT.invoker().interceptAttributeValue((LivingEntity) (Object) this, attribute, cir);
     }
 
-    @Inject(method = "getAttributeBaseValue", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "getAttributeBaseValue", at = @At("RETURN"), cancellable = true)
     private void onGetAttributeBaseValue(RegistryEntry<EntityAttribute> attribute, CallbackInfoReturnable<Double> cir) {
         EntityAttributeBaseValueCallback.EVENT.invoker().interceptAttributeBaseValue((LivingEntity) (Object)
                 this, attribute, cir);

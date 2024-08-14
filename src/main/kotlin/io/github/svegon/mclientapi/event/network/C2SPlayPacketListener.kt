@@ -1,4 +1,4 @@
-package io.github.svegon.mclientapi.event.network.packet_direct
+package io.github.svegon.mclientapi.event.network
 
 import net.minecraft.network.listener.PacketListener
 import net.minecraft.network.listener.ServerPlayPacketListener
@@ -127,26 +127,16 @@ interface C2SPlayPacketListener : C2SPacketListener, ServerPlayPacketListener {
     object InvokerFactory : Function<Array<C2SPlayPacketListener>, C2SPlayPacketListener> {
         override fun apply(listeners: Array<C2SPlayPacketListener>): C2SPlayPacketListener {
             return object : C2SPlayPacketListener {
-                override fun intercept(packet: Packet<out PacketListener>, ci: CallbackInfo) {
+                override fun intercept(packet: Packet<out PacketListener>, callback: CallbackInfo) {
                     for (listener in listeners) {
-                        listener.intercept(packet, ci)
+                        listener.intercept(packet, callback)
 
-                        if (ci.isCancelled) {
+                        if (callback.isCancelled) {
                             return
                         }
                     }
                 }
             }
-        }
-    }
-
-    companion object {
-        fun emptyInvoker(): C2SPlayPacketListener {
-            return EmptyInvoker
-        }
-
-        fun invokerFactory(): Function<Array<C2SPlayPacketListener>, C2SPlayPacketListener> {
-            return InvokerFactory
         }
     }
 }

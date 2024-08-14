@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(RenderTickCounter.class)
 public interface RenderTickCounterMixin {
     @Mixin(RenderTickCounter.Dynamic.class)
-    abstract class Dynamic implements RenderTickCounter,
-            IRenderTickCounter {
+    abstract class Dynamic implements RenderTickCounter, IRenderTickCounter {
         @Shadow
         private float tickDeltaBeforePause;
         @Shadow
@@ -100,6 +99,16 @@ public interface RenderTickCounterMixin {
         @Override
         public void setTickTime(float v) {
             tickTime = v;
+        }
+
+        @Override
+        public float getTps() {
+            return 1000 / tickTime;
+        }
+
+        @Override
+        public void setTps(float value) {
+            tickTime = 1000 / value;
         }
     }
 }

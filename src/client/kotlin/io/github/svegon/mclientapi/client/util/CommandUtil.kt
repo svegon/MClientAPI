@@ -223,14 +223,14 @@ object CommandUtil {
 
     @Throws(CommandSyntaxException::class)
     fun getGameProfiles(
-        context: CommandContext<FabricClientCommandSource?>,
+        context: CommandContext<FabricClientCommandSource>,
         name: String,
     ): Collection<GameProfile> {
         return context.getArgument(name, GameProfileArgumentType.GameProfileArgument::class.java)
             .getNames(context.source as ServerCommandSource)
     }
 
-    fun getPosArgument(context: CommandContext<FabricClientCommandSource?>, name: String?): PosArgument {
+    fun getPosArgument(context: CommandContext<FabricClientCommandSource>, name: String): PosArgument {
         return context.getArgument(name, PosArgument::class.java)
     }
 

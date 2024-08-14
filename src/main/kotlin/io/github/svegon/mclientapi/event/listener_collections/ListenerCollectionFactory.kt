@@ -1,4 +1,4 @@
-package io.github.svegon.mclientapi.event
+package io.github.svegon.mclientapi.event.listener_collections
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets

@@ -15,7 +15,10 @@
     "MerchantInventoryMixin",
     "MerchantScreenHandlerMixin",
     "PlayerMoveC2SPacketMixin",
+    "ServerConfigurationNetworkHandlerMixin",
+    "ServerLoginNetworkHandlerMixin",
     "ServerPlayNetworkHandlerMixin",
+    "ServerQueryPacketHandlerMixin",
     "StatHandlerMixin"
   ],
   "injectors": {

@@ -10,19 +10,16 @@ import java.util.*
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.BiConsumer
-import java.util.function.IntSupplier
 import java.util.function.Predicate
 import kotlin.math.min
 
 open class BlockSearchManager(
-    val blockCondition: Predicate<in BlockPos.Mutable>, private val limit: IntSupplier,
+    val blockCondition: (BlockPos.Mutable) -> Boolean, private val limit: () -> Int,
     val minHeight: Int, val maxHeight: Int
 ) : AutoCloseable {
     val results: MutableSet<BlockPos> = Sets.newConcurrentHashSet()
     private val searchers: MutableMap<ChunkPos, ChunkSearcher> = Maps.newConcurrentMap()
-    private val matchingBlocksListeners: MutableSet<BiConsumer<BlockSearchManager, Set<BlockPos>>> =
-        Sets.newConcurrentHashSet()
+    private val matchingBlocksListeners: MutableSet<(BlockSearchManager, Set<BlockPos>) -> Unit> = Sets.newConcurrentHashSet()
     private val cleanable: Cleaner.Cleanable
     private var pool = standardPool()
 
@@ -30,13 +27,13 @@ open class BlockSearchManager(
         this.cleanable = CLEANER.register(this, Finalizer(results, searchers, pool))
     }
 
-    constructor(blockCondition: Predicate<in BlockPos.Mutable?>, minHeight: Int, maxHeight: Int) : this(
+    constructor(blockCondition: (BlockPos.Mutable) -> Boolean, minHeight: Int, maxHeight: Int) : this(
         blockCondition,
-        object : IntSupplier {
+        object : () -> Int {
             // approximately amount of BlockPos instances we can fit into the memory
             val constant: Int = Runtime.getRuntime().freeMemory().toInt() / 72
 
-            override fun getAsInt(): Int {
+            override fun invoke(): Int {
                 return constant
             }
         },
@@ -92,24 +89,24 @@ open class BlockSearchManager(
         removeChunks(listOf(*chunks))
     }
 
-    fun addListener(listener: BiConsumer<BlockSearchManager, Set<BlockPos>>): Boolean {
+    fun addListener(listener: (BlockSearchManager, Set<BlockPos>) -> Unit): Boolean {
         return matchingBlocksListeners.add(listener)
     }
 
-    fun removeListener(listener: BiConsumer<BlockSearchManager, Set<BlockPos>>): Boolean {
+    fun removeListener(listener: (BlockSearchManager, Set<BlockPos>) -> Unit): Boolean {
         return matchingBlocksListeners.remove(listener)
     }
 
     private fun completeSearchListener() {
         if (pool.awaitQuiescence(Long.MAX_VALUE, TimeUnit.DAYS)) {
             for (listener in matchingBlocksListeners) {
-                listener.accept(this, Collections.unmodifiableSet(results))
+                listener(this, Collections.unmodifiableSet(results))
             }
         }
     }
 
     fun limitReached(): Boolean {
-        return results.size >= limit.asInt
+        return results.size >= limit()
     }
 
     private class Finalizer(

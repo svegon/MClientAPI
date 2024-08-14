@@ -1,9 +1,9 @@
 package io.github.svegon.mclientapi.client.mixin;
 
-import io.github.svegon.mclientapi.client.event.input.CrosshairTargetTypeCallback;
 import io.github.svegon.mclientapi.client.event.world.ClientWorldLifecycleEvents;
 import io.github.svegon.mclientapi.client.mixinterface.IClientPlayNetworkHandler;
-import io.github.svegon.mclientapi.event.network.packet_direct.S2CPlayPacketListener;
+import io.github.svegon.mclientapi.event.network.C2SPlayPacketListener;
+import io.github.svegon.mclientapi.event.network.S2CPlayPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.MinecraftClient;
@@ -12,6 +12,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.listener.TickablePacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.registry.DynamicRegistryManager;
 import org.jetbrains.annotations.NotNull;
@@ -41,9 +42,32 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
     private DynamicRegistryManager.Immutable combinedDynamicRegistries;
 
     @Unique
-    private final Event<S2CPlayPacketListener> packetReceivedEvent =
-            EventFactory.createArrayBacked(S2CPlayPacketListener.class, S2CPlayPacketListener.Companion.emptyInvoker(),
-                    S2CPlayPacketListener.Companion.invokerFactory());
+    private @Final Event<S2CPlayPacketListener> packetReceivedEvent;
+    @Unique
+    private @Final Event<C2SPlayPacketListener> packetSendEvent;
+
+    @Inject(at = @At("RETURN"), method = "<init>")
+    private void init(MinecraftClient client, ClientConnection clientConnection,
+                      ClientConnectionState clientConnectionState, CallbackInfo ci) {
+        packetReceivedEvent =
+                EventFactory.createArrayBacked(S2CPlayPacketListener.class, S2CPlayPacketListener.EmptyInvoker.INSTANCE,
+                        S2CPlayPacketListener.InvokerFactory.INSTANCE);
+        packetSendEvent =
+                EventFactory.createArrayBacked(C2SPlayPacketListener.class, C2SPlayPacketListener.EmptyInvoker.INSTANCE,
+                        C2SPlayPacketListener.InvokerFactory.INSTANCE);
+    }
+
+    @Override
+    public void sendPacket(Packet<?> packet) {
+        CallbackInfo callback = new CallbackInfo(getClass().getCanonicalName()
+                + "sendPacket(Lnet/minecraft/network/packet;)V", true);
+
+        packetSendEvent.invoker().intercept(packet, callback);
+
+        if (!callback.isCancelled()) {
+            super.sendPacket(packet);
+        }
+    }
 
     @Inject(method = "onGameJoin", at = @At("RETURN"))
     private void onGameJoinMixin(GameJoinS2CPacket packet, CallbackInfo callback) {
@@ -54,6 +78,12 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
     @Override
     public Event<S2CPlayPacketListener> getPacketReceivedEvent() {
         return packetReceivedEvent;
+    }
+
+    @Override
+    @NotNull
+    public Event<C2SPlayPacketListener> getPacketSendEvent() {
+        return packetSendEvent;
     }
 
     @Override

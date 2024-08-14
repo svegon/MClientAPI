@@ -11,9 +11,9 @@ interface IRenderTickCounter {
     var prevTimeMillis: Long
     var tickTime: Float
 
-    var tpS: Float
+    var tps: Float
         get() = 1000 / tickTime
-        set(tps) {
-            tickTime = 1000 / tps
+        set(value) {
+            tickTime = 1000 / value
         }
 }

@@ -10,7 +10,8 @@ import net.minecraft.text.Text
 
 fun interface CommandBlockTooltipCallback {
     fun appendCommandBlockTooltip(
-        block: CommandBlock, stack: ItemStack, context: Item.TooltipContext, tooltip: List<Text>, options: TooltipType
+        block: CommandBlock, stack: ItemStack, context: Item.TooltipContext,
+        tooltip: MutableList<Text>, options: TooltipType
     )
 
     companion object {

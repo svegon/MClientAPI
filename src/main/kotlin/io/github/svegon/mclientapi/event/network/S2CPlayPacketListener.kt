@@ -1,4 +1,4 @@
-package io.github.svegon.mclientapi.event.network.packet_direct
+package io.github.svegon.mclientapi.event.network
 
 import net.minecraft.network.listener.ClientPlayPacketListener
 import net.minecraft.network.listener.PacketListener
@@ -6,9 +6,7 @@ import net.minecraft.network.packet.Packet
 import net.minecraft.network.packet.s2c.common.*
 import net.minecraft.network.packet.s2c.play.*
 import net.minecraft.network.packet.s2c.query.PingResultS2CPacket
-import net.minecraft.util.hit.HitResult
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
-import java.util.function.Function
 
 interface S2CPlayPacketListener : S2CPacketListener, ClientPlayPacketListener {
     override fun onPingResult(packet: PingResultS2CPacket) {}
@@ -257,29 +255,19 @@ interface S2CPlayPacketListener : S2CPacketListener, ClientPlayPacketListener {
 
     object EmptyInvoker : S2CPlayPacketListener
 
-    object InvokerFactory : Function<Array<S2CPlayPacketListener>, S2CPlayPacketListener> {
+    object InvokerFactory : java.util.function.Function<Array<S2CPlayPacketListener>, S2CPlayPacketListener> {
         override fun apply(listeners: Array<S2CPlayPacketListener>): S2CPlayPacketListener {
             return object : S2CPlayPacketListener {
-                override fun intercept(packet: Packet<out PacketListener>, ci: CallbackInfo) {
+                override fun intercept(packet: Packet<out PacketListener>, callback: CallbackInfo) {
                     for (listener in listeners) {
-                        listener.intercept(packet, ci)
+                        listener.intercept(packet, callback)
 
-                        if (ci.isCancelled) {
+                        if (callback.isCancelled) {
                             return
                         }
                     }
                 }
             }
-        }
-    }
-
-    companion object {
-        fun emptyInvoker(): S2CPlayPacketListener {
-            return EmptyInvoker
-        }
-        
-        fun invokerFactory(): Function<Array<S2CPlayPacketListener>, S2CPlayPacketListener> {
-            return InvokerFactory
         }
     }
 }

@@ -1,4 +1,4 @@
-package io.github.svegon.mclientapi.event.network.packet_direct
+package io.github.svegon.mclientapi.event.network
 
 import net.minecraft.network.listener.ClientPacketListener
 

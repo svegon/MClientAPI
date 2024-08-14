@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 fun interface ShulkerBoxTooltipListener {
     fun appendShulkerBoxTooltip(
         block: ShulkerBoxBlock, stack: ItemStack, context: Item.TooltipContext,
-        tooltip: List<Text>, options: TooltipType, callback: CallbackInfo
+        tooltip: MutableList<Text>, options: TooltipType, callback: CallbackInfo
     )
 
     companion object {
@@ -23,7 +23,7 @@ fun interface ShulkerBoxTooltipListener {
                                         tooltip: List<Text>, options: TooltipType, callback: CallbackInfo -> }
         ) { listeners: Array<ShulkerBoxTooltipListener> ->
             ShulkerBoxTooltipListener { block: ShulkerBoxBlock, stack: ItemStack, context: Item.TooltipContext,
-                                        tooltip: List<Text>, options: TooltipType, callback: CallbackInfo ->
+                                        tooltip, options: TooltipType, callback: CallbackInfo ->
                 for (listener in listeners) {
                     listener.appendShulkerBoxTooltip(block, stack, context, tooltip, options, callback)
 

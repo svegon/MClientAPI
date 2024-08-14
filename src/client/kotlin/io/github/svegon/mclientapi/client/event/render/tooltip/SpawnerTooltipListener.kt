@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 fun interface SpawnerTooltipListener {
     fun appendSpawnerTooltip(
         block: SpawnerBlock, stack: ItemStack, context: Item.TooltipContext,
-        tooltip: List<Text>, options: TooltipType, callback: CallbackInfo
+        tooltip: MutableList<Text>, options: TooltipType, callback: CallbackInfo
     )
 
     companion object {
@@ -24,7 +24,7 @@ fun interface SpawnerTooltipListener {
                                      tooltip: List<Text>, options: TooltipType, callback: CallbackInfo -> }
         ) { listeners: Array<SpawnerTooltipListener> ->
             SpawnerTooltipListener { block: SpawnerBlock, stack: ItemStack, context: Item.TooltipContext,
-                                     tooltip: List<Text>, options: TooltipType, callback: CallbackInfo ->
+                                     tooltip, options: TooltipType, callback: CallbackInfo ->
                 for (listener in listeners) {
                     listener.appendSpawnerTooltip(block, stack, context, tooltip, options, callback)
 

@@ -1,7 +1,9 @@
 package io.github.svegon.mclientapi.client.mixin;
 
+import io.github.svegon.mclientapi.client.event.interaction.StopUsingItemListener;
 import io.github.svegon.mclientapi.client.mixinterface.IClientPlayerInteractionManager;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
@@ -9,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public abstract class ClientPlayerInteractionManagerMixin implements IClientPlayerInteractionManager {
@@ -31,6 +36,12 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
     private GameMode previousGameMode;
     @Shadow
     private int lastSelectedSlot;
+
+    @Inject(at = @At("HEAD"), method = "stopUsingItem", cancellable = true)
+    private void onStopUsingItem(PlayerEntity player, CallbackInfo ci) {
+        StopUsingItemListener.EVENT.invoker().onStoppingUsingItem((ClientPlayerInteractionManager) (Object)
+                this, player, ci);
+    }
 
     @NotNull
     @Override
