@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.IBucketItem;
+import io.github.svegon.mclientapi.mixininterface.MClientAPIBucketItem;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.FluidModificationItem;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(BucketItem.class)
-public abstract class BucketItemMixin extends Item implements FluidModificationItem, IBucketItem {
+public abstract class BucketItemMixin extends Item implements FluidModificationItem, MClientAPIBucketItem {
     @Shadow @Final private Fluid fluid;
 
     private BucketItemMixin(Settings settings) {

@@ -3,7 +3,7 @@ package io.github.svegon.mclientapi.mixin;
 import io.github.svegon.mclientapi.MClientAPI;
 import io.github.svegon.mclientapi.event.network.PacketReceiveListener;
 import io.github.svegon.mclientapi.event.network.PacketSendListener;
-import io.github.svegon.mclientapi.mixininterface.network.IPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIPacketListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.network.ClientConnection;
@@ -30,9 +30,9 @@ public abstract class ClientConnectionMixin extends SimpleChannelInboundHandler<
     @Inject(at = @At("HEAD"), method = "handlePacket", cancellable = true)
     private static <T extends PacketListener> void onHandlePacket(Packet<T> packet, PacketListener listener,
                                                                   CallbackInfo ci) {
-        if (listener instanceof IPacketListener<?, ?> iPacketListener) {
+        if (listener instanceof MClientAPIPacketListener<?, ?> MClientAPIPacketListener) {
             try {
-                iPacketListener.getPacketReceivedEvent().invoker().intercept(packet, ci);
+                MClientAPIPacketListener.getPacketReceivedEvent().invoker().intercept(packet, ci);
             } catch (ClassCastException e) {
                 MClientAPI.Companion.getLOGGER().warn("class missmatch while intercepting packet " + packet
                         + " listened by " + listener);

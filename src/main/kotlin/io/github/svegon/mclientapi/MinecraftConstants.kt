@@ -15,9 +15,9 @@ object MinecraftConstants {
 
     /**
      * maximum number of characters in a book's title you can write in vanilla
-     * if this is exceeded, MC will deny display the title at all
+     * if this is exceeded, any written book component with this title cannot be encoded/decoded
      */
-    const val MAX_TITLE_LENGTH_READABLE: Int = 32
+    const val MAX_TITLE_LENGTH_ENCODABLE: Int = 32
 
     /**
      * maximum number of characters in title accepted by server

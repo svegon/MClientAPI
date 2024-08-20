@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.IEntitySelector;
+import io.github.svegon.mclientapi.mixininterface.MClientAPIEntitySelector;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.resource.featuretoggle.FeatureSet;
@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +19,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Mixin(EntitySelector.class)
-public abstract class EntitySelectorMixin implements IEntitySelector {
+public abstract class EntitySelectorMixin implements MClientAPIEntitySelector {
     @Shadow
     private @Final Function<Vec3d, Vec3d> positionOffset;
     @Shadow

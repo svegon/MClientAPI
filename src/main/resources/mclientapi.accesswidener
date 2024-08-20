@@ -3,3 +3,4 @@ extendable class net/minecraft/server/command/FillCommand$Mode
 extendable class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogModifier
 extendable class net/minecraft/client/render/BackgroundRenderer$FogData
 extendable class net/minecraft/client/gui/screen/ingame/MerchantScreen$WidgetButtonPage
+accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder

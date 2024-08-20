@@ -3,7 +3,7 @@ package io.github.svegon.mclientapi.mixininterface
 import net.minecraft.village.Merchant
 import net.minecraft.village.MerchantInventory
 
-interface IMerchantScreenHandler {
+interface MClientAPIMerchantScreenHandler {
     val merchant: Merchant
 
     val merchantInventory: MerchantInventory

@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.IDefaultPosArgument;
+import io.github.svegon.mclientapi.mixininterface.MClientAPIDefaultPosArgument;
 import net.minecraft.command.argument.CoordinateArgument;
 import net.minecraft.command.argument.DefaultPosArgument;
 import net.minecraft.command.argument.PosArgument;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(DefaultPosArgument.class)
-public abstract class DefaultPosArgumentMixin implements PosArgument, IDefaultPosArgument {
+public abstract class DefaultPosArgumentMixin implements PosArgument, MClientAPIDefaultPosArgument {
     @Shadow @Final private CoordinateArgument x;
 
     @Shadow @Final private CoordinateArgument y;

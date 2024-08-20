@@ -9,7 +9,7 @@ import java.util.*
 import java.util.function.Function
 import java.util.function.Predicate
 
-interface IEntitySelector {
+interface MClientAPIEntitySelector {
     val positionOffset: Function<Vec3d, Vec3d>
 
     val box: Box?

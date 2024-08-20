@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixininterface
 
-interface ILookingPosArgument {
+interface MClientAPILookingPosArgument {
     val x: Double
 
     val y: Double

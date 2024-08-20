@@ -1,10 +1,8 @@
 package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.event.network.C2SConfigurationPacketListener;
-import io.github.svegon.mclientapi.event.network.C2SConfigurationPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CConfigurationPacketListener;
-import io.github.svegon.mclientapi.event.network.S2CConfigurationPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IClientConfigurationPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIClientConfigurationPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConfigurationNetworkHandler.class)
 public abstract class ClientConfigurationNetworkHandlerMixin extends ClientCommonNetworkHandler
         implements ClientConfigurationPacketListener, TickablePacketListener,
-        IClientConfigurationPacketListener {
+        MClientAPIClientConfigurationPacketListener {
     @Unique
     private @Final Event<S2CConfigurationPacketListener> packetReceivedEvent;
     @Unique

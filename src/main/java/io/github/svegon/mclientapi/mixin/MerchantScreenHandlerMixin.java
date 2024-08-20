@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.IMerchantScreenHandler;
+import io.github.svegon.mclientapi.mixininterface.MClientAPIMerchantScreenHandler;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MerchantScreenHandler.class)
-public abstract class MerchantScreenHandlerMixin extends ScreenHandler implements IMerchantScreenHandler {
+public abstract class MerchantScreenHandlerMixin extends ScreenHandler implements MClientAPIMerchantScreenHandler {
     @Mutable
     @Shadow @Final private Merchant merchant;
 

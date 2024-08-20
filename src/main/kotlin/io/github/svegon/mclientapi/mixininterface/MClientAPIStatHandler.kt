@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap
 import net.minecraft.stat.Stat
 import net.minecraft.stat.StatHandler
 
-interface IStatHandler {
+interface MClientAPIStatHandler {
     val statMap: Object2IntMap<Stat<*>>
 
     fun copyFrom(statHandler: StatHandler)

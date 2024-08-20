@@ -1,7 +1,7 @@
 package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.client.event.world.ClientWorldLifecycleEvents;
-import io.github.svegon.mclientapi.client.mixinterface.IClientPlayNetworkHandler;
+import io.github.svegon.mclientapi.client.mixinterface.MClientAPIClientPlayNetworkHandler;
 import io.github.svegon.mclientapi.event.network.C2SPlayPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CPlayPacketListener;
 import net.fabricmc.fabric.api.event.Event;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkHandler
         implements TickablePacketListener, ClientPlayPacketListener,
-        IClientPlayNetworkHandler {
+        MClientAPIClientPlayNetworkHandler {
     @Shadow
     @Final
     private Map<UUID, PlayerListEntry> playerListEntries;

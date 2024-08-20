@@ -4,9 +4,9 @@ import com.google.common.collect.Lists
 import com.mojang.authlib.GameProfile
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import io.github.svegon.mclientapi.mixininterface.IDefaultPosArgument
-import io.github.svegon.mclientapi.mixininterface.IEntitySelector
-import io.github.svegon.mclientapi.mixininterface.ILookingPosArgument
+import io.github.svegon.mclientapi.mixininterface.MClientAPIDefaultPosArgument
+import io.github.svegon.mclientapi.mixininterface.MClientAPIEntitySelector
+import io.github.svegon.mclientapi.mixininterface.MClientAPILookingPosArgument
 import io.github.svegon.mclientapi.util.GeometryUtil
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.network.AbstractClientPlayerEntity
@@ -43,8 +43,8 @@ object CommandUtil {
         argName: String,
     ): List<Entity> {
         val selector: EntitySelector = context.getArgument(argName, EntitySelector::class.java)
-        val playerName: String? = (selector as IEntitySelector).playerName
-        val uuid: UUID? = (selector as IEntitySelector).uuid
+        val playerName: String? = (selector as MClientAPIEntitySelector).playerName
+        val uuid: UUID? = (selector as MClientAPIEntitySelector).uuid
 
         if (!selector.includesNonPlayers()) {
             return getPlayers(context, argName)
@@ -71,11 +71,11 @@ object CommandUtil {
 
             return emptyList()
         } else {
-            val vec3d: Vec3d = (selector as IEntitySelector).positionOffset.apply(
+            val vec3d: Vec3d = (selector as MClientAPIEntitySelector).positionOffset.apply(
                 context.source.player.pos
             )
-            var box: Box? = (selector as IEntitySelector).`mClientAPI$getOffsetBox`(vec3d)
-            val predicate: Predicate<Entity> = (selector as IEntitySelector).`mClientAPI$positionPredicate`(vec3d, box,
+            var box: Box? = (selector as MClientAPIEntitySelector).`mClientAPI$getOffsetBox`(vec3d)
+            val predicate: Predicate<Entity> = (selector as MClientAPIEntitySelector).`mClientAPI$positionPredicate`(vec3d, box,
                 if (selector.isSenderOnly) null else context.source.enabledFeatures)
 
             if (selector.isSenderOnly) {
@@ -83,7 +83,7 @@ object CommandUtil {
                 else emptyList())
             } else {
                 val entities: MutableList<Entity> = Lists.newArrayList()
-                box = (selector as IEntitySelector).box
+                box = (selector as MClientAPIEntitySelector).box
 
                 if (selector.isLocalWorldOnly) {
                     appendEntitiesFromWorld(selector, entities, context.source.world, box, predicate)
@@ -97,7 +97,7 @@ object CommandUtil {
                     }
                 }
 
-                return (selector as IEntitySelector).`mClientAPI$getEntities`(vec3d, entities)
+                return (selector as MClientAPIEntitySelector).`mClientAPI$getEntities`(vec3d, entities)
             }
         }
     }
@@ -109,10 +109,10 @@ object CommandUtil {
         box: Box?,
         predicate: Predicate<Entity>,
     ) {
-        val appendLimit = (selector as IEntitySelector).entityAppendLimit
+        val appendLimit = (selector as MClientAPIEntitySelector).entityAppendLimit
 
         if (entities.size < appendLimit) {
-            world.collectEntitiesByType((selector as IEntitySelector).entityFilter,
+            world.collectEntitiesByType((selector as MClientAPIEntitySelector).entityFilter,
                 box ?: GeometryUtil.UNBOUND_BOX, predicate, entities, appendLimit)
         }
     }
@@ -122,8 +122,8 @@ object CommandUtil {
         argName: String,
     ): List<PlayerEntity> {
         val selector: EntitySelector = context.getArgument(argName, EntitySelector::class.java)
-        val playerName: String? = (selector as IEntitySelector).playerName
-        val uuid: UUID? = (selector as IEntitySelector).uuid
+        val playerName: String? = (selector as MClientAPIEntitySelector).playerName
+        val uuid: UUID? = (selector as MClientAPIEntitySelector).uuid
 
         if (playerName != null) {
             for (player in context.source.world.players) {
@@ -142,11 +142,11 @@ object CommandUtil {
 
             return emptyList()
         } else {
-            val vec3d: Vec3d = (selector as IEntitySelector).positionOffset.apply(
+            val vec3d: Vec3d = (selector as MClientAPIEntitySelector).positionOffset.apply(
                 context.source.player.pos
             )
-            val box = (selector as IEntitySelector).`mClientAPI$getOffsetBox`(vec3d)
-            val predicate: Predicate<Entity> = (selector as IEntitySelector).`mClientAPI$positionPredicate`(vec3d,
+            val box = (selector as MClientAPIEntitySelector).`mClientAPI$getOffsetBox`(vec3d)
+            val predicate: Predicate<Entity> = (selector as MClientAPIEntitySelector).`mClientAPI$positionPredicate`(vec3d,
                 box, null)
 
             if (selector.isSenderOnly) {
@@ -154,7 +154,7 @@ object CommandUtil {
 
                 return if (predicate.test(player)) listOf(player) else emptyList()
             } else {
-                val appendLimit = (selector as IEntitySelector).entityAppendLimit
+                val appendLimit = (selector as MClientAPIEntitySelector).entityAppendLimit
                 val players: MutableList<AbstractClientPlayerEntity>
 
                 if (selector.isLocalWorldOnly) {
@@ -173,7 +173,7 @@ object CommandUtil {
                     }
                 }
 
-                return (selector as IEntitySelector).`mClientAPI$getEntities`(vec3d, players)
+                return (selector as MClientAPIEntitySelector).`mClientAPI$getEntities`(vec3d, players)
             }
         }
     }
@@ -236,9 +236,9 @@ object CommandUtil {
 
     fun toAbsolutePos(argument: PosArgument, source: FabricClientCommandSource): Vec3d {
         if (argument is LookingPosArgument) {
-            val x: Double = (argument as ILookingPosArgument).x
-            val y: Double = (argument as ILookingPosArgument).y
-            val z: Double = (argument as ILookingPosArgument).y
+            val x: Double = (argument as MClientAPILookingPosArgument).x
+            val y: Double = (argument as MClientAPILookingPosArgument).y
+            val z: Double = (argument as MClientAPILookingPosArgument).y
             val vec2f: Vec2f = source.rotation
             val vec3d: Vec3d = EntityAnchorArgumentType.EntityAnchor.EYES.positionAt(source.entity)
             val f: Float = MathHelper.cos((vec2f.y + 90.0f) * (Math.PI.toFloat() / 180))
@@ -257,9 +257,9 @@ object CommandUtil {
         }
 
         if (argument is DefaultPosArgument) {
-            val x: CoordinateArgument = (argument as IDefaultPosArgument).x
-            val y: CoordinateArgument = (argument as IDefaultPosArgument).y
-            val z: CoordinateArgument = (argument as IDefaultPosArgument).y
+            val x: CoordinateArgument = (argument as MClientAPIDefaultPosArgument).x
+            val y: CoordinateArgument = (argument as MClientAPIDefaultPosArgument).y
+            val z: CoordinateArgument = (argument as MClientAPIDefaultPosArgument).y
             val pos: Vec3d = source.position
 
             return Vec3d(
@@ -277,8 +277,8 @@ object CommandUtil {
         }
 
         if (argument is DefaultPosArgument) {
-            val x: CoordinateArgument = (argument as IDefaultPosArgument).x
-            val y: CoordinateArgument = (argument as IDefaultPosArgument).y
+            val x: CoordinateArgument = (argument as MClientAPIDefaultPosArgument).x
+            val y: CoordinateArgument = (argument as MClientAPIDefaultPosArgument).y
             val rot: Vec2f = source.rotation
 
             return Vec2f(

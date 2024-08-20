@@ -2,24 +2,15 @@ package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.event.network.C2SQueryPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CQueryPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IServerConfigurationPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IServerQueryPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIServerQueryPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketCallbacks;
-import net.minecraft.network.listener.ServerLoginPacketListener;
 import net.minecraft.network.listener.ServerQueryPacketListener;
-import net.minecraft.network.listener.TickablePacketListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerMetadata;
-import net.minecraft.server.network.ConnectedClientData;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerQueryNetworkHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerQueryNetworkHandler.class)
 public abstract class ServerQueryPacketHandlerMixin implements ServerQueryPacketListener,
-        IServerQueryPacketListener {
+        MClientAPIServerQueryPacketListener {
     @Unique
     private @Final Event<C2SQueryPacketListener> packetReceivedEvent;
     @Unique

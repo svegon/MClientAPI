@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.ILookingPosArgument;
+import io.github.svegon.mclientapi.mixininterface.MClientAPILookingPosArgument;
 import net.minecraft.command.argument.LookingPosArgument;
 import net.minecraft.command.argument.PosArgument;
 import org.spongepowered.asm.mixin.Final;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(LookingPosArgument.class)
-public abstract class LookingPosArgumentMixin implements PosArgument, ILookingPosArgument {
+public abstract class LookingPosArgumentMixin implements PosArgument, MClientAPILookingPosArgument {
     @Shadow @Final private double x;
 
     @Shadow @Final private double y;

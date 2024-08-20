@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixininterface
 
-interface IPlayerMoveC2SPacket {
+interface MClientAPIPlayerMoveC2SPacket {
     var x: Double
 
     var y: Double

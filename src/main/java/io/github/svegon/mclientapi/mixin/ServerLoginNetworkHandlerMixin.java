@@ -2,7 +2,7 @@ package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.event.network.C2SLoginPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CLoginPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IServerLoginPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIServerLoginPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.ClientConnection;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public abstract class ServerLoginNetworkHandlerMixin  implements ServerLoginPacketListener, TickablePacketListener,
-        IServerLoginPacketListener {
+        MClientAPIServerLoginPacketListener {
     @Unique
     private @Final Event<C2SLoginPacketListener> packetReceivedEvent;
     @Unique

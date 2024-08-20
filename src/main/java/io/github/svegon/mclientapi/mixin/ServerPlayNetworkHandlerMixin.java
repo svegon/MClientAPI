@@ -2,7 +2,7 @@ package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.event.network.C2SPlayPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CPlayPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IServerPlayPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIServerPlayPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.ClientConnection;
@@ -27,7 +27,7 @@ public abstract class ServerPlayNetworkHandlerMixin
         implements ServerPlayPacketListener,
         PlayerAssociatedNetworkHandler,
         TickablePacketListener,
-        IServerPlayPacketListener {
+        MClientAPIServerPlayPacketListener {
     @Unique
     private @Final Event<C2SPlayPacketListener> packetReceivedEvent;
     @Unique

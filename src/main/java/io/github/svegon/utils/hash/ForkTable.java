@@ -14,25 +14,25 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 
-public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E>>
+public final class ForkTable<K, V, E extends ForkTable.Entry<K, V, E>>
         extends AbstractForkTable<K, V, E> implements Object2ObjectMap<K, E> {
     private final ObjectSet<K> keySet = new KeySet<>(this);
     private final Hash.Strategy<? super K> strategy;
 
-    public ObjectForkTable(int branchFactor, Hash.Strategy<? super K> strategy) {
+    public ForkTable(int branchFactor, Hash.Strategy<? super K> strategy) {
         super(branchFactor);
         this.strategy = strategy != null ? strategy : HashUtil.DefaultStrategy.INSTANCE;
     }
 
-    public ObjectForkTable(Hash.Strategy<? super K> strategy) {
+    public ForkTable(Hash.Strategy<? super K> strategy) {
         this(DEFAULT_BRANCH_FACTOR, strategy);
     }
 
-    public ObjectForkTable(int branchFactor) {
+    public ForkTable(int branchFactor) {
         this(branchFactor, null);
     }
 
-    public ObjectForkTable() {
+    public ForkTable() {
         this(null);
     }
 
@@ -205,11 +205,11 @@ public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E
 
     public static abstract class Entry<K, V, E extends Entry<K, V, E>>
             implements Object2ObjectMap.Entry<K, V> {
-        final ObjectForkTable<K, V, E> table;
+        final ForkTable<K, V, E> table;
         private final K key;
         protected final int hash;
 
-        public Entry(ObjectForkTable<K, V, E> table, K key) {
+        public Entry(ForkTable<K, V, E> table, K key) {
             this.table = table;
             this.key = key;
             this.hash = table.strategy.hashCode(key);
@@ -244,7 +244,7 @@ public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E
             return hash ^ Objects.hashCode(getValue());
         }
 
-        public final ObjectForkTable<K, V, E> getTable() {
+        public final ForkTable<K, V, E> getTable() {
             return table;
         }
 
@@ -256,9 +256,9 @@ public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E
 
     public static final class Object2EntryEntry<K, V, E extends Entry<K, V, E>>
             extends Key2EntryEntry<K, V, E> implements Object2ObjectMap.Entry<K, E> {
-        private final ObjectForkTable<K, V, E> ref;
+        private final ForkTable<K, V, E> ref;
 
-        public Object2EntryEntry(ObjectForkTable<K, V, E> ref, E entry) {
+        public Object2EntryEntry(ForkTable<K, V, E> ref, E entry) {
             super(entry);
             this.ref = ref;
         }
@@ -281,9 +281,9 @@ public final class ObjectForkTable<K, V, E extends ObjectForkTable.Entry<K, V, E
 
     private static final class KeySet<K, V, E extends Entry<K, V, E>>
             extends AbstractObjectSet<K> {
-        private final ObjectForkTable<K, V, E> ref;
+        private final ForkTable<K, V, E> ref;
 
-        private KeySet(ObjectForkTable<K, V, E> ref) {
+        private KeySet(ForkTable<K, V, E> ref) {
             this.ref = ref;
         }
 

@@ -2,7 +2,7 @@ package io.github.svegon.mclientapi.client.mixin;
 
 import io.github.svegon.mclientapi.event.network.C2SLoginPacketListener;
 import io.github.svegon.mclientapi.event.network.S2CLoginPacketListener;
-import io.github.svegon.mclientapi.mixininterface.network.IClientLoginPacketListener;
+import io.github.svegon.mclientapi.mixininterface.network.MClientAPIClientLoginPacketListener;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 @Mixin(ClientLoginNetworkHandler.class)
 public abstract class ClientLoginNetworkHandlerMixin implements ClientLoginPacketListener,
-        IClientLoginPacketListener {
+        MClientAPIClientLoginPacketListener {
     @Unique
     private @Final Event<S2CLoginPacketListener> packetReceivedEvent;
     @Unique

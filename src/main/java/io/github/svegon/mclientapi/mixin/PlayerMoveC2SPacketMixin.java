@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi.mixin;
 
-import io.github.svegon.mclientapi.mixininterface.IPlayerMoveC2SPacket;
+import io.github.svegon.mclientapi.mixininterface.MClientAPIPlayerMoveC2SPacket;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerMoveC2SPacket.class)
-public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacketListener>, IPlayerMoveC2SPacket {
+public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacketListener>, MClientAPIPlayerMoveC2SPacket {
     @Shadow
     @Final
     @Mutable

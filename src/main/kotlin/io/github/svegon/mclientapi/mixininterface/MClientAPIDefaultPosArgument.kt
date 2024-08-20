@@ -2,7 +2,7 @@ package io.github.svegon.mclientapi.mixininterface
 
 import net.minecraft.command.argument.CoordinateArgument
 
-interface IDefaultPosArgument {
+interface MClientAPIDefaultPosArgument {
     val x: CoordinateArgument
 
     val y: CoordinateArgument

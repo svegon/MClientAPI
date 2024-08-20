@@ -20,9 +20,7 @@ class CharCompressedTableSet : AbstractCharSet {
 
     constructor(expectedMaxKey: Char) {
         table = if (expectedMaxKey.code == 0) ByteArrays.EMPTY_ARRAY else ByteArray(
-            if ((expectedMaxKey.code ushr 3)
-                + (expectedMaxKey.code and 7) != 0
-            ) 1 else 0
+            (expectedMaxKey.code ushr 3) + if ((expectedMaxKey.code and 7) != 0) 1 else 0
         )
     }
 
