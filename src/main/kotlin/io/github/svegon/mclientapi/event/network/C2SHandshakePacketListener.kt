@@ -1,17 +1,14 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.listener.ServerHandshakePacketListener
-import net.minecraft.network.listener.ServerQueryPacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket
-import net.minecraft.network.packet.c2s.query.QueryPingC2SPacket
-import net.minecraft.network.packet.c2s.query.QueryRequestC2SPacket
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.handshake.ClientIntentionPacket
+import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.util.function.Function
 
 interface C2SHandshakePacketListener : C2SPacketListener, ServerHandshakePacketListener {
-    override fun onHandshake(packet: HandshakeC2SPacket) {}
+    override fun handleIntention(packet: ClientIntentionPacket) {}
 
     object EmptyInvoker : C2SHandshakePacketListener
 

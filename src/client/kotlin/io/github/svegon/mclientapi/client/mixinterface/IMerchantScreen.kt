@@ -1,7 +1,7 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
 interface IMerchantScreen {
-    var selectedIndex: Int
+    var `mClientAPI$selectedOffer`: Int
 
     var isScrolling: Boolean
 

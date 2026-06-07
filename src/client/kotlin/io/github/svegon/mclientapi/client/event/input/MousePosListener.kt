@@ -11,10 +11,10 @@ fun interface MousePosListener {
     fun onMousePos(prevX: Double, prevY: Double, x: Double, y: Double, deltaX: Double, deltaY: Double)
 
     companion object {
-        @JvmField
         val EVENT: Event<MousePosListener> = EventFactory.createArrayBacked(
             MousePosListener::class.java,
-            MousePosListener { prevX: Double, prevY: Double, x: Double, y: Double, deltaX: Double, deltaY: Double -> }
+            MousePosListener { prevX: Double, prevY: Double, x: Double, y: Double,
+                               deltaX: Double, deltaY: Double -> }
         ) { listeners: Array<MousePosListener> ->
             MousePosListener { prevX: Double, prevY: Double, x: Double, y: Double, deltaX: Double, deltaY: Double ->
                 for (listener in listeners) {

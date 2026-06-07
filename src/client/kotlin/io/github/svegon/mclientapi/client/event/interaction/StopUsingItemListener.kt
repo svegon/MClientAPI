@@ -2,25 +2,23 @@ package io.github.svegon.mclientapi.client.event.interaction
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.network.ClientPlayerInteractionManager
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.client.multiplayer.MultiPlayerGameMode
+import net.minecraft.world.entity.player.Player
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 fun interface StopUsingItemListener {
     fun onStoppingUsingItem(
-        interactionManager: ClientPlayerInteractionManager,
-        player: PlayerEntity,
+        interactionManager: MultiPlayerGameMode,
+        player: Player,
         callback: CallbackInfo
     )
 
     companion object {
-        @JvmField
         val EVENT: Event<StopUsingItemListener> = EventFactory.createArrayBacked(
             StopUsingItemListener::class.java,
-            StopUsingItemListener { interactionManager: ClientPlayerInteractionManager, player: PlayerEntity,
-                                    ci: CallbackInfo -> }) { listeners: Array<StopUsingItemListener> ->
-            StopUsingItemListener { interactionManager: ClientPlayerInteractionManager, player: PlayerEntity,
-                                    ci: CallbackInfo ->
+            StopUsingItemListener { interactionManager, player, ci: CallbackInfo -> })
+        { listeners: Array<StopUsingItemListener> -> StopUsingItemListener {
+            interactionManager: MultiPlayerGameMode, player: Player, ci: CallbackInfo ->
                 for (listener in listeners) {
                     listener.onStoppingUsingItem(interactionManager, player, ci)
 

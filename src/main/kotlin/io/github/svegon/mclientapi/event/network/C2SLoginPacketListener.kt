@@ -1,38 +1,35 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.listener.ServerCommonPacketListener
-import net.minecraft.network.listener.ServerLoginPacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.common.*
-import net.minecraft.network.packet.c2s.login.EnterConfigurationC2SPacket
-import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket
-import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket
-import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.common.*
+import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket
+import net.minecraft.network.protocol.login.*
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.util.function.Function
 
-interface C2SLoginPacketListener : C2SPacketListener, ServerLoginPacketListener,
-    ServerCommonPacketListener {
-    override fun onCookieResponse(packet: CookieResponseC2SPacket) {}
+interface C2SLoginPacketListener : C2SPacketListener, ServerLoginPacketListener, ServerCommonPacketListener {
+    override fun handleCookieResponse(packet: ServerboundCookieResponsePacket) {}
+
+    override fun handleHello(packet: ServerboundHelloPacket) {}
+
+    override fun handleKey(packet: ServerboundKeyPacket) {}
+
+    override fun handleCustomQueryPacket(packet: ServerboundCustomQueryAnswerPacket) {}
+
+    override fun handleLoginAcknowledgement(packet: ServerboundLoginAcknowledgedPacket) {}
     
-    override fun onKeepAlive(packet: KeepAliveC2SPacket) {}
+    override fun handleKeepAlive(packet: ServerboundKeepAlivePacket) {}
 
-    override fun onPong(packet: CommonPongC2SPacket) {}
+    override fun handlePong(serverboundPongPacket: ServerboundPongPacket) {}
 
-    override fun onCustomPayload(packet: CustomPayloadC2SPacket) {}
+    override fun handleCustomPayload(packet: ServerboundCustomPayloadPacket) {}
 
-    override fun onResourcePackStatus(packet: ResourcePackStatusC2SPacket) {}
+    override fun handleResourcePackResponse(packet: ServerboundResourcePackPacket) {}
 
-    override fun onClientOptions(packet: ClientOptionsC2SPacket) {}
+    override fun handleClientInformation(packet: ServerboundClientInformationPacket) {}
 
-    override fun onHello(packet: LoginHelloC2SPacket) {}
-
-    override fun onKey(packet: LoginKeyC2SPacket) {}
-
-    override fun onQueryResponse(packet: LoginQueryResponseC2SPacket) {}
-
-    override fun onEnterConfiguration(packet: EnterConfigurationC2SPacket) {}
+    override fun handleCustomClickAction(packet: ServerboundCustomClickActionPacket) {}
 
     object EmptyInvoker : C2SLoginPacketListener
 

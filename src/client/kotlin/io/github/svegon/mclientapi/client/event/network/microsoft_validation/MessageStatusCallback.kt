@@ -2,27 +2,26 @@ package io.github.svegon.mclientapi.client.event.network.microsoft_validation
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.client.network.message.MessageTrustStatus
-import net.minecraft.network.message.SignedMessage
-import net.minecraft.text.Text
+import net.minecraft.client.multiplayer.chat.ChatTrustLevel
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.PlayerChatMessage
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import java.time.Instant
 
 fun interface MessageStatusCallback {
     fun onGetMessageStatus(
-        message: SignedMessage, decorated: Text, receptionTimestamp: Instant,
-        callback: CallbackInfoReturnable<MessageTrustStatus>
+        message: PlayerChatMessage, decorated: Component, receptionTimestamp: Instant,
+        callback: CallbackInfoReturnable<ChatTrustLevel>
     )
 
     companion object {
-        @JvmField
         val EVENT: Event<MessageStatusCallback> = EventFactory.createArrayBacked(
             MessageStatusCallback::class.java,
-            MessageStatusCallback { message: SignedMessage, decorated: Text, receptionTimestamp: Instant,
-                                    callback: CallbackInfoReturnable<MessageTrustStatus> -> }
+            MessageStatusCallback { message: PlayerChatMessage, decorated: Component,
+                                    receptionTimestamp: Instant, callback: CallbackInfoReturnable<ChatTrustLevel> -> }
         ) { listeners: Array<MessageStatusCallback> ->
-            MessageStatusCallback { message: SignedMessage, decorated: Text, senderEntry: Instant,
-                                    callback: CallbackInfoReturnable<MessageTrustStatus> ->
+            MessageStatusCallback { message: PlayerChatMessage, decorated: Component, senderEntry: Instant,
+                                    callback: CallbackInfoReturnable<ChatTrustLevel> ->
                 for (listener in listeners) {
                     listener.onGetMessageStatus(message, decorated, senderEntry, callback)
 

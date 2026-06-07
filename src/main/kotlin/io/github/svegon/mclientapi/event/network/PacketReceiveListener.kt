@@ -3,16 +3,15 @@ package io.github.svegon.mclientapi.event.network
 import io.netty.channel.ChannelHandlerContext
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.network.ClientConnection
-import net.minecraft.network.packet.Packet
+import net.minecraft.network.Connection
+import net.minecraft.network.protocol.Packet
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 fun interface PacketReceiveListener {
-    fun onPacketReceive(connection: ClientConnection, context: ChannelHandlerContext,
+    fun onPacketReceive(connection: Connection, context: ChannelHandlerContext,
                         packet: Packet<*>, callback: CallbackInfo)
 
     companion object {
-        @JvmField
         val EVENT: Event<PacketReceiveListener> = EventFactory.createArrayBacked(
                 PacketReceiveListener::class.java,
             PacketReceiveListener { connection, context, packet, callback -> }

@@ -2,19 +2,20 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.0.10"
-    id("fabric-loom") version "1.7.3"
+    kotlin("jvm") version "2.3.21"
+    id("net.fabricmc.fabric-loom") version "1.16-SNAPSHOT"
     id("maven-publish")
 }
 
 version = project.property("mod_version") as String
 group = project.property("maven_group") as String
+val modid = project.property("archives_base_name") as String
 
 base {
-    archivesName.set(project.property("archives_base_name") as String)
+    archivesName.set(modid)
 }
 
-val targetJavaVersion = 21
+val targetJavaVersion = 25
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -28,10 +29,16 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        register("MClientAPI") {
+        register(modid) {
             sourceSet("main")
             sourceSet("client")
         }
+    }
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
     }
 }
 
@@ -46,12 +53,10 @@ repositories {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
-    mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
-    modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
+    implementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
+    implementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
 
 tasks.processResources {
@@ -63,11 +68,11 @@ tasks.processResources {
     filesMatching("fabric.mod.json") {
         expand(
             "version" to project.version,
-            "minecraft_version" to project.property("minecraft_version"),
-            "loader_version" to project.property("loader_version"),
-            "kotlin_loader_version" to project.property("kotlin_loader_version"),
-			"modid" to project.property("modid"),
-			"fabric_version" to project.property("fabric_version")
+            "minecraft_version" to project.property("minecraft_version") as String,
+            "loader_version" to project.property("loader_version") as String,
+            "kotlin_loader_version" to project.property("kotlin_loader_version") as String,
+			"modid" to modid,
+			"fabric_version" to project.property("fabric_version") as String
         )
     }
 }
@@ -87,7 +92,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName}" }
+        rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
 

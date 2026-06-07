@@ -1,9 +1,9 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import net.minecraft.block.WoodType
-import net.minecraft.block.entity.SignBlockEntity
-import net.minecraft.block.entity.SignText
-import net.minecraft.client.util.SelectionManager
+import net.minecraft.client.gui.font.TextFieldHelper
+import net.minecraft.world.level.block.entity.SignBlockEntity
+import net.minecraft.world.level.block.entity.SignText
+import net.minecraft.world.level.block.state.properties.WoodType
 
 interface IAbstractSignEditScreen {
     var blockEntity: SignBlockEntity
@@ -18,5 +18,5 @@ interface IAbstractSignEditScreen {
 
     var currentRow: Int
 
-    var selectionManager: SelectionManager?
+    var selectionManager: TextFieldHelper?
 }

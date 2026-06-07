@@ -1,29 +1,20 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import net.minecraft.client.toast.TutorialToast
-import net.minecraft.client.util.WindowProvider
-import net.minecraft.util.profiler.TickTimeTracker
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.gui.components.toasts.TutorialToast
 
 interface IMinecraftClient {
-    val windowProvider: WindowProvider
+    var `mClientAPI$itemUseCooldown`: Int
 
-    var itemUseCooldown: Int
+    var `mClientAPI$socialInteractionsToast`: TutorialToast?
 
-    var attackCooldown: Int
+    val `mClientAPI$tickTimer`: DeltaTracker.Timer
 
-    var lastMetricsSampleTime: Long
+    fun `mClientAPI$attack`()
 
-    var nextDebugInfoUpdateTime: Long
+    fun `mClientAPI$pickItem`()
 
-    var socialInteractionsToast: TutorialToast?
+    fun `mClientAPI$useItem`()
 
-    val tickTimeTracker: TickTimeTracker?
-
-    fun attack()
-
-    fun pickItem()
-
-    fun useItem()
-
-    fun progressBlockBreaking()
+    fun `mClientAPI$progressBlockBreaking`()
 }

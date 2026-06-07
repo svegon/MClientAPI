@@ -1,25 +1,29 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.ClientLoginPacketListener
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.s2c.common.CookieRequestS2CPacket
-import net.minecraft.network.packet.s2c.login.*
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.cookie.ClientboundCookieRequestPacket
+import net.minecraft.network.protocol.login.ClientLoginPacketListener
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket
+import net.minecraft.network.protocol.login.ClientboundHelloPacket
+import net.minecraft.network.protocol.login.ClientboundLoginCompressionPacket
+import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket
+import net.minecraft.network.protocol.login.ClientboundLoginFinishedPacket
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.util.function.Function
 
 interface S2CLoginPacketListener : S2CPacketListener, ClientLoginPacketListener {
-    override fun onCookieRequest(packet: CookieRequestS2CPacket) {}
+    override fun handleHello(packet: ClientboundHelloPacket) {}
 
-    override fun onHello(packet: LoginHelloS2CPacket) {}
+    override fun handleLoginFinished(packet: ClientboundLoginFinishedPacket) {}
 
-    override fun onSuccess(packet: LoginSuccessS2CPacket) {}
+    override fun handleDisconnect(packet: ClientboundLoginDisconnectPacket) {}
 
-    override fun onDisconnect(packet: LoginDisconnectS2CPacket) {}
+    override fun handleCompression(packet: ClientboundLoginCompressionPacket) {}
 
-    override fun onCompression(packet: LoginCompressionS2CPacket) {}
+    override fun handleCustomQuery(packet: ClientboundCustomQueryPacket) {}
 
-    override fun onQueryRequest(packet: LoginQueryRequestS2CPacket) {}
+    override fun handleRequestCookie(packet: ClientboundCookieRequestPacket) {}
 
     object EmptyInvoker : S2CLoginPacketListener
 

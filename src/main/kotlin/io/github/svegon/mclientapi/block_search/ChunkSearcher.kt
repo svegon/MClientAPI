@@ -1,8 +1,8 @@
 package io.github.svegon.mclientapi.block_search
 
 import com.google.common.collect.Lists
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.ChunkPos
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.ChunkPos
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
@@ -32,8 +32,8 @@ class ChunkSearcher(private val manager: BlockSearchManager, private val chunk: 
         manager.results.removeIf { pos -> pos.x shr 4 == chunk.x && pos.z shr 4 == chunk.z }
 
         BlockSearchManager.search(
-            BlockPos(chunk.startX, manager.minHeight, chunk.startZ),
-            BlockPos(chunk.endX, manager.maxHeight, chunk.endZ), manager.blockCondition,
+            BlockPos(chunk.minBlockX, manager.minHeight, chunk.minBlockZ),
+            BlockPos(chunk.maxBlockX, manager.maxHeight, chunk.maxBlockZ), manager.blockCondition,
             this::shouldStop,
             intermediateResult
         )
@@ -65,7 +65,7 @@ class ChunkSearcher(private val manager: BlockSearchManager, private val chunk: 
         status = Status.IDLE
     }
 
-    fun shouldStop(currentBlock: BlockPos.Mutable): Boolean {
+    fun shouldStop(currentBlock: BlockPos.MutableBlockPos): Boolean {
         return status == Status.INTERRUPTED || manager.limitReached()
     }
 

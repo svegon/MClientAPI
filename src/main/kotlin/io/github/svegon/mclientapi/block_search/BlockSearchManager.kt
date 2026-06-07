@@ -3,8 +3,8 @@ package io.github.svegon.mclientapi.block_search
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.ChunkPos
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.ChunkPos
 import java.lang.ref.Cleaner
 import java.util.*
 import java.util.concurrent.ForkJoinPool
@@ -14,7 +14,7 @@ import java.util.function.Predicate
 import kotlin.math.min
 
 open class BlockSearchManager(
-    val blockCondition: (BlockPos.Mutable) -> Boolean, private val limit: () -> Int,
+    val blockCondition: (BlockPos.MutableBlockPos) -> Boolean, private val limit: () -> Int,
     val minHeight: Int, val maxHeight: Int
 ) : AutoCloseable {
     val results: MutableSet<BlockPos> = Sets.newConcurrentHashSet()
@@ -27,7 +27,7 @@ open class BlockSearchManager(
         this.cleanable = CLEANER.register(this, Finalizer(results, searchers, pool))
     }
 
-    constructor(blockCondition: (BlockPos.Mutable) -> Boolean, minHeight: Int, maxHeight: Int) : this(
+    constructor(blockCondition: (BlockPos.MutableBlockPos) -> Boolean, minHeight: Int, maxHeight: Int) : this(
         blockCondition,
         object : () -> Int {
             // approximately amount of BlockPos instances we can fit into the memory
@@ -41,7 +41,6 @@ open class BlockSearchManager(
         maxHeight
     )
 
-    @Throws(Exception::class)
     override fun close() {
         cleanable.clean()
     }
@@ -131,8 +130,8 @@ open class BlockSearchManager(
         val UNIQUE_ID_SUPPLIER: AtomicInteger = AtomicInteger()
 
         fun search(
-            from: BlockPos, to: BlockPos, blockCondition: Predicate<in BlockPos.Mutable>,
-            stopCondition: Predicate<in BlockPos.Mutable>
+            from: BlockPos, to: BlockPos, blockCondition: Predicate<in BlockPos.MutableBlockPos>,
+            stopCondition: Predicate<in BlockPos.MutableBlockPos>
         ): List<BlockPos> {
             val list: LinkedList<BlockPos> = Lists.newLinkedList<BlockPos>()
 
@@ -142,16 +141,16 @@ open class BlockSearchManager(
         }
 
         fun search(
-            from: BlockPos, to: BlockPos, blockCondition: Predicate<in BlockPos.Mutable>,
-            stopCondition: Predicate<in BlockPos.Mutable>, resultSet: MutableCollection<BlockPos>
+            from: BlockPos, to: BlockPos, blockCondition: Predicate<in BlockPos.MutableBlockPos>,
+            stopCondition: Predicate<in BlockPos.MutableBlockPos>, resultSet: MutableCollection<BlockPos>
         ) {
-            for (pos in (BlockPos.iterate(from, to) as Iterable<BlockPos.Mutable>)) {
+            for (pos in (BlockPos.betweenClosed(from, to) as Iterable<BlockPos.MutableBlockPos>)) {
                 if (stopCondition.test(pos)) {
                     return
                 }
 
                 if (blockCondition.test(pos)) {
-                    resultSet.add(pos.toImmutable())
+                    resultSet.add(pos.immutable())
                 }
             }
         }

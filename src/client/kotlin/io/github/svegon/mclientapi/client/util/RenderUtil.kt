@@ -1,17 +1,47 @@
 package io.github.svegon.mclientapi.client.util
 
 import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.VertexConsumer
-import net.minecraft.text.Text
-import net.minecraft.util.math.Box
-import net.minecraft.util.math.ColorHelper
+import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.blaze3d.vertex.VertexConsumer
+import it.unimi.dsi.fastutil.objects.ObjectArrays
+import net.minecraft.client.gui.Font
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector
+import net.minecraft.client.resources.language.I18n
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.FormattedText
+import net.minecraft.world.phys.AABB
 import org.joml.Matrix4f
+import org.joml.Matrix4fc
 import java.awt.Rectangle
 import java.lang.reflect.Field
 
 object RenderUtil {
+    val ADD = Component.translatable("gui.add")
+    val CONFIRM_QUESTION = Component.translatable("gui.confirmMedium")
+    val REMOVE = Component.translatable("gui.remove")
+
+    fun parseMultilineTranslation(keyStart: String): List<Component> {
+        return parseMultilineTranslation(keyStart, *ObjectArrays.EMPTY_ARRAY)
+    }
+
+    fun parseMultilineTranslation(keyStart: String, vararg args: Any): List<Component> {
+        val translation: MutableList<Component> = ArrayList()
+
+        var i = 0
+        while (true) {
+            val key = keyStart + i
+
+            if (!I18n.exists(key)) {
+                break
+            }
+
+            translation.add(Component.translatable(key, *args))
+            ++i
+        }
+
+        return translation
+    }
+
     fun color4FToI(a: FloatArray): Int {
         return (a[0] * 255f).toInt() shl 24 or ((a[1] * 255f).toInt() shl 16) or ((a[2] * 255f).toInt() shl 8
         ) or ((a[3] * 255f).toInt())
@@ -22,61 +52,6 @@ object RenderUtil {
             (color shr 24) / 255f, ((color shr 16) and 255) / 255f, ((color shr 8) and 255) / 255f,
             (color and 255) / 255f
         )
-    }
-
-    fun setShaderColor(vararg components: Float) {
-        if (components.size < 4) {
-            RenderSystem.setShaderColor(components[0], components[1], components[2], 1f)
-        } else {
-            RenderSystem.setShaderColor(components[0], components[1], components[2], components[3])
-        }
-    }
-
-    fun setShaderColor(red: Int, green: Int, blue: Int, alpha: Int) {
-        RenderSystem.setShaderColor(red / 255f, green / 255f, blue / 255f, alpha / 255f)
-    }
-
-    fun setShaderColor(color: Int) {
-        setShaderColor(
-            ColorHelper.Argb.getRed(color), ColorHelper.Argb.getGreen(color),
-            ColorHelper.Argb.getBlue(color), ColorHelper.Argb.getAlpha(color)
-        )
-    }
-
-    fun setShaderRed(red: Float) {
-        RenderSystem.getShaderColor()[0] = red
-    }
-
-    fun setShaderGreen(green: Float) {
-        RenderSystem.getShaderColor()[1] = green
-    }
-
-    fun setShaderBlue(blue: Float) {
-        RenderSystem.getShaderColor()[2] = blue
-    }
-
-    fun setShaderAlpha(alpha: Float) {
-        RenderSystem.getShaderColor()[3] = alpha
-    }
-
-    fun setShaderRed(red: Int) {
-        setShaderRed(red / 255f)
-    }
-
-    fun setShaderGreen(green: Int) {
-        setShaderGreen(green / 255f)
-    }
-
-    fun setShaderBlue(blue: Int) {
-        setShaderBlue(blue / 255f)
-    }
-
-    fun setShaderAlpha(alpha: Int) {
-        setShaderAlpha(alpha / 255f)
-    }
-
-    fun resetShaderColor() {
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
     }
 
     fun rect(vertexConsumer: VertexConsumer, x1: Float, y1: Float, x2: Float, y2: Float) {
@@ -109,20 +84,20 @@ object RenderUtil {
     }
 
     fun xRect(vertexConsumer: VertexConsumer, x: Float, y1: Float, z1: Float, y2: Float, z2: Float) {
-        vertexConsumer.vertex(x, y1, z1)
-        vertexConsumer.vertex(x, y1, z2)
-        vertexConsumer.vertex(x, y2, z2)
-        vertexConsumer.vertex(x, y2, z1)
+        vertexConsumer.addVertex(x, y1, z1)
+        vertexConsumer.addVertex(x, y1, z2)
+        vertexConsumer.addVertex(x, y2, z2)
+        vertexConsumer.addVertex(x, y2, z1)
     }
 
     fun xRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x: Float, y1: Float, z1: Float, y2: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x: Float, y1: Float, z1: Float, y2: Float,
         z2: Float
     ) {
-        vertexConsumer.vertex(matrix, x, y1, z1)
-        vertexConsumer.vertex(matrix, x, y1, z2)
-        vertexConsumer.vertex(matrix, x, y2, z2)
-        vertexConsumer.vertex(matrix, x, y2, z1)
+        vertexConsumer.addVertex(matrix, x, y1, z1)
+        vertexConsumer.addVertex(matrix, x, y1, z2)
+        vertexConsumer.addVertex(matrix, x, y2, z2)
+        vertexConsumer.addVertex(matrix, x, y2, z1)
     }
 
     fun xRect(vertexConsumer: VertexConsumer, x: Double, y1: Double, z1: Double, y2: Double, z2: Double) {
@@ -130,27 +105,27 @@ object RenderUtil {
     }
 
     fun xRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x: Double, y1: Double, z1: Double, y2: Double,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x: Double, y1: Double, z1: Double, y2: Double,
         z2: Double
     ) {
         xRect(vertexConsumer, matrix, x.toFloat(), y1.toFloat(), z1.toFloat(), y2.toFloat(), z2.toFloat())
     }
 
     fun yRect(vertexConsumer: VertexConsumer, y: Float, x1: Float, z1: Float, x2: Float, z2: Float) {
-        vertexConsumer.vertex(x1, y, z1)
-        vertexConsumer.vertex(x1, y, z2)
-        vertexConsumer.vertex(x2, y, z2)
-        vertexConsumer.vertex(x2, y, z1)
+        vertexConsumer.addVertex(x1, y, z1)
+        vertexConsumer.addVertex(x1, y, z2)
+        vertexConsumer.addVertex(x2, y, z2)
+        vertexConsumer.addVertex(x2, y, z1)
     }
 
     fun yRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, y: Float, x1: Float, z1: Float, x2: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, y: Float, x1: Float, z1: Float, x2: Float,
         z2: Float
     ) {
-        vertexConsumer.vertex(matrix, x1, y, z1)
-        vertexConsumer.vertex(matrix, x1, y, z2)
-        vertexConsumer.vertex(matrix, x2, y, z2)
-        vertexConsumer.vertex(matrix, x2, y, z1)
+        vertexConsumer.addVertex(matrix, x1, y, z1)
+        vertexConsumer.addVertex(matrix, x1, y, z2)
+        vertexConsumer.addVertex(matrix, x2, y, z2)
+        vertexConsumer.addVertex(matrix, x2, y, z1)
     }
 
     fun yRect(vertexConsumer: VertexConsumer, x: Double, y1: Double, z1: Double, y2: Double, z2: Double) {
@@ -158,27 +133,27 @@ object RenderUtil {
     }
 
     fun yRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x: Double, y1: Double, z1: Double, y2: Double,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x: Double, y1: Double, z1: Double, y2: Double,
         z2: Double
     ) {
         yRect(vertexConsumer, matrix, x.toFloat(), y1.toFloat(), z1.toFloat(), y2.toFloat(), z2.toFloat())
     }
 
     fun zRect(vertexConsumer: VertexConsumer, z: Float, x1: Float, y1: Float, x2: Float, y2: Float) {
-        vertexConsumer.vertex(x1, y1, z)
-        vertexConsumer.vertex(x1, y2, z)
-        vertexConsumer.vertex(x2, y2, z)
-        vertexConsumer.vertex(x2, y1, z)
+        vertexConsumer.addVertex(x1, y1, z)
+        vertexConsumer.addVertex(x1, y2, z)
+        vertexConsumer.addVertex(x2, y2, z)
+        vertexConsumer.addVertex(x2, y1, z)
     }
 
     fun zRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, z: Float, x1: Float, y1: Float, x2: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, z: Float, x1: Float, y1: Float, x2: Float,
         y2: Float
     ) {
-        vertexConsumer.vertex(matrix, x1, y1, z)
-        vertexConsumer.vertex(matrix, x1, y2, z)
-        vertexConsumer.vertex(matrix, x2, y2, z)
-        vertexConsumer.vertex(matrix, x2, y1, z)
+        vertexConsumer.addVertex(matrix, x1, y1, z)
+        vertexConsumer.addVertex(matrix, x1, y2, z)
+        vertexConsumer.addVertex(matrix, x2, y2, z)
+        vertexConsumer.addVertex(matrix, x2, y1, z)
     }
 
     fun zRect(vertexConsumer: VertexConsumer, x: Double, y1: Double, z1: Double, y2: Double, z2: Double) {
@@ -186,35 +161,35 @@ object RenderUtil {
     }
 
     fun zRect(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x: Double, y1: Double, z1: Double, y2: Double,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x: Double, y1: Double, z1: Double, y2: Double,
         z2: Double
     ) {
         zRect(vertexConsumer, matrix, x.toFloat(), y1.toFloat(), z1.toFloat(), y2.toFloat(), z2.toFloat())
     }
 
     fun zRectLines(vertexConsumer: VertexConsumer, z: Float, x1: Float, y1: Float, x2: Float, y2: Float) {
-        vertexConsumer.vertex(x1, y1, z)
-        vertexConsumer.vertex(x2, y1, z)
-        vertexConsumer.vertex(x2, y1, z)
-        vertexConsumer.vertex(x2, y2, z)
-        vertexConsumer.vertex(x2, y2, z)
-        vertexConsumer.vertex(x1, y2, z)
-        vertexConsumer.vertex(x1, y2, z)
-        vertexConsumer.vertex(x1, y1, z)
+        vertexConsumer.addVertex(x1, y1, z)
+        vertexConsumer.addVertex(x2, y1, z)
+        vertexConsumer.addVertex(x2, y1, z)
+        vertexConsumer.addVertex(x2, y2, z)
+        vertexConsumer.addVertex(x2, y2, z)
+        vertexConsumer.addVertex(x1, y2, z)
+        vertexConsumer.addVertex(x1, y2, z)
+        vertexConsumer.addVertex(x1, y1, z)
     }
 
     fun zRectLines(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, z: Float, x1: Float, y1: Float, x2: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, z: Float, x1: Float, y1: Float, x2: Float,
         y2: Float
     ) {
-        vertexConsumer.vertex(matrix, x1, y1, z)
-        vertexConsumer.vertex(matrix, x2, y1, z)
-        vertexConsumer.vertex(matrix, x2, y1, z)
-        vertexConsumer.vertex(matrix, x2, y2, z)
-        vertexConsumer.vertex(matrix, x2, y2, z)
-        vertexConsumer.vertex(matrix, x1, y2, z)
-        vertexConsumer.vertex(matrix, x1, y2, z)
-        vertexConsumer.vertex(matrix, x1, y1, z)
+        vertexConsumer.addVertex(matrix, x1, y1, z)
+        vertexConsumer.addVertex(matrix, x2, y1, z)
+        vertexConsumer.addVertex(matrix, x2, y1, z)
+        vertexConsumer.addVertex(matrix, x2, y2, z)
+        vertexConsumer.addVertex(matrix, x2, y2, z)
+        vertexConsumer.addVertex(matrix, x1, y2, z)
+        vertexConsumer.addVertex(matrix, x1, y2, z)
+        vertexConsumer.addVertex(matrix, x1, y1, z)
     }
 
     fun block(vertexConsumer: VertexConsumer, x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float) {
@@ -235,12 +210,12 @@ object RenderUtil {
         block(vertexConsumer, x1.toFloat(), y1.toFloat(), z1.toFloat(), x2.toFloat(), y2.toFloat(), z2.toFloat())
     }
 
-    fun block(vertexConsumer: VertexConsumer, box: Box) {
+    fun block(vertexConsumer: VertexConsumer, box: AABB) {
         block(vertexConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)
     }
 
     fun block(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x1: Float, y1: Float, z1: Float, x2: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x1: Float, y1: Float, z1: Float, x2: Float,
         y2: Float, z2: Float
     ) {
         xRect(vertexConsumer, matrix, x1, y1, z1, y2, z2)
@@ -254,7 +229,7 @@ object RenderUtil {
     }
 
     fun block(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x1: Double, y1: Double, z1: Double,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x1: Double, y1: Double, z1: Double,
         x2: Double, y2: Double, z2: Double
     ) {
         block(
@@ -269,7 +244,7 @@ object RenderUtil {
         )
     }
 
-    fun block(vertexConsumer: VertexConsumer, matrix: Matrix4f?, box: Box) {
+    fun block(vertexConsumer: VertexConsumer, matrix: Matrix4fc, box: AABB) {
         block(vertexConsumer, matrix, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)
     }
 
@@ -291,17 +266,17 @@ object RenderUtil {
         zRectLines(vertexConsumer, z1, x1, y1, x2, y2)
         zRectLines(vertexConsumer, z2, x1, y1, x2, y2)
 
-        vertexConsumer.vertex(x1, y1, z1)
-        vertexConsumer.vertex(x1, y1, z2)
+        vertexConsumer.addVertex(x1, y1, z1)
+        vertexConsumer.addVertex(x1, y1, z2)
 
-        vertexConsumer.vertex(x2, y1, z1)
-        vertexConsumer.vertex(x2, y1, z2)
+        vertexConsumer.addVertex(x2, y1, z1)
+        vertexConsumer.addVertex(x2, y1, z2)
 
-        vertexConsumer.vertex(x2, y2, z1)
-        vertexConsumer.vertex(x2, y2, z2)
+        vertexConsumer.addVertex(x2, y2, z1)
+        vertexConsumer.addVertex(x2, y2, z2)
 
-        vertexConsumer.vertex(x1, y2, z1)
-        vertexConsumer.vertex(x1, y2, z2)
+        vertexConsumer.addVertex(x1, y2, z1)
+        vertexConsumer.addVertex(x1, y2, z2)
     }
 
     fun blockOutline(
@@ -319,32 +294,32 @@ object RenderUtil {
         )
     }
 
-    fun blockOutline(vertexConsumer: VertexConsumer, box: Box) {
+    fun blockOutline(vertexConsumer: VertexConsumer, box: AABB) {
         blockOutline(vertexConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)
     }
 
     fun blockOutline(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x1: Float, y1: Float, z1: Float,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x1: Float, y1: Float, z1: Float,
         x2: Float, y2: Float, z2: Float
     ) {
         zRectLines(vertexConsumer, matrix, z1, x1, y1, x2, y2)
         zRectLines(vertexConsumer, matrix, z2, x1, y1, x2, y2)
 
-        vertexConsumer.vertex(matrix, x1, y1, z1)
-        vertexConsumer.vertex(matrix, x1, y1, z2)
+        vertexConsumer.addVertex(matrix, x1, y1, z1)
+        vertexConsumer.addVertex(matrix, x1, y1, z2)
 
-        vertexConsumer.vertex(matrix, x2, y1, z1)
-        vertexConsumer.vertex(matrix, x2, y1, z2)
+        vertexConsumer.addVertex(matrix, x2, y1, z1)
+        vertexConsumer.addVertex(matrix, x2, y1, z2)
 
-        vertexConsumer.vertex(matrix, x2, y2, z1)
-        vertexConsumer.vertex(matrix, x2, y2, z2)
+        vertexConsumer.addVertex(matrix, x2, y2, z1)
+        vertexConsumer.addVertex(matrix, x2, y2, z2)
 
-        vertexConsumer.vertex(matrix, x1, y2, z1)
-        vertexConsumer.vertex(matrix, x1, y2, z2)
+        vertexConsumer.addVertex(matrix, x1, y2, z1)
+        vertexConsumer.addVertex(matrix, x1, y2, z2)
     }
 
     fun blockOutline(
-        vertexConsumer: VertexConsumer, matrix: Matrix4f?, x1: Double, y1: Double, z1: Double,
+        vertexConsumer: VertexConsumer, matrix: Matrix4fc, x1: Double, y1: Double, z1: Double,
         x2: Double, y2: Double, z2: Double
     ) {
         blockOutline(
@@ -359,19 +334,23 @@ object RenderUtil {
         )
     }
 
-    fun blockOutline(vertexConsumer: VertexConsumer, matrix: Matrix4f?, box: Box) {
-        blockOutline(vertexConsumer, matrix, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)
+    fun blockOutline(vertexConsumer: VertexConsumer, matrix: Matrix4fc, box: AABB) {
+        blockOutline(vertexConsumer, matrix, box.minX, box.minY, box.minZ, box.maxX, box.maxY,
+            box.maxZ)
     }
 
     fun drawWrapped(
-        context: DrawContext, tr: TextRenderer, texts: List<Text?>, x: Int, y: Int,
-        width: Int, color: Int
+        context: OrderedSubmitNodeCollector, matrices: PoseStack, font: Font, texts: List<FormattedText>,
+        startX: Float, startY: Float, width: Int, color: Int
     ) {
-        var y = y
+        var x = startX
+        var y = startY
+
         for (text in texts) {
-            for (orderedText in tr.wrapLines(text, width)) {
-                context.drawText(tr, orderedText, x, y, color, false)
-                y += tr.fontHeight
+            for (line in font.split(text, width)) {
+                context.submitText(matrices, x, y, line, true,
+                    Font.DisplayMode.NORMAL, 0, color, 0, 0)
+                y += font.lineHeight
             }
         }
     }

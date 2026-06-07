@@ -2,31 +2,19 @@ package io.github.svegon.mclientapi.event.entity
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.entity.Entity
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.player.Player
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
-interface IsInvisibleToListener {
-    fun invisibleSightCheck(entity: Entity, viewer: PlayerEntity, callback: CallbackInfoReturnable<Boolean>)
+fun interface IsInvisibleToListener {
+    fun invisibleSightCheck(entity: Entity, viewer: Player, callback: CallbackInfoReturnable<Boolean>)
 
     companion object {
-        @JvmField
-        val EVENT: Event<IsInvisibleToListener?> = EventFactory.createArrayBacked(
-            IsInvisibleToListener::class.java,
-            object : IsInvisibleToListener {
-                override fun invisibleSightCheck(
-                    entity: Entity,
-                    viewer: PlayerEntity,
-                    callback: CallbackInfoReturnable<Boolean>
-                ) {}
-            }) {
-            listeners -> object : IsInvisibleToListener {
-                override fun invisibleSightCheck(
-                    entity: Entity,
-                    viewer: PlayerEntity,
-                    callback: CallbackInfoReturnable<Boolean>
-                ) {
-                    for (listener in listeners) listener.invisibleSightCheck(entity, viewer, callback)
+        val EVENT: Event<IsInvisibleToListener> = EventFactory.createArrayBacked(IsInvisibleToListener::class.java,
+            IsInvisibleToListener { entity, viewer, callback -> }) { listeners ->
+            IsInvisibleToListener { entity, viewer, callback ->
+                for (listener in listeners) {
+                    listener.invisibleSightCheck(entity, viewer, callback)
                 }
             }
         }

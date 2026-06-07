@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.svegon.mclientapi.server.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

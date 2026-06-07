@@ -1,31 +1,29 @@
 package io.github.svegon.mclientapi.client.block_search
 
+import com.mojang.blaze3d.buffers.GpuBuffer
 import io.github.svegon.mclientapi.block_search.BlockSearchManager
 import io.github.svegon.mclientapi.client.block_search.BlockVertexCompiler.compileOutlineVertices
 import io.github.svegon.mclientapi.client.block_search.BlockVertexCompiler.compileSideVertices
-import net.minecraft.client.gl.VertexBuffer
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.ChunkPos
+import net.minecraft.core.BlockPos
+import net.minecraft.world.level.ChunkPos
 import java.util.concurrent.ForkJoinTask
-import java.util.function.IntSupplier
-import java.util.function.Predicate
 
 class BlockSearchAndVertexCompilationManager(
-    blockCondition: (BlockPos.Mutable) -> Boolean,
+    blockCondition: (BlockPos.MutableBlockPos) -> Boolean,
     limit: () -> Int, minHeight: Int, maxHeight: Int
-) : BlockSearchManager(blockCondition, limit, minHeight, maxHeight) {
-    private var sideVertices: VertexBuffer? = null
-    private var sideVertexesTask: ForkJoinTask<VertexBuffer>? = null
-    private var outlineVertexes: VertexBuffer? = null
-    private var outlineVerticesTask: ForkJoinTask<VertexBuffer>? = null
-    private var vertexesUpToDate = false
+): BlockSearchManager(blockCondition, limit, minHeight, maxHeight) {
+    private var sideVertices: GpuBuffer? = null
+    private var sideVertexesTask: ForkJoinTask<GpuBuffer>? = null
+    private var outlineVertexes: GpuBuffer? = null
+    private var outlineVerticesTask: ForkJoinTask<GpuBuffer>? = null
+    private var verticesUpToDate = false
 
     init {
-        addListener { self, result -> vertexesUpToDate = true }
+        addListener { self, result -> verticesUpToDate = true }
     }
 
     constructor(
-        blockCondition: (BlockPos.Mutable) -> Boolean,
+        blockCondition: (BlockPos.MutableBlockPos) -> Boolean,
         minHeight: Int, maxHeight: Int
     ) : this(blockCondition, object : () -> Int {
         // approximately amount of BlockPos instances we can fit into the memory
@@ -38,15 +36,15 @@ class BlockSearchAndVertexCompilationManager(
 
     override fun addChunk(chunk: ChunkPos) {
         super.addChunk(chunk)
-        vertexesUpToDate = false
+        verticesUpToDate = false
     }
 
     override fun removeChunk(chunk: ChunkPos) {
         super.removeChunk(chunk)
-        vertexesUpToDate = false
+        verticesUpToDate = false
     }
 
-    fun compileSideVertices(): ForkJoinTask<VertexBuffer> {
+    fun compileSideVertices(): ForkJoinTask<GpuBuffer> {
         if (sideVertexesTask == null) {
             return (this as BlockSearchManager).compileSideVertices().also { sideVertexesTask = it }
         }
@@ -55,14 +53,14 @@ class BlockSearchAndVertexCompilationManager(
             sideVertices = sideVertexesTask!!.getRawResult()
         }
 
-        if (!vertexesUpToDate && sideVertexesTask!!.isDone()) {
+        if (!verticesUpToDate && sideVertexesTask!!.isDone()) {
             return (this as BlockSearchManager).compileSideVertices().also { sideVertexesTask = it }
         }
 
         return sideVertexesTask!!
     }
 
-    fun compileOutlineVertices(): ForkJoinTask<VertexBuffer> {
+    fun compileOutlineVertices(): ForkJoinTask<GpuBuffer> {
         if (outlineVerticesTask == null) {
             return (this as BlockSearchManager).compileOutlineVertices().also { outlineVerticesTask = it }
         }
@@ -71,27 +69,27 @@ class BlockSearchAndVertexCompilationManager(
             outlineVertexes = outlineVerticesTask!!.rawResult
         }
 
-        if (!vertexesUpToDate && outlineVerticesTask!!.isDone) {
+        if (!verticesUpToDate && outlineVerticesTask!!.isDone) {
             return (this as BlockSearchManager).compileOutlineVertices().also { outlineVerticesTask = it }
         }
 
         return outlineVerticesTask!!
     }
 
-    fun getSideVertexes(): VertexBuffer? {
-        val task: ForkJoinTask<VertexBuffer> = compileSideVertices()
+    fun getSideVertexes(): GpuBuffer? {
+        val task: ForkJoinTask<GpuBuffer> = compileSideVertices()
 
-        if (vertexesUpToDate) {
+        if (verticesUpToDate) {
             return sideVertices!!
         }
 
         return task.rawResult
     }
 
-    fun getOutlineVertexes(): VertexBuffer? {
-        val task: ForkJoinTask<VertexBuffer> = compileOutlineVertices()
+    fun getOutlineVertexes(): GpuBuffer? {
+        val task: ForkJoinTask<GpuBuffer> = compileOutlineVertices()
 
-        if (vertexesUpToDate) {
+        if (verticesUpToDate) {
             return outlineVertexes
         }
 

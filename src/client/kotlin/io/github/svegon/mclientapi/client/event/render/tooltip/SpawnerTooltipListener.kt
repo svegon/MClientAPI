@@ -2,33 +2,29 @@ package io.github.svegon.mclientapi.client.event.render.tooltip
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.block.ShulkerBoxBlock
-import net.minecraft.block.SpawnerBlock
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.tooltip.TooltipType
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
+import net.minecraft.world.item.component.TypedEntityData
+import net.minecraft.world.level.block.entity.BlockEntityType
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 fun interface SpawnerTooltipListener {
     fun appendSpawnerTooltip(
-        block: SpawnerBlock, stack: ItemStack, context: Item.TooltipContext,
-        tooltip: MutableList<Text>, options: TooltipType, callback: CallbackInfo
+        data: TypedEntityData<BlockEntityType<*>>?, builder: (Component) -> Void, nextSpawnDataTagKey: String,
+        ci: CallbackInfo
     )
 
     companion object {
-        @JvmField
         val EVENT: Event<SpawnerTooltipListener> = EventFactory.createArrayBacked(
             SpawnerTooltipListener::class.java,
-            SpawnerTooltipListener { block: SpawnerBlock, stack: ItemStack, context: Item.TooltipContext,
-                                     tooltip: List<Text>, options: TooltipType, callback: CallbackInfo -> }
+            SpawnerTooltipListener { data: TypedEntityData<BlockEntityType<*>>?,
+                                     builder: (Component) -> Void, nextSpawnDataTagKey: String,  ci: CallbackInfo -> }
         ) { listeners: Array<SpawnerTooltipListener> ->
-            SpawnerTooltipListener { block: SpawnerBlock, stack: ItemStack, context: Item.TooltipContext,
-                                     tooltip, options: TooltipType, callback: CallbackInfo ->
+            SpawnerTooltipListener { data: TypedEntityData<BlockEntityType<*>>?, builder: (Component) -> Void,
+                                     nextSpawnDataTagKey: String, ci: CallbackInfo ->
                 for (listener in listeners) {
-                    listener.appendSpawnerTooltip(block, stack, context, tooltip, options, callback)
+                    listener.appendSpawnerTooltip(data, builder, nextSpawnDataTagKey, ci)
 
-                    if (callback.isCancelled) {
+                    if (ci.isCancelled) {
                         return@SpawnerTooltipListener
                     }
                 }

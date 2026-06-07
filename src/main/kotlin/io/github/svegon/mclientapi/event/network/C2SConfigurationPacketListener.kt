@@ -1,30 +1,36 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.listener.ServerConfigurationPacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.common.*
-import net.minecraft.network.packet.c2s.config.ReadyC2SPacket
-import net.minecraft.network.packet.c2s.config.SelectKnownPacksC2SPacket
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.common.*
+import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener
+import net.minecraft.network.protocol.configuration.ServerboundAcceptCodeOfConductPacket
+import net.minecraft.network.protocol.configuration.ServerboundFinishConfigurationPacket
+import net.minecraft.network.protocol.configuration.ServerboundSelectKnownPacks
+import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.util.function.Function
 
 interface C2SConfigurationPacketListener : C2SPacketListener, ServerConfigurationPacketListener {
-    override fun onCookieResponse(packet: CookieResponseC2SPacket) {}
+    override fun handleCookieResponse(packet: ServerboundCookieResponsePacket) {}
+    
+    override fun handleKeepAlive(packet: ServerboundKeepAlivePacket) {}
 
-    override fun onKeepAlive(packet: KeepAliveC2SPacket) {}
+    override fun handlePong(serverboundPongPacket: ServerboundPongPacket) {}
 
-    override fun onPong(packet: CommonPongC2SPacket) {}
+    override fun handleCustomPayload(packet: ServerboundCustomPayloadPacket) {}
 
-    override fun onCustomPayload(packet: CustomPayloadC2SPacket) {}
+    override fun handleResourcePackResponse(packet: ServerboundResourcePackPacket) {}
 
-    override fun onResourcePackStatus(packet: ResourcePackStatusC2SPacket) {}
+    override fun handleClientInformation(packet: ServerboundClientInformationPacket) {}
 
-    override fun onClientOptions(packet: ClientOptionsC2SPacket) {}
+    override fun handleCustomClickAction(packet: ServerboundCustomClickActionPacket) {}
 
-    override fun onReady(packet: ReadyC2SPacket) {}
+    override fun handleConfigurationFinished(packet: ServerboundFinishConfigurationPacket) {}
 
-    override fun onSelectKnownPacks(packet: SelectKnownPacksC2SPacket) {}
+    override fun handleSelectKnownPacks(packet: ServerboundSelectKnownPacks) {}
+
+    override fun handleAcceptCodeOfConduct(packet: ServerboundAcceptCodeOfConductPacket) {}
 
     object EmptyInvoker : C2SConfigurationPacketListener
 

@@ -1,23 +1,23 @@
 package io.github.svegon.mclientapi.util
 
-import net.minecraft.component.EnchantmentEffectComponentTypes
-import net.minecraft.enchantment.Enchantment
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.item.ItemStack
-import net.minecraft.registry.entry.RegistryEntry
-import net.minecraft.util.math.random.Random
+import net.minecraft.core.Holder
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.enchantment.Enchantment
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.level.levelgen.SingleThreadedRandomSource
+import kotlin.random.Random
 
 object EnchantmentUtil {
-    private val random = Random.create()
+    private val random = Random(System.currentTimeMillis())
 
-    fun getProtection(enchantment: RegistryEntry<Enchantment>, stack: ItemStack): Float {
-        val effects = enchantment.value().effects.get(EnchantmentEffectComponentTypes.DAMAGE_PROTECTION)!!.map {
-            component -> component.effect
-        }
+    fun getProtection(enchantment: Holder<Enchantment>, stack: ItemStack): Float {
+        val random = SingleThreadedRandomSource(System.nanoTime())
+        val level = EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
         var value = 0f
 
-        for (effect in effects) {
-            value = effect.apply(EnchantmentHelper.getLevel(enchantment, stack), random, value)
+        for (effect in enchantment.value().getEffects(EnchantmentEffectComponents.DAMAGE_PROTECTION)) {
+            value = effect.effect().process(level, random, value)
         }
 
         return value

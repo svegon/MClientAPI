@@ -1,25 +1,21 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import net.minecraft.item.ItemStack
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.GameMode
+import net.minecraft.core.BlockPos
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.GameType
 
 interface IClientPlayerInteractionManager {
-    var gameMode: GameMode
+    var gameMode: GameType
 
-    var previousGameMode: GameMode
+    var previousLocalPlayerMode: GameType
 
-    var currentBreakingPos: BlockPos
+    var destroyBlockPos: BlockPos
 
-    var selectedStack: ItemStack
-
-    var currentBreakingProgress: Float
-
-    var blockBreakingSoundCooldown: Float
+    var destroyProgress: Float
 
     var blockBreakingCooldown: Int
 
-    var breakingBlock: Boolean
+    var destroying: Boolean
 
     var lastSelectedSlot: Int
 }

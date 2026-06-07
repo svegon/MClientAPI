@@ -1,5 +1,5 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.ClientPacketListener
+import net.minecraft.network.PacketListener
 
-interface S2CPacketListener : InterceptingPacketListener, ClientPacketListener
+interface S2CPacketListener : InterceptingPacketListener, PacketListener

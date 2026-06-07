@@ -1,16 +1,17 @@
 package io.github.svegon.mclientapi.mixin;
 
 import io.github.svegon.mclientapi.mixininterface.IPlayerMoveC2SPacket;
-import net.minecraft.network.listener.ServerPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(PlayerMoveC2SPacket.class)
-public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacketListener>, IPlayerMoveC2SPacket {
+@Mixin(ServerboundMovePlayerPacket.class)
+public abstract class PlayerMoveC2SPacketMixin implements Packet<@NotNull ServerGamePacketListener>, IPlayerMoveC2SPacket {
     @Shadow
     @Final
     @Mutable
@@ -26,11 +27,11 @@ public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacke
     @Shadow
     @Final
     @Mutable
-    protected float yaw;
+    protected float xRot;
     @Shadow
     @Final
     @Mutable
-    protected float pitch;
+    protected float yRot;
     @Shadow
     @Final
     @Mutable
@@ -68,22 +69,21 @@ public abstract class PlayerMoveC2SPacketMixin implements Packet<ServerPlayPacke
 
     @Override
     public float getYaw() {
-        return yaw;
+        return xRot;
     }
 
     @Override
-    public void setYaw(float yaw) {
-        this.yaw = yaw;
+    public void setYaw(float xRot) {
+        this.xRot = xRot;
     }
 
     @Override
     public float getPitch() {
-        return pitch;
+        return yRot;
     }
 
-    @Override
-    public void setPitch(float pitch) {
-        this.pitch = pitch;
+    public void setyRot(float pitch) {
+        this.yRot = pitch;
     }
 
     @Override

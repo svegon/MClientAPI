@@ -2,7 +2,6 @@ package io.github.svegon.mclientapi.event.listener_collections
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import io.github.svegon.utils.collections.ListUtil
 import java.util.*
 
 object ListenerCollectionFactory {
@@ -11,10 +10,7 @@ object ListenerCollectionFactory {
     }
 
     fun <L> listenersArrayList(invokerFactory: (List<L>) -> L): ListenerList<L> {
-        return ListenerList(
-            ListUtil.newExposedArrayList(),
-            invokerFactory
-        )
+        return ListenerList(Collections.synchronizedList(Lists.newArrayList()), invokerFactory)
     }
 
     fun <L> listenersLinkedList(invokerFactory: (List<L>) -> L): ListenerList<L> {
@@ -24,8 +20,8 @@ object ListenerCollectionFactory {
         )
     }
 
-    fun <L> listenersHashSet(invokerFactory: (Set<L>) -> L): ListenerSet<L> {
-        return ListenerSet(Sets.newConcurrentHashSet(), invokerFactory)
+    fun <L : Any> listenersHashSet(invokerFactory: (Set<L>) -> L): ListenerSet<L> {
+        return ListenerSet<L>(Sets.newConcurrentHashSet(), invokerFactory)
     }
 
     fun <L> listenersLinkedSet(invokerFactory: (Set<L>) -> L): ListenerSet<L> {

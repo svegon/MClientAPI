@@ -1,69 +1,42 @@
 package io.github.svegon.mclientapi.client.block_search
 
+import com.mojang.blaze3d.buffers.GpuBuffer
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.*
 import io.github.svegon.mclientapi.block_search.BlockSearchManager
 import io.github.svegon.mclientapi.block_search.BlockSearchManager.Companion.standardPool
-import net.minecraft.client.gl.VertexBuffer
-import net.minecraft.client.render.BufferBuilder
-import net.minecraft.client.render.BuiltBuffer
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormats
-import net.minecraft.client.util.BufferAllocator
-import net.minecraft.util.math.BlockPos
+import net.minecraft.core.BlockPos
 import java.util.concurrent.Callable
 import java.util.concurrent.ForkJoinTask
 
 object BlockVertexCompiler {
-    private val bufferAllocator = BufferAllocator(576)
+    private val tesselator = Tesselator.getInstance();
 
-    fun sideVertices(blocks: Collection<BlockPos>): Callable<VertexBuffer> {
-        return Callable<VertexBuffer> {
-            val partialResults: Iterator<BuiltBuffer> = blocks.parallelStream()
-                .map { pos: BlockPos ->
-                    getSideVertices(
-                        newQuadsBuilder(),
-                        pos,
-                        blocks
-                    ).end()
-                }.iterator()
-            partialResults.hasNext()
-            val buffer = VertexBuffer(VertexBuffer.Usage.STATIC)
-            buffer.bind()
+    fun sideVertices(blocks: Collection<BlockPos>): Callable<GpuBuffer> {
+        return Callable<GpuBuffer> {
+            val builder = tesselator.begin(VertexFormat.Mode.QUADS,
+                    DefaultVertexFormat.POSITION_COLOR)
 
-            if (partialResults.hasNext()) {
-                do {
-                    buffer.upload(partialResults.next())
-                } while (partialResults.hasNext())
-            } else {
-                buffer.upload(newQuadsBuilder().end())
+            for (pos in blocks) {
+                getSideVertices(builder, pos, blocks)
             }
 
-            VertexBuffer.unbind()
-            buffer
+            RenderSystem.getDevice().createBuffer(null,
+                GpuBuffer.USAGE_VERTEX or GpuBuffer.USAGE_COPY_DST, builder.buildOrThrow().vertexBuffer())
         }
     }
 
-    fun outlineVertices(blocks: Collection<BlockPos>): Callable<VertexBuffer> {
-        return Callable<VertexBuffer> {
-            val partialResults: Iterator<BuiltBuffer> = blocks.parallelStream()
-                .map { pos: BlockPos ->
-                    getOutlineVertices(
-                        newLinesBuilder(),
-                        pos,
-                        blocks
-                    ).end()
-                }.iterator()
-            partialResults.hasNext()
-            val buffer = VertexBuffer(VertexBuffer.Usage.STATIC)
-            buffer.bind()
+    fun outlineVertices(blocks: Collection<BlockPos>): Callable<GpuBuffer> {
+        return Callable<GpuBuffer> {
+            val builder = tesselator.begin(VertexFormat.Mode.LINES,
+                DefaultVertexFormat.POSITION_COLOR)
 
-            if (partialResults.hasNext()) {
-                do {
-                    buffer.upload(partialResults.next())
-                } while (partialResults.hasNext())
-            } else {
-                buffer.upload(newLinesBuilder().end())
+            for (pos in blocks) {
+                getOutlineVertices(builder, pos, blocks)
             }
-            buffer
+
+            RenderSystem.getDevice().createBuffer(null,
+                GpuBuffer.USAGE_VERTEX or GpuBuffer.USAGE_COPY_DST, builder.buildOrThrow().vertexBuffer())
         }
     }
 
@@ -71,46 +44,46 @@ object BlockVertexCompiler {
         buffer: BufferBuilder, pos: BlockPos,
         matchingBlocks: Collection<BlockPos>
     ): BufferBuilder {
-        if (!matchingBlocks.contains(pos.down())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+        if (!matchingBlocks.contains(pos.below())) {
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
         }
 
-        if (!matchingBlocks.contains(pos.up())) {
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+        if (!matchingBlocks.contains(pos.above())) {
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
         }
 
         if (!matchingBlocks.contains(pos.north())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
         }
 
         if (!matchingBlocks.contains(pos.east())) {
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
         }
 
         if (!matchingBlocks.contains(pos.south())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
         }
 
         if (!matchingBlocks.contains(pos.west())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
         }
 
         return buffer
@@ -120,88 +93,80 @@ object BlockVertexCompiler {
         buffer: BufferBuilder, pos: BlockPos,
         matchingBlocks: Collection<BlockPos>
     ): BufferBuilder {
-        if (!matchingBlocks.contains(pos.down())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+        if (!matchingBlocks.contains(pos.below())) {
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
         }
 
-        if (!matchingBlocks.contains(pos.up())) {
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+        if (!matchingBlocks.contains(pos.above())) {
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
         }
 
         if (!matchingBlocks.contains(pos.north())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
         }
 
         if (!matchingBlocks.contains(pos.east())) {
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z.toFloat())
         }
 
         if (!matchingBlocks.contains(pos.south())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x + 1f, pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
         }
 
         if (!matchingBlocks.contains(pos.west())) {
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
-            buffer.vertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z + 1f)
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y + 1f, pos.z.toFloat())
+            buffer.addVertex(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
         }
 
         return buffer
     }
 
-    fun BlockSearchManager.compileOutlineVertices(): ForkJoinTask<VertexBuffer> {
+    fun BlockSearchManager.compileOutlineVertices(): ForkJoinTask<GpuBuffer> {
         return standardPool().submit(outlineVertices(results))
     }
 
-    fun BlockSearchManager.compileSideVertices(): ForkJoinTask<VertexBuffer> {
+    fun BlockSearchManager.compileSideVertices(): ForkJoinTask<GpuBuffer> {
         return standardPool().submit(sideVertices(results))
-    }
-
-    private fun newLinesBuilder(): BufferBuilder {
-        return BufferBuilder(bufferAllocator, VertexFormat.DrawMode.LINES, VertexFormats.POSITION)
-    }
-
-    private fun newQuadsBuilder(): BufferBuilder {
-        return BufferBuilder(bufferAllocator, VertexFormat.DrawMode.QUADS, VertexFormats.POSITION)
     }
 }

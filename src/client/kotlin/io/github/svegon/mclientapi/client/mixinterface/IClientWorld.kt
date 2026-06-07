@@ -1,13 +1,10 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.network.ClientPlayNetworkHandler
-import net.minecraft.client.network.PendingUpdateManager
+import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientPacketListener
 
 interface IClientWorld {
-    val client: MinecraftClient
+    val `mClientAPI$minecraft`: Minecraft
 
-    val networkHandler: ClientPlayNetworkHandler
-
-    val pendingUpdateManager: PendingUpdateManager
+    val `mClientAPI$packetListener`: ClientPacketListener
 }

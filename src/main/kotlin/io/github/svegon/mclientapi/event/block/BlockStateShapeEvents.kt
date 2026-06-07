@@ -2,106 +2,208 @@ package io.github.svegon.mclientapi.event.block
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.block.BlockState
-import net.minecraft.block.ShapeContext
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.shape.VoxelShape
-import net.minecraft.world.BlockView
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.VoxelShape
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 object BlockStateShapeEvents {
-    fun interface OutlineShape {
+    fun interface FaceOcclusionShapeCallback {
+        fun getFaceOcclusionShape(
+            state: BlockState, direction: Direction,
+            callback: CallbackInfoReturnable<RenderShape>
+        )
+    }
+
+    fun interface OcclusionShapeCallback {
+        fun getOcclusionShape(state: BlockState, callback: CallbackInfoReturnable<RenderShape>)
+    }
+
+    fun interface RenderShapeCallback {
+        fun getRenderShape(state: BlockState, callback: CallbackInfoReturnable<RenderShape>)
+    }
+
+    fun interface OutlineShapeCallback {
         fun getOutlineShape(
-            state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
+            state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
             cir: CallbackInfoReturnable<VoxelShape>
         )
     }
 
-    fun interface CollisionShape {
+    fun interface CollisionShapeCallback {
         fun getCollisionShape(
-            state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
+            state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
             cir: CallbackInfoReturnable<VoxelShape>
         )
     }
 
-    fun interface CameraCollisionShape {
+    fun interface EntityInsideShapeCallback {
+        fun getEntityInsideShape(
+            state: BlockState, level: BlockGetter, pos: BlockPos, entity: Entity,
+            cir: CallbackInfoReturnable<VoxelShape>
+        )
+    }
+
+    fun interface BlockSupportShapeCallback {
+        fun getBlockSupportShape(
+            state: BlockState, world: BlockGetter, pos: BlockPos, cir: CallbackInfoReturnable<VoxelShape>
+        )
+    }
+
+    fun interface CameraCollisionShapeCallback {
         fun getCameraCollisionShape(
-            state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
+            state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
             cir: CallbackInfoReturnable<VoxelShape>
         )
     }
 
-    fun interface RaycastShape {
-        fun getRaycastShape(
-            state: BlockState,
-            world: BlockView,
-            pos: BlockPos,
-            cir: CallbackInfoReturnable<VoxelShape>
+    fun interface BlockInteractionShapeCallback {
+        fun getInteractionShape(
+            state: BlockState, world: BlockGetter, pos: BlockPos,  cir: CallbackInfoReturnable<VoxelShape>
         )
     }
 
-    @JvmField
-    val OUTLINE_SHAPE: Event<OutlineShape> = EventFactory.createArrayBacked(
-        OutlineShape::class.java,
-        OutlineShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                       cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<OutlineShape> ->
-        OutlineShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                       cir: CallbackInfoReturnable<VoxelShape> ->
+    val FACE_OCCLUSION_SHAPE: Event<FaceOcclusionShapeCallback> = EventFactory.createArrayBacked(
+        FaceOcclusionShapeCallback::class.java, FaceOcclusionShapeCallback { _, _, _ -> }
+    ) {
+            listeners -> FaceOcclusionShapeCallback { state, direction, callback ->
+            for (listener in listeners) {
+                listener.getFaceOcclusionShape(state, direction, callback)
+
+                if (callback.isCancelled) {
+                    return@FaceOcclusionShapeCallback
+                }
+            }
+        }
+    }
+
+    val OCCLUSION_SHAPE: Event<OcclusionShapeCallback> = EventFactory.createArrayBacked(
+        OcclusionShapeCallback::class.java, OcclusionShapeCallback { _, _ -> }
+    ) {
+                listeners -> OcclusionShapeCallback { state, callback ->
+            for (listener in listeners) {
+                listener.getOcclusionShape(state, callback)
+
+                if (callback.isCancelled) {
+                    return@OcclusionShapeCallback
+                }
+            }
+        }
+    }
+
+    val RENDER_SHAPE: Event<RenderShapeCallback> = EventFactory.createArrayBacked(
+        RenderShapeCallback::class.java, RenderShapeCallback { _, _ -> }
+    ) {
+            listeners -> RenderShapeCallback { state, callback ->
+            for (listener in listeners) {
+                listener.getRenderShape(state, callback)
+
+                if (callback.isCancelled) {
+                    return@RenderShapeCallback
+                }
+            }
+        }
+    }
+
+    val OUTLINE_SHAPE: Event<OutlineShapeCallback> = EventFactory.createArrayBacked(
+        OutlineShapeCallback::class.java,
+        OutlineShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
+                               cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<OutlineShapeCallback> ->
+        OutlineShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
+                               cir: CallbackInfoReturnable<VoxelShape> ->
             for (listener in listeners) {
                 listener.getOutlineShape(state, world, pos, context, cir)
 
                 if (cir.isCancelled) {
-                    return@OutlineShape
+                    return@OutlineShapeCallback
                 }
             }
         }
     }
-    @JvmField
-    val COLLISION_SHAPE: Event<CollisionShape> = EventFactory.createArrayBacked(
-        CollisionShape::class.java,
-        CollisionShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                         cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<CollisionShape> ->
-        CollisionShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                         cir: CallbackInfoReturnable<VoxelShape> ->
+    
+    val COLLISION_SHAPE: Event<CollisionShapeCallback> = EventFactory.createArrayBacked(
+        CollisionShapeCallback::class.java,
+        CollisionShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
+                                 cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<CollisionShapeCallback> ->
+        CollisionShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos, context: CollisionContext,
+                                 cir: CallbackInfoReturnable<VoxelShape> ->
             for (listener in listeners) {
                 listener.getCollisionShape(state, world, pos, context, cir)
 
                 if (cir.isCancelled) {
-                    return@CollisionShape
+                    return@CollisionShapeCallback
                 }
             }
         }
     }
-    @JvmField
-    val CAMERA_COLLISION_SHAPE: Event<CameraCollisionShape> = EventFactory.createArrayBacked(
-        CameraCollisionShape::class.java,
-        CameraCollisionShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                               cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<CameraCollisionShape> ->
-        CameraCollisionShape { state: BlockState, world: BlockView, pos: BlockPos, context: ShapeContext,
-                               cir: CallbackInfoReturnable<VoxelShape> ->
+
+    val ENTITY_INSIDE_SHAPE: Event<EntityInsideShapeCallback> = EventFactory.createArrayBacked(
+        EntityInsideShapeCallback::class.java,
+        EntityInsideShapeCallback { state: BlockState, level: BlockGetter, pos: BlockPos, entity: Entity,
+                                    cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<EntityInsideShapeCallback> ->
+        EntityInsideShapeCallback { state: BlockState, level: BlockGetter, pos: BlockPos, entity: Entity,
+                                    cir: CallbackInfoReturnable<VoxelShape> ->
+            for (listener in listeners) {
+                listener.getEntityInsideShape(state, level, pos, entity, cir)
+
+                if (cir.isCancelled) {
+                    return@EntityInsideShapeCallback
+                }
+            }
+        }
+    }
+
+    val BLOCK_SUPPORT_SHAPE: Event<BlockSupportShapeCallback> = EventFactory.createArrayBacked(
+        BlockSupportShapeCallback::class.java,
+        BlockSupportShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos,
+                                    cir: CallbackInfoReturnable<VoxelShape> -> }) {
+                listeners: Array<BlockSupportShapeCallback> -> BlockSupportShapeCallback {
+                    state: BlockState, world: BlockGetter, pos: BlockPos, cir: CallbackInfoReturnable<VoxelShape> ->
+            for (listener in listeners) {
+                listener.getBlockSupportShape(state, world, pos, cir)
+
+                if (cir.isCancelled) {
+                    return@BlockSupportShapeCallback
+                }
+            }
+        }
+    }
+
+    val CAMERA_COLLISION_SHAPE: Event<CameraCollisionShapeCallback> = EventFactory.createArrayBacked(
+        CameraCollisionShapeCallback::class.java,
+        CameraCollisionShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos,
+                                       context: CollisionContext, cir: CallbackInfoReturnable<VoxelShape> -> }) {
+            listeners: Array<CameraCollisionShapeCallback> -> CameraCollisionShapeCallback { state: BlockState, world: BlockGetter,
+                                                                                             pos: BlockPos, context: CollisionContext,
+                                                                                             cir: CallbackInfoReturnable<VoxelShape> ->
             for (listener in listeners) {
                 listener.getCameraCollisionShape(state, world, pos, context, cir)
 
                 if (cir.isCancelled) {
-                    return@CameraCollisionShape
+                    return@CameraCollisionShapeCallback
                 }
             }
         }
     }
-    @JvmField
-    val RAYCAST_SHAPE: Event<RaycastShape> = EventFactory.createArrayBacked(
-        RaycastShape::class.java,
-        RaycastShape { state: BlockState, world: BlockView, pos: BlockPos,
-                       cir: CallbackInfoReturnable<VoxelShape> -> }) { listeners: Array<RaycastShape> ->
-        RaycastShape { state: BlockState, world: BlockView, pos: BlockPos,
-                       cir: CallbackInfoReturnable<VoxelShape> ->
-            for (listener in listeners) {
-                listener.getRaycastShape(state, world, pos, cir)
 
-                if (cir.isCancelled) {
-                    return@RaycastShape
-                }
+    val INTERACTION_SHAPE: Event<BlockInteractionShapeCallback> = EventFactory.createArrayBacked(
+        BlockInteractionShapeCallback::class.java,
+        BlockInteractionShapeCallback { state: BlockState, world: BlockGetter, pos: BlockPos,
+                                    cir: CallbackInfoReturnable<VoxelShape> -> }) {
+            listeners: Array<BlockInteractionShapeCallback> -> BlockInteractionShapeCallback {
+            state: BlockState, world: BlockGetter, pos: BlockPos, cir: CallbackInfoReturnable<VoxelShape> ->
+        for (listener in listeners) {
+            listener.getInteractionShape(state, world, pos, cir)
+
+            if (cir.isCancelled) {
+                return@BlockInteractionShapeCallback
             }
         }
+    }
     }
 }

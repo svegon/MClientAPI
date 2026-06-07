@@ -1,0 +1,8 @@
+package io.github.svegon.mclientapi.client.mixin.screen;
+
+import net.minecraft.client.gui.Gui;
+import org.spongepowered.asm.mixin.Mixin;
+
+@Mixin(Gui.class)
+public abstract class GuiMixin {
+}

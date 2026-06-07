@@ -1,20 +1,21 @@
 package io.github.svegon.mclientapi.client.mixinterface
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.Selectable
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.components.events.GuiEventListener
+import net.minecraft.client.gui.narration.NarratableEntry
 
 interface IScreen {
-    val client: MinecraftClient
+    val `mClientAPI$minecraft`: Minecraft
 
-    fun <T> addDrawableElement(drawableElement: T): T where T : Element, T : Drawable, T : Selectable
+    fun <T> `mClientAPI$addRenderableWidget`(drawableElement: T): T where T : GuiEventListener, T : Renderable,
+                                                                          T : NarratableEntry
 
-    fun <T : Drawable> addDrawableOnly(drawable: T): T
+    fun <T : Renderable> `mClientAPI$addRenderableOnly`(drawable: T): T
 
-    fun <T> addSelectableElement(child: T): T where T : Element, T : Selectable
+    fun <T> `mClientAPI$addWidget`(child: T): T where T : GuiEventListener, T : NarratableEntry
 
-    fun removeElement(child: Element)
+    fun `mClientAPI$removeWidget`(child: GuiEventListener)
 
-    fun clearElements()
+    fun `mClientAPI$clearWidgets`()
 }

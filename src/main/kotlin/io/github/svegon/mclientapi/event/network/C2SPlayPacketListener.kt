@@ -1,126 +1,209 @@
 package io.github.svegon.mclientapi.event.network
 
-import net.minecraft.network.listener.PacketListener
-import net.minecraft.network.listener.ServerPlayPacketListener
-import net.minecraft.network.listener.ServerQueryPacketListener
-import net.minecraft.network.packet.Packet
-import net.minecraft.network.packet.c2s.common.*
-import net.minecraft.network.packet.c2s.play.*
-import net.minecraft.network.packet.c2s.query.QueryPingC2SPacket
-import net.minecraft.network.packet.c2s.query.QueryRequestC2SPacket
+import net.minecraft.network.PacketListener
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.common.ServerboundClientInformationPacket
+import net.minecraft.network.protocol.common.ServerboundCustomClickActionPacket
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket
+import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket
+import net.minecraft.network.protocol.common.ServerboundPongPacket
+import net.minecraft.network.protocol.common.ServerboundResourcePackPacket
+import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket
+import net.minecraft.network.protocol.game.ServerGamePacketListener
+import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket
+import net.minecraft.network.protocol.game.ServerboundAttackPacket
+import net.minecraft.network.protocol.game.ServerboundBlockEntityTagQueryPacket
+import net.minecraft.network.protocol.game.ServerboundChangeDifficultyPacket
+import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket
+import net.minecraft.network.protocol.game.ServerboundChatAckPacket
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket
+import net.minecraft.network.protocol.game.ServerboundChatCommandSignedPacket
+import net.minecraft.network.protocol.game.ServerboundChatPacket
+import net.minecraft.network.protocol.game.ServerboundChatSessionUpdatePacket
+import net.minecraft.network.protocol.game.ServerboundChunkBatchReceivedPacket
+import net.minecraft.network.protocol.game.ServerboundClientCommandPacket
+import net.minecraft.network.protocol.game.ServerboundClientTickEndPacket
+import net.minecraft.network.protocol.game.ServerboundCommandSuggestionPacket
+import net.minecraft.network.protocol.game.ServerboundConfigurationAcknowledgedPacket
+import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket
+import net.minecraft.network.protocol.game.ServerboundContainerSlotStateChangedPacket
+import net.minecraft.network.protocol.game.ServerboundDebugSubscriptionRequestPacket
+import net.minecraft.network.protocol.game.ServerboundEditBookPacket
+import net.minecraft.network.protocol.game.ServerboundEntityTagQueryPacket
+import net.minecraft.network.protocol.game.ServerboundInteractPacket
+import net.minecraft.network.protocol.game.ServerboundJigsawGeneratePacket
+import net.minecraft.network.protocol.game.ServerboundLockDifficultyPacket
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket
+import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket
+import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket
+import net.minecraft.network.protocol.game.ServerboundPickItemFromBlockPacket
+import net.minecraft.network.protocol.game.ServerboundPickItemFromEntityPacket
+import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket
+import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
+import net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket
+import net.minecraft.network.protocol.game.ServerboundRecipeBookChangeSettingsPacket
+import net.minecraft.network.protocol.game.ServerboundRecipeBookSeenRecipePacket
+import net.minecraft.network.protocol.game.ServerboundRenameItemPacket
+import net.minecraft.network.protocol.game.ServerboundSeenAdvancementsPacket
+import net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket
+import net.minecraft.network.protocol.game.ServerboundSelectTradePacket
+import net.minecraft.network.protocol.game.ServerboundSetBeaconPacket
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket
+import net.minecraft.network.protocol.game.ServerboundSetCommandBlockPacket
+import net.minecraft.network.protocol.game.ServerboundSetCommandMinecartPacket
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket
+import net.minecraft.network.protocol.game.ServerboundSetGameRulePacket
+import net.minecraft.network.protocol.game.ServerboundSetJigsawBlockPacket
+import net.minecraft.network.protocol.game.ServerboundSetStructureBlockPacket
+import net.minecraft.network.protocol.game.ServerboundSetTestBlockPacket
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket
+import net.minecraft.network.protocol.game.ServerboundSpectateEntityPacket
+import net.minecraft.network.protocol.game.ServerboundSwingPacket
+import net.minecraft.network.protocol.game.ServerboundTeleportToEntityPacket
+import net.minecraft.network.protocol.game.ServerboundTestInstanceBlockActionPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket
+import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import java.util.function.Function
 
-interface C2SPlayPacketListener : C2SPacketListener, ServerPlayPacketListener {
-    override fun onQueryPing(packet: QueryPingC2SPacket) {}
+interface C2SPlayPacketListener : C2SPacketListener, ServerGamePacketListener {
+    override fun handleAnimate(packet: ServerboundSwingPacket) {}
 
-    override fun onCookieResponse(packet: CookieResponseC2SPacket) {}
+    override fun handleChat(packet: ServerboundChatPacket) {}
 
-    override fun onKeepAlive(packet: KeepAliveC2SPacket) {}
+    override fun handleChatCommand(packet: ServerboundChatCommandPacket) {}
 
-    override fun onPong(packet: CommonPongC2SPacket) {}
+    override fun handleSignedChatCommand(packet: ServerboundChatCommandSignedPacket) {}
 
-    override fun onCustomPayload(packet: CustomPayloadC2SPacket) {}
+    override fun handleChatAck(packet: ServerboundChatAckPacket) {}
 
-    override fun onResourcePackStatus(packet: ResourcePackStatusC2SPacket) {}
+    override fun handleClientCommand(packet: ServerboundClientCommandPacket) {}
 
-    override fun onClientOptions(packet: ClientOptionsC2SPacket) {}
+    override fun handleContainerButtonClick(packet: ServerboundContainerButtonClickPacket) {}
 
-    override fun onHandSwing(packet: HandSwingC2SPacket) {}
+    override fun handleContainerClick(packet: ServerboundContainerClickPacket) {}
 
-    override fun onChatMessage(packet: ChatMessageC2SPacket) {}
+    override fun handlePlaceRecipe(packet: ServerboundPlaceRecipePacket) {}
 
-    override fun onCommandExecution(packet: CommandExecutionC2SPacket) {}
+    override fun handleContainerClose(packet: ServerboundContainerClosePacket) {}
 
-    override fun onChatCommandSigned(packet: ChatCommandSignedC2SPacket) {}
+    override fun handleAttack(packet: ServerboundAttackPacket) {}
 
-    override fun onMessageAcknowledgment(packet: MessageAcknowledgmentC2SPacket) {}
+    override fun handleInteract(packet: ServerboundInteractPacket) {}
 
-    override fun onClientStatus(packet: ClientStatusC2SPacket) {}
+    override fun handleSpectateEntity(packet: ServerboundSpectateEntityPacket) {}
 
-    override fun onButtonClick(packet: ButtonClickC2SPacket) {}
+    override fun handleMovePlayer(packet: ServerboundMovePlayerPacket) {}
 
-    override fun onClickSlot(packet: ClickSlotC2SPacket) {}
+    override fun handlePlayerAbilities(packet: ServerboundPlayerAbilitiesPacket) {}
 
-    override fun onCraftRequest(packet: CraftRequestC2SPacket) {}
+    override fun handlePlayerAction(packet: ServerboundPlayerActionPacket) {}
 
-    override fun onCloseHandledScreen(packet: CloseHandledScreenC2SPacket) {}
+    override fun handlePlayerCommand(packet: ServerboundPlayerCommandPacket) {}
 
-    override fun onPlayerInteractEntity(packet: PlayerInteractEntityC2SPacket) {}
+    override fun handlePlayerInput(packet: ServerboundPlayerInputPacket) {}
 
-    override fun onPlayerMove(packet: PlayerMoveC2SPacket) {}
+    override fun handleSetCarriedItem(packet: ServerboundSetCarriedItemPacket) {}
 
-    override fun onUpdatePlayerAbilities(packet: UpdatePlayerAbilitiesC2SPacket) {}
+    override fun handleSetCreativeModeSlot(packet: ServerboundSetCreativeModeSlotPacket) {}
 
-    override fun onPlayerAction(packet: PlayerActionC2SPacket) {}
+    override fun handleSignUpdate(packet: ServerboundSignUpdatePacket) {}
 
-    override fun onClientCommand(packet: ClientCommandC2SPacket) {}
+    override fun handleUseItemOn(packet: ServerboundUseItemOnPacket) {}
 
-    override fun onPlayerInput(packet: PlayerInputC2SPacket) {}
+    override fun handleUseItem(packet: ServerboundUseItemPacket) {}
 
-    override fun onUpdateSelectedSlot(packet: UpdateSelectedSlotC2SPacket) {}
+    override fun handleTeleportToEntityPacket(packet: ServerboundTeleportToEntityPacket) {}
 
-    override fun onCreativeInventoryAction(packet: CreativeInventoryActionC2SPacket) {}
+    override fun handlePaddleBoat(packet: ServerboundPaddleBoatPacket) {}
 
-    override fun onUpdateSign(packet: UpdateSignC2SPacket) {}
+    override fun handleMoveVehicle(packet: ServerboundMoveVehiclePacket) {}
 
-    override fun onPlayerInteractBlock(packet: PlayerInteractBlockC2SPacket) {}
+    override fun handleAcceptTeleportPacket(packet: ServerboundAcceptTeleportationPacket) {}
 
-    override fun onPlayerInteractItem(packet: PlayerInteractItemC2SPacket) {}
+    override fun handleAcceptPlayerLoad(packet: ServerboundPlayerLoadedPacket) {}
 
-    override fun onSpectatorTeleport(packet: SpectatorTeleportC2SPacket) {}
+    override fun handleRecipeBookSeenRecipePacket(packet: ServerboundRecipeBookSeenRecipePacket) {}
 
-    override fun onBoatPaddleState(packet: BoatPaddleStateC2SPacket) {}
+    override fun handleBundleItemSelectedPacket(packet: ServerboundSelectBundleItemPacket) {}
 
-    override fun onVehicleMove(packet: VehicleMoveC2SPacket) {}
+    override fun handleRecipeBookChangeSettingsPacket(packet: ServerboundRecipeBookChangeSettingsPacket) {}
 
-    override fun onTeleportConfirm(packet: TeleportConfirmC2SPacket) {}
+    override fun handleSeenAdvancements(packet: ServerboundSeenAdvancementsPacket) {}
 
-    override fun onRecipeBookData(packet: RecipeBookDataC2SPacket) {}
+    override fun handleCustomCommandSuggestions(packet: ServerboundCommandSuggestionPacket) {}
 
-    override fun onRecipeCategoryOptions(packet: RecipeCategoryOptionsC2SPacket) {}
+    override fun handleSetCommandBlock(packet: ServerboundSetCommandBlockPacket) {}
 
-    override fun onAdvancementTab(packet: AdvancementTabC2SPacket) {}
+    override fun handleSetCommandMinecart(packet: ServerboundSetCommandMinecartPacket) {}
 
-    override fun onRequestCommandCompletions(packet: RequestCommandCompletionsC2SPacket) {}
+    override fun handlePickItemFromBlock(packet: ServerboundPickItemFromBlockPacket) {}
 
-    override fun onUpdateCommandBlock(packet: UpdateCommandBlockC2SPacket) {}
+    override fun handlePickItemFromEntity(packet: ServerboundPickItemFromEntityPacket) {}
 
-    override fun onUpdateCommandBlockMinecart(packet: UpdateCommandBlockMinecartC2SPacket) {}
+    override fun handleRenameItem(packet: ServerboundRenameItemPacket) {}
 
-    override fun onPickFromInventory(packet: PickFromInventoryC2SPacket) {}
+    override fun handleSetBeaconPacket(packet: ServerboundSetBeaconPacket) {}
 
-    override fun onRenameItem(packet: RenameItemC2SPacket) {}
+    override fun handleSetGameRule(packet: ServerboundSetGameRulePacket) {}
 
-    override fun onUpdateBeacon(packet: UpdateBeaconC2SPacket) {}
+    override fun handleSetStructureBlock(packet: ServerboundSetStructureBlockPacket) {}
 
-    override fun onUpdateStructureBlock(packet: UpdateStructureBlockC2SPacket) {}
+    override fun handleSetTestBlock(packet: ServerboundSetTestBlockPacket) {}
 
-    override fun onSelectMerchantTrade(packet: SelectMerchantTradeC2SPacket) {}
+    override fun handleTestInstanceBlockAction(packet: ServerboundTestInstanceBlockActionPacket) {}
 
-    override fun onBookUpdate(packet: BookUpdateC2SPacket) {}
+    override fun handleSelectTrade(packet: ServerboundSelectTradePacket) {}
 
-    override fun onQueryEntityNbt(packet: QueryEntityNbtC2SPacket) {}
+    override fun handleEditBook(packet: ServerboundEditBookPacket) {}
 
-    override fun onSlotChangedState(packet: SlotChangedStateC2SPacket) {}
+    override fun handleEntityTagQuery(packet: ServerboundEntityTagQueryPacket) {}
 
-    override fun onQueryBlockNbt(packet: QueryBlockNbtC2SPacket) {}
+    override fun handleContainerSlotStateChanged(packet: ServerboundContainerSlotStateChangedPacket) {}
 
-    override fun onUpdateJigsaw(packet: UpdateJigsawC2SPacket) {}
+    override fun handleBlockEntityTagQuery(packet: ServerboundBlockEntityTagQueryPacket) {}
 
-    override fun onJigsawGenerating(packet: JigsawGeneratingC2SPacket) {}
+    override fun handleSetJigsawBlock(packet: ServerboundSetJigsawBlockPacket) {}
 
-    override fun onUpdateDifficulty(packet: UpdateDifficultyC2SPacket) {}
+    override fun handleJigsawGenerate(packet: ServerboundJigsawGeneratePacket) {}
 
-    override fun onUpdateDifficultyLock(packet: UpdateDifficultyLockC2SPacket) {}
+    override fun handleChangeDifficulty(packet: ServerboundChangeDifficultyPacket) {}
 
-    override fun onPlayerSession(packet: PlayerSessionC2SPacket) {}
+    override fun handleChangeGameMode(packet: ServerboundChangeGameModePacket) {}
 
-    override fun onAcknowledgeReconfiguration(packet: AcknowledgeReconfigurationC2SPacket) {}
+    override fun handleLockDifficulty(packet: ServerboundLockDifficultyPacket) {}
 
-    override fun onAcknowledgeChunks(packet: AcknowledgeChunksC2SPacket) {}
+    override fun handleChatSessionUpdate(packet: ServerboundChatSessionUpdatePacket) {}
 
-    override fun onDebugSampleSubscription(packet: DebugSampleSubscriptionC2SPacket) {}
+    override fun handleConfigurationAcknowledged(packet: ServerboundConfigurationAcknowledgedPacket) {}
+
+    override fun handleChunkBatchReceived(packet: ServerboundChunkBatchReceivedPacket) {}
+
+    override fun handleDebugSubscriptionRequest(packet: ServerboundDebugSubscriptionRequestPacket) {}
+
+    override fun handleClientTickEnd(packet: ServerboundClientTickEndPacket) {}
+
+    override fun handleKeepAlive(packet: ServerboundKeepAlivePacket) {}
+
+    override fun handlePong(serverboundPongPacket: ServerboundPongPacket) {}
+
+    override fun handleCustomPayload(packet: ServerboundCustomPayloadPacket) {}
+
+    override fun handleResourcePackResponse(packet: ServerboundResourcePackPacket) {}
+
+    override fun handleClientInformation(packet: ServerboundClientInformationPacket) {}
+
+    override fun handleCustomClickAction(packet: ServerboundCustomClickActionPacket) {}
+
+    override fun handleCookieResponse(packet: ServerboundCookieResponsePacket) {}
+
+    override fun handlePingRequest(packet: ServerboundPingRequestPacket) {}
 
     object EmptyInvoker : C2SPlayPacketListener
 

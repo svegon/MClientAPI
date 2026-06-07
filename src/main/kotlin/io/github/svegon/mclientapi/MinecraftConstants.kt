@@ -1,6 +1,6 @@
 package io.github.svegon.mclientapi
 
-import net.minecraft.network.PacketByteBuf
+import net.minecraft.network.FriendlyByteBuf
 
 object MinecraftConstants {
     /**
@@ -40,14 +40,14 @@ object MinecraftConstants {
     const val SQUARED_BLOCK_REACH_DISTANCE: Int = 25
 
     /**
-     * maximum number of characters in a single chat message (not command)
+     * maximum number of characters in a single chat message (not a command)
      */
     const val MAX_CHAT_MESSAGE_LENGTH = 256
 
     /**
-     * maximum number of characters in a single command string (not chat message)
+     * maximum number of characters in a single command string (not a chat message)
      */
-    const val MAX_COMMAND_LENGTH = PacketByteBuf.MAX_TEXT_LENGTH
+    const val MAX_COMMAND_LENGTH = FriendlyByteBuf.MAX_STRING_LENGTH; //TODO
 
     /**
      * maximum number of rows in a sign's text

@@ -2,30 +2,32 @@ package io.github.svegon.mclientapi.client.event.render.tooltip
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.Item.TooltipContext
-import net.minecraft.item.ItemStack
-import net.minecraft.item.tooltip.TooltipType
-import net.minecraft.text.Text
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
+import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.component.TooltipDisplay
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 fun interface AppendItemTooltipListener {
-    fun appendItemTooltip(stack: ItemStack, context: TooltipContext, player: PlayerEntity?, type: TooltipType,
-                       callback: CallbackInfoReturnable<List<Text>>, tooltip: MutableList<Text>)
+    fun appendItemTooltip(stack: ItemStack, context: Item.TooltipContext, display: TooltipDisplay, player: Player?,
+                          tooltipFlag: TooltipFlag, builder: (Component) -> Void, ci: CallbackInfo)
 
     companion object {
-        @JvmField
         val EVENT: Event<AppendItemTooltipListener> = EventFactory.createArrayBacked(
             AppendItemTooltipListener::class.java,
-            AppendItemTooltipListener { stack: ItemStack, context: TooltipContext, player: PlayerEntity?, type,
-                                        callback: CallbackInfoReturnable<List<Text>>, tooltip -> }
+            AppendItemTooltipListener { stack: ItemStack, context: Item.TooltipContext,
+                                        display: TooltipDisplay, player: Player?, tooltipFlag: TooltipFlag,
+                                        builder: (Component) -> Void, ci: CallbackInfo -> }
         ) { listeners: Array<AppendItemTooltipListener> ->
-            AppendItemTooltipListener { stack: ItemStack, context: TooltipContext, player: PlayerEntity?, type: TooltipType,
-                                        callback: CallbackInfoReturnable<List<Text>>, tooltip ->
+            AppendItemTooltipListener { stack: ItemStack, context: Item.TooltipContext, display: TooltipDisplay,
+                                        player: Player?,  tooltipFlag: TooltipFlag, builder: (Component) -> Void,
+                                        ci: CallbackInfo ->
                 for (listener in listeners) {
-                    listener.appendItemTooltip(stack, context, player, type, callback, tooltip)
+                    listener.appendItemTooltip(stack, context, display, player, tooltipFlag, builder, ci)
 
-                    if (callback.isCancelled) {
+                    if (ci.isCancelled) {
                         return@AppendItemTooltipListener
                     }
                 }

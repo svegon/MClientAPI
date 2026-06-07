@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "MClientAPI",
-  "description": "API for (client) mods",
+  "description": "API for Minecraft mods",
   "authors": [
   	"Svegon"
   ],
@@ -22,6 +22,9 @@
     ],
     "main": [
       "io.github.svegon.mclientapi.MClientAPI"
+    ],
+    "server": [
+      "io.github.svegon.mclientapi.server.MClientAPIServerMain"
     ]
   },
   "mixins": [
@@ -29,6 +32,10 @@
     {
       "config": "${modid}.client.mixins.json",
       "environment": "client"
+    },
+    {
+      "config": "${modid}.server.mixins.json",
+      "environment": "server"
     }
   ],
   "accessWidener" : "${modid}.accesswidener",
@@ -36,6 +43,6 @@
     "fabricloader": ">=${loader_version}",
     "fabric-language-kotlin": ">=${kotlin_loader_version}",
     "fabric": ">=${fabric_version}",
-    "minecraft": ">=${minecraft_version}"
+    "minecraft": ">=26"
   }
 }
