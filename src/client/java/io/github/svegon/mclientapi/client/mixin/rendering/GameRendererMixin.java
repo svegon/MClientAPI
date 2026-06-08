@@ -30,16 +30,15 @@ public abstract class GameRendererMixin implements IGameRenderer {
                 (GameRenderer) (Object) this, callback);
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/Renderable;" +
-            "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V", ordinal = 0),
+    @Redirect(method = "extractGui", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Overlay;" +
+            "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"),
             target = @Desc(owner = Renderable.class, value = "extractRenderState", args = {GuiGraphicsExtractor.class,
                     int.class, int.class, float.class}))
-    private void renderOverlay(Renderable instance, final GuiGraphicsExtractor graphics, int mouseX, int mouseY,
-                               final float a) {
-        CallbackInfo callback = new CallbackInfo("Lnet/minecraft/client/gui/components/Renderable;" +
+    private void renderOverlay(Overlay instance, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        CallbackInfo callback = new CallbackInfo("Lnet/minecraft/client/gui/screens/Overlay;" +
                 "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V", true);
 
-        LoadingOverlayRenderListener.Companion.getEVENT().invoker().onLoadingOverlayRender((Overlay) instance, graphics,
+        LoadingOverlayRenderListener.Companion.getEVENT().invoker().onLoadingOverlayRender(instance, graphics,
                 mouseX, mouseY, a, callback);
 
         if (!callback.isCancelled()) {
